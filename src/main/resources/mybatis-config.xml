@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
-
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <!--mapper 연결 테스트-->
-    <mappers>
-        <mapper resource="UserMapper.xml"/>
-    </mappers>
 
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
@@ -15,4 +12,6 @@
         <setting name="jdbcTypeForNull" value="NULL"/>
         <!-- 쿼리에 보내는 파라미터가 Null인 경우 오류 발생하는 것을 방지해 줌 ex. #{search.user} 가 널인 경우 등등 -->
     </settings>
+    <!-- DB에 사용되는 쿼리문들을 담은 mapper파일을 등록하는 부분 -->
+
 </configuration>

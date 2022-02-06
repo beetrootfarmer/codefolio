@@ -4,9 +4,14 @@ import com.codefolio.mapper.UserMapper;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class UserServiceImpl implements UserService {
-    private UserMapper userMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     public List<UserVO> getAllUserData() {

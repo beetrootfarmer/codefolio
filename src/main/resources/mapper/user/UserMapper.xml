@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.codefolio.mapper.UserMapper">
 <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
-    <select id="getAllUserData" resultType="com.codefolio.vo.UserVO">
-        SELECT * FROM user;
+    <select id="getAllUserData" parameterType="com.codefolio.vo.UserVO" resultType="Map">
+        SELECT * FROM codefolio.user ORDER BY user_seq DESC;
     </select>
 
 </mapper>
