@@ -5,4 +5,18 @@
     <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
         SELECT * FROM codefolio.proj ORDER BY proj_seq DESC;
     </select>
+
+    <insert id="addProj" parameterType="Map">
+        INSERT
+        INTO codefolio.proj(proj_seq, proj_user, proj_title, proj_gitId,proj_Like, proj_view,proj_stack)
+        VALUES(
+            (SELECT IFNULL(MAX(proj_seq), 0) + 1 FROM codefolio.proj A),
+            #{projUser},
+            #{projTitle},
+            #{projGitId},
+            (SELECT IFNULL(MAX(proj_like), 0) + 1 FROM codefolio.proj A),
+            (SELECT IFNULL(MAX(proj_view), 0) + 1 FROM codefolio.proj A),
+            #{projStack}
+            )
+    </insert>
 </mapper>
