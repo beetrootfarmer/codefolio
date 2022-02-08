@@ -14,25 +14,24 @@
             width:1000px;
             margin: 0 auto;
         }
-        .addform > div > * {
-           float:left;
+        .common-form > div > * {
+            float:left;
         }
-        .addform > div::after {
-           content: "";
+        .common-form > div::after {
+            content: "";
             display: block;
             clear: both;
         }
-        .addform > div >span {
+        .common-form > div >span {
             width:100px;
             margin-top: 1%;
         }
-        .addform > div > div {
+        .common-form > div > div {
             width: calc(100% - 50px);
         }
-        .addform > div > div > input[type="text"], .addform > div > div > textarea {
+        .common-form > div > div > input[type="text"], .common-form > div > div > textarea {
             width:90%;
         }
-
     </style>
 </head>
 <body>
@@ -57,7 +56,7 @@
 
     </script>
 
-    <form class="con addform" action="./doAdd"
+    <form class="con common-form" action="./doAdd"
           method="POST" onsubmit="submitAddForm(this); return false;">
 
 <%--    게시글 번호 쿼리처리--%>

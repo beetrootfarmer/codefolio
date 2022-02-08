@@ -2,14 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.codefolio.mapper.ProjMapper">
+    <resultMap type="com.codefolio.vo.ProjVO" id="projResult">
+        <result property="projSeq" column="proj_seq"/>
+        <result property="projUser" column="proj_user"/>
+        <result property="projTitle" column="proj_title"/>
+        <result property="projGitId" column="proj_gitId"/>
+        <result property="projLike" column="proj_like"/>
+        <result property="projView" column="proj_view"/>
+        <result property="projStack" column="proj_stack"/>
+    </resultMap>
+
     <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
-        SELECT * FROM codefolio.proj ORDER BY proj_seq DESC;
+        SELECT *
+        FROM codefolio.proj
+        ORDER BY proj_seq DESC;
+    </select>
+
+    <select id="getProjDetail" parameterType="int" resultType="com.codefolio.vo.ProjVO" resultMap="projResult">
+        SELECT *
+        FROM proj
+        WHERE proj_seq = #{projSeq}
+    </select>
+
+    <select id="getProjSeq" resultType="int">
+        SELECT IFNULL(MAX(proj_seq), 0) + 1
+        FROM codefolio.proj
+    </select>
+
+    <select id="getTotalProj" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM codefolio.proj;
     </select>
 
     <insert id="addProj" parameterType="Map">
         INSERT
-        INTO codefolio.proj(proj_seq, proj_user, proj_title, proj_gitId,proj_Like, proj_view,proj_stack)
-        VALUES(
+        INTO codefolio.proj
+            ( proj_seq, proj_user, proj_title, proj_gitId, proj_Like, proj_view ,proj_stack  )
+        VALUES (
             (SELECT IFNULL(MAX(proj_seq), 0) + 1 FROM codefolio.proj A),
             #{projUser},
             #{projTitle},
@@ -17,6 +46,12 @@
             (SELECT IFNULL(MAX(proj_like), 0) + 1 FROM codefolio.proj A),
             (SELECT IFNULL(MAX(proj_view), 0) + 1 FROM codefolio.proj A),
             #{projStack}
-            )
+               )
     </insert>
+
+    <delete id="deleteProj" parameterType="int">
+        DELETE
+        FROM codefolio.proj
+        WHERE proj_seq = #{projSeq}
+    </delete>
 </mapper>
