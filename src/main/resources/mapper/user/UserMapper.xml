@@ -3,8 +3,20 @@
 
 <mapper namespace="com.codefolio.mapper.UserMapper">
 <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
+    <!--유저 리스트 받아오기-->
     <select id="getAllUserData" parameterType="com.codefolio.vo.UserVO" resultType="Map">
         SELECT * FROM codefolio.user ORDER BY user_seq DESC;
     </select>
+
+    <!--join user-->
+    <insert id="JoinUser" parameterType="map">
+            INSERT INTO user SET
+            user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId};
+    </insert>
+
+<!--    &lt;!&ndash;아이디 중복 체크&ndash;&gt;-->
+<!--    <select id="checkUserIdDup" parameterType="String" resultType="int">-->
+<!--        SELECT COUNT(*) FROM codefolio.user WHERE userId = #{userId};-->
+<!--    </select>-->
 
 </mapper>

@@ -12,6 +12,7 @@
 </head>
 <body>
     <h1>사용자 리스트</h1>
+    <!--el의 장점은 request.getAttribute("userList") 할 필요가 없다. -->
     <c:forEach var="user" items="${userList}" varStatus="status">
         <section>
             번호 : ${user.user_seq},
