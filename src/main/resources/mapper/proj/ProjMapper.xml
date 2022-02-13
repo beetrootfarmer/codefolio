@@ -3,6 +3,6 @@
 
 <mapper namespace="com.codefolio.mapper.ProjMapper">
     <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
-        SELECT * FROM codefolio.proj ORDER BY proj_seq DESC;
+        SELECT * FROM codefolio.proj ORDER BY proj_seq ASC;
     </select>
 </mapper>

@@ -2,17 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.codefolio.mapper.UserMapper">
+
+    <resultMap type="com.codefolio.vo.UserVO" id="UserResult">
+        <result property="userSeq" column="user_seq"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPwd" column="user_pwd"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="userGitId" column="user_gitId"/>
+    </resultMap>
+
 <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
     <!--유저 리스트 받아오기-->
-    <select id="getAllUserData" parameterType="com.codefolio.vo.UserVO" resultType="Map">
+    <select id="getAllUserData" parameterType="com.codefolio.vo.UserVO" resultType="map">
         SELECT * FROM codefolio.user ORDER BY user_seq DESC;
     </select>
 
+    <select id="getUser" parameterType="int" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
+        SELECT * FROM codefolio.user WHERE user_seq = #{userSeq}
+    </select>
+
     <!--join user-->
-    <insert id="JoinUser" parameterType="map">
-            INSERT INTO user SET
-            user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId};
+    <insert id="joinUser" parameterType="map" useGeneratedKeys="true" keyProperty="user_seq">
+            INSERT INTO codefolio.user SET
+            user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId},
+            user_creDate=NOW(),user_recDate=NOW(),user_reg=true;
     </insert>
+
+    <!--updateUser-->
+    <update id="updateUser" parameterType="map">
+        UPDATE user
+        SET user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId}
+        WHERE user_seq = #{userSeq};
+    </update>
+
+    <!--user delete-->
+    <delete id="delete" parameterType="int">
+        DELETE FROM codefolio.user WHERE user_seq = #{userSeq}
+    </delete>
 
 <!--    &lt;!&ndash;아이디 중복 체크&ndash;&gt;-->
 <!--    <select id="checkUserIdDup" parameterType="String" resultType="int">-->

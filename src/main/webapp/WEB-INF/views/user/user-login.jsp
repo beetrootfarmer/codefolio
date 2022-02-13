@@ -46,14 +46,14 @@
         <div>
             <input name="userPwd" type="text" placeholder="password" autofocus="autofocus">
         </div>
-        <div>
-            <input type="submit" value="로그인">
-        </div>
     </div>
     <div>
-        <input type="reset" value="회원가입">
+        <input type="submit" value="로그인">
+        <input type="reset" value="뒤로" onclick="history.back();">
     </div>
-    </div>
+
+    <div><a href="join">회원가입</a></div>
+
 </form>
 
 </body>

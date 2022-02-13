@@ -12,9 +12,14 @@ import java.util.Map;
 public interface UserMapper {
     public List<UserVO> getAllUserData();
 
-    UserVO getUser();
+    public UserVO getUser(int userSeq);
 
-//    public int getuserIdDupCount(String userId);
+    public void joinUser(Map<String, Object> param);
 
-    public void JoinUser(Map<String, Object> param);
+    public void updateUser(Map<String, Object> param);
+
+    public void delete(int userSeq);
+
+    //    public int getuserIdDupCount(String userId);
+
 }

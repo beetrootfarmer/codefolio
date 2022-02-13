@@ -2,11 +2,10 @@ package com.codefolio.impl;
 
 
 import com.codefolio.mapper.UserMapper;
+import com.codefolio.utils.CUtil;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +21,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
+    //JoinUser을 하는 동안에 auto_increment에 의해 생긴 주키 값을 알아내야 함
     @Override
-    public void JoinUser(Map<String, Object> param) {
-        userMapper.JoinUser(param);
+    public void joinUser(Map<String, Object> param) {
+        userMapper.joinUser(param);
+        log.info("newId : "+param.get("userId"));
+        //return CUtil.getAsLong(param.get("userSeq"));
     }
+
+    @Override
+    public UserVO getUser(int userSeq){return userMapper.getUser(userSeq);}
 
     @Override
     public List<UserVO> getAllUserData() {
@@ -33,7 +38,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO getUser(){return userMapper.getUser();}
+    public void updateUser(Map<String, Object> param){ userMapper.updateUser(param);}
+
+
+    @Override
+    public void delete(int userSeq){
+        userMapper.delete(userSeq);
+    }
 
 //
 //    @Override

@@ -56,7 +56,7 @@
     </script>
 
     <!--버튼을 누르면 createUser를 controller에서 처리-->
-    <form action="./doJoin" method="POST" onsubmit="submitJoinForm(this); return false;">
+    <form action="./joinUser" method="POST" onsubmit="submitJoinForm(this); return false;">
         <div>
             <span>이름</span>
             <div>
@@ -90,6 +90,10 @@
             </div>
         </div>
     </form>
+    <div>
+        <a href="list">유저 리스트</a>
+        <a href="login">로그인</a>
+    </div>
 
 </body>
 </html>

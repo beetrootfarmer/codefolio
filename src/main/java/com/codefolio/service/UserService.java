@@ -7,11 +7,17 @@ import java.util.Map;
 
 
 public interface UserService {
+
+    public UserVO getUser(int userSeq);
+
     public List<UserVO> getAllUserData();
 
-    public UserVO getUser();
+    public void joinUser(Map<String, Object> param);
 
-//    public Map<String, Object> checkUserIdDup(String userId);
+    public void updateUser(Map<String, Object> param);
 
-    public void JoinUser(Map<String, Object> param);
+    public void delete(int userSeq);
+
+    //    public Map<String, Object> checkUserIdDup(String userId);
+
 }
