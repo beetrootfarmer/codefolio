@@ -14,12 +14,12 @@ public interface UserMapper {
 
     public UserVO getUser(int userSeq);
 
-    public void joinUser(Map<String, Object> param);
+    public int joinUser(UserVO user);
 
-    public void updateUser(Map<String, Object> param);
+    public void updateUser(UserVO user);
 
     public void delete(int userSeq);
 
-    //    public int getuserIdDupCount(String userId);
+    public int getuserIdDupCount(String userId);
 
 }

@@ -23,16 +23,16 @@
     </select>
 
     <!--join user-->
-    <insert id="joinUser" parameterType="map" useGeneratedKeys="true" keyProperty="user_seq">
+    <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
             INSERT INTO codefolio.user SET
-            user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId},
-            user_creDate=NOW(),user_recDate=NOW(),user_reg=true;
+            id=#{id},pwd=#{pwd},name=#{name},email=#{email},gitId=#{gitId},
+            creDate=NOW(),recDate=NOW(),reg=true;
     </insert>
 
     <!--updateUser-->
-    <update id="updateUser" parameterType="map">
+    <update id="updateUser" parameterType="com.codefolio.vo.UserVO">
         UPDATE user
-        SET user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId}
+        SET id=#{userId},pwd=#{userPwd},name=#{userName},email=#{userEmail},gitId=#{userGitId}
         WHERE user_seq = #{userSeq};
     </update>
 
@@ -41,9 +41,9 @@
         DELETE FROM codefolio.user WHERE user_seq = #{userSeq}
     </delete>
 
-<!--    &lt;!&ndash;아이디 중복 체크&ndash;&gt;-->
-<!--    <select id="checkUserIdDup" parameterType="String" resultType="int">-->
-<!--        SELECT COUNT(*) FROM codefolio.user WHERE userId = #{userId};-->
-<!--    </select>-->
+    <!--아이디 중복 체크-->
+    <select id="checkUserIdDup" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM codefolio.user WHERE userId = #{userId};
+    </select>
 
 </mapper>
