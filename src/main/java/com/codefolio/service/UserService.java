@@ -1,17 +1,35 @@
 package com.codefolio.service;
 
 import com.codefolio.vo.UserVO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface UserService {
+
+    @Transactional
+    public UserVO getUser(int userSeq);
+
+    @Transactional(readOnly = true)
     public List<UserVO> getAllUserData();
 
-    public UserVO getUser();
+    @Transactional
+    public int joinUser(UserVO user);
 
-//    public Map<String, Object> checkUserIdDup(String userId);
+    @Transactional
+    public void updateUser(UserVO user);
 
-    public void JoinUser(Map<String, Object> param);
+    @Transactional
+    public void delete(int userSeq);
+
+    @Transactional
+    public int checkEmail(UserVO userEmail);
+
+    @Transactional
+    public String checkLogin(UserVO user);
+
+//    @Transactional
+//    public Map<String, Object> checkUserEmailDup(String userId);
+
 }

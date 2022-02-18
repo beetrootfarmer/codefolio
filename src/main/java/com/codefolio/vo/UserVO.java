@@ -9,11 +9,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserVO {
+
     private int userSeq;
-    private String userId;
-    private String userPwd;
-    private String userName;
-    private String userEmail;
-    private String userGitId;
+    //user 기본정보
+    private String id;
+    private String pwd;
+    private String name;
+    private String email;
+    private String gitId;
+
+    //user 생성일, 접속일
+    private String creDate;
+    private String recDate;
+
+    //user 프로필, 소개글
+    private String img;
+    private String introFile;
+
+    //user 탈퇴유무(false => 탈퇴유저)
+    private boolean reg;
 
 }
