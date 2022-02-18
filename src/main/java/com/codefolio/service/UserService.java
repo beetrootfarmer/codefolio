@@ -4,7 +4,6 @@ import com.codefolio.vo.UserVO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface UserService {
@@ -25,6 +24,12 @@ public interface UserService {
     public void delete(int userSeq);
 
     @Transactional
-    public Map<String, Object> checkUserIdDup(String userId);
+    public int checkEmail(UserVO userEmail);
+
+    @Transactional
+    public String checkLogin(UserVO user);
+
+//    @Transactional
+//    public Map<String, Object> checkUserEmailDup(String userId);
 
 }
