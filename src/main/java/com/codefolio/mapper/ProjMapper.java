@@ -13,7 +13,7 @@ import java.util.Map;
 public interface ProjMapper {
     public List<ProjVO> getProjList();
 
-    public void addProj(Map<String, Object> param);
+     public void addProj(ProjVO vo);
 
     public int getTotalProj();
 
@@ -22,5 +22,9 @@ public interface ProjMapper {
     public int getProjSeq();
 
     public void deleteProj(int projSeq);
+
+    public void update(Map<String, Object> param);
+
+    public void viewUp(int projSeq);
 
 }

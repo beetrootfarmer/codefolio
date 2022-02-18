@@ -24,9 +24,10 @@ public class ProjServiceImpl implements ProjService {
     }
 
     @Override
-    public void addProj(Map<String, Object> param) {
-        projMapper.addProj(param);
+    public void addProj(ProjVO vo) {
+        projMapper.addProj(vo);
         }
+
 
     @Override
     public int getProjSeq() {
@@ -47,5 +48,15 @@ public class ProjServiceImpl implements ProjService {
     public void deleteProj(int projSeq) {
         projMapper.deleteProj(projSeq);
     }
+
+    @Override
+    public void update(Map<String, Object> param){
+         projMapper.update(param);
+    }
+
+    @Override
+    public void viewUp(int projSeq){
+        projMapper.viewUp(projSeq);
+    };
 
 }
