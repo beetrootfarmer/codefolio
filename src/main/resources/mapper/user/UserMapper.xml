@@ -5,11 +5,11 @@
 
     <resultMap type="com.codefolio.vo.UserVO" id="UserResult">
         <result property="userSeq" column="user_seq"/>
-        <result property="userId" column="user_id"/>
-        <result property="userName" column="user_name"/>
-        <result property="userPwd" column="user_pwd"/>
-        <result property="userEmail" column="user_email"/>
-        <result property="userGitId" column="user_gitId"/>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="pwd" column="pwd"/>
+        <result property="email" column="email"/>
+        <result property="gitId" column="gitId"/>
     </resultMap>
 
 <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
@@ -19,20 +19,19 @@
     </select>
 
     <select id="getUser" parameterType="int" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
-        SELECT * FROM codefolio.user WHERE user_seq = #{userSeq}
+        SELECT * FROM codefolio.user WHERE user_seq = #{userSeq};
     </select>
 
     <!--join user-->
-    <insert id="joinUser" parameterType="map" useGeneratedKeys="true" keyProperty="user_seq">
+    <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
             INSERT INTO codefolio.user SET
-            user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId},
-            user_creDate=NOW(),user_recDate=NOW(),user_reg=true;
+            pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},creDate=NOW(),recDate=NOW();
     </insert>
 
     <!--updateUser-->
-    <update id="updateUser" parameterType="map">
+    <update id="updateUser" parameterType="com.codefolio.vo.UserVO">
         UPDATE user
-        SET user_id=#{userId},user_pwd=#{userPwd},user_name=#{userName},user_email=#{userEmail},user_gitId=#{userGitId}
+        SET id=#{id},pwd=#{pwd},name=#{name},email=#{email},gitId=#{gitId}
         WHERE user_seq = #{userSeq};
     </update>
 
@@ -41,9 +40,14 @@
         DELETE FROM codefolio.user WHERE user_seq = #{userSeq}
     </delete>
 
-<!--    &lt;!&ndash;아이디 중복 체크&ndash;&gt;-->
-<!--    <select id="checkUserIdDup" parameterType="String" resultType="int">-->
-<!--        SELECT COUNT(*) FROM codefolio.user WHERE userId = #{userId};-->
-<!--    </select>-->
+    <!--email 중복 체크-->
+    <select id="checkEmail" parameterType="com.codefolio.vo.UserVO" resultType="int">
+        SELECT COUNT(email) FROM codefolio.user WHERE email=#{email};
+    </select>
+
+    <!--유저 로그인-->
+    <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
+        SELECT name FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY name DESC LIMIT 1;
+    </select>
 
 </mapper>

@@ -2,147 +2,91 @@ package com.codefolio.controller;
 
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
-import org.springframework.stereotype.Controller;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 
-import java.sql.SQLOutput;
 import java.util.List;
-import java.util.Map;
 
-@Controller
+
 @Slf4j
+@RestController
+@RequestMapping("/user")
 public class UserController {
+
     @Autowired
     UserService userService;
 
-    //userController test
-    @RequestMapping("/")
-    public String hello() {
-            return "user/user-main";
-    }
 
-    //page url
-    @RequestMapping("/user/join")
-    public String showJoin(){
-        return "user/user-join";
-    }
-
-    @RequestMapping("/user/login")
-    public String showLogin(){return "user/user-login";}
-
-    @RequestMapping("/user/update")
-    public String showUpdate(Model model, int userSeq){
-        UserVO user = userService.getUser(userSeq);
-        model.addAttribute("user",user);
-        return "user/user-update";
+    @GetMapping("hello")
+    public String hello(){
+        return "helloTest";
     }
 
     //JoinUser
-    @RequestMapping("/user/joinUser")
-    @ResponseBody
-    //HttpServletRequest req;
-    public String joinUser(@RequestParam Map<String, Object> param){
-        userService.joinUser(param);
+    @PostMapping("")
+    public ResponseEntity<UserVO> joinUser(@RequestBody UserVO user){
 
-        String msg = "회원가입이 완료되었습니다.";
+        Integer userSeq = userService.joinUser(user);
+        UserVO userDetail = userService.getUser(userSeq);
 
-        StringBuilder sb = new StringBuilder();
+        return ResponseEntity.ok(userDetail);
+    }
 
-        sb.append("alert('"+msg+"');");
-        sb.append("location.replace('./list');");
 
-        sb.insert(0,"<script>");
-        sb.append("</script>");
+    //TODO : 이메일 중복 확인이 제대로 안됨 결과 값이 0만 뜬다.
+    //Required request parameter 'email' for method parameter type UserVO is not present
+    //로그인 email의 중복성 체크
+    @PostMapping("/checkEmail")
+    public ResponseEntity<String> checkEmail(@RequestParam("email") UserVO userEmail){
+        int result= userService.checkEmail(userEmail);
+        System.out.println(result);
+        if(result!=0)return ResponseEntity.badRequest().body("fail");
+        else return ResponseEntity.ok("success");
+    }
 
-        return sb.toString();
+    //TODO: jwt로그인 방식 구현하기 필요
+    //회원 로그인
+    @PostMapping("/login")
+    public ResponseEntity<String> loginCheck(@RequestBody UserVO user){
+        String userName = userService.checkLogin(user);
+        if(userName!=null)
+            return ResponseEntity.ok(userName+" 로그인 성공");
+        else return ResponseEntity.badRequest().body("해당 사용자를 찾을 수 없습니다.");
     }
 
     //Get user(userSeq)
-    @RequestMapping("/user/detail")
-    public String getUser(Model model, int userSeq){
+    @GetMapping("/{userSeq}")
+    public ResponseEntity<String> getUser(@PathVariable("userSeq") int userSeq){
         UserVO user = userService.getUser(userSeq);
-        model.addAttribute("user",user);
-        System.out.println("=========user 상세============"+"\n" + userService.getUser(userSeq));
-        return "user/user-detail";
+        return ResponseEntity.ok(userSeq+"번"+user);
     }
 
-    //Get userlist => model view
-    @RequestMapping("/user/list")
-    public String getAllUserData(Model model) {
-        List<UserVO> userList = userService.getAllUserData();
-
-        model.addAttribute("userList", userList);
-        //request.setAttribute("userList",userList); 와 똑같은 표현
-
-        System.out.println("=========test 메소드 탐============");
-        System.out.println("=========user 정보============"+"\n" + userService.getAllUserData());
-        return "user/user-list";
+    //Get userlist
+    @GetMapping("/list")
+    public ResponseEntity<List<UserVO>> getAllUserData() {
+        List<UserVO> userList =  userService.getAllUserData();
+        return ResponseEntity.ok(userList);
     }
 
+    //TODO : user update시 null 값만 저장됨
     //Update user
-    @RequestMapping("/user/updateUser")
-    @ResponseBody
-    public String updateUser(@RequestParam Map<String,Object> param, int userSeq){
-        System.out.println("user/update");
-
-        userService.updateUser(param);
-
-        String msg = userSeq+"번 사용자가 수정되었습니다.";
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("alert('"+msg+"');");
-        sb.append("location.replace('./detail?userSeq="+userSeq+"');");
-
-        sb.insert(0,"<script>");
-        sb.append("</script>");
-
-        return sb.toString();
+    @PutMapping("/{userSeq}")
+    public ResponseEntity<String> updateUser(@RequestBody UserVO user,@PathVariable("userSeq") int userSeq){
+        userService.updateUser(user);
+        UserVO userDetail = userService.getUser(userSeq);
+        return ResponseEntity.ok(userSeq+"번\n"+userDetail);
     }
 
 
-    @RequestMapping("/user/delete")
-    @ResponseBody
-    public String deleteUser(int userSeq){
+    @DeleteMapping("/{userSeq}")
+    public ResponseEntity<String> deleteUser(@PathVariable("userSeq") int userSeq){
         userService.delete(userSeq);
-
-        String msg = userSeq+"번 사용자가 삭제되었습니다.";
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("alert('"+msg+"');");
-        sb.append("location.replace('./list');");
-
-        sb.insert(0,"<script>");
-        sb.append("</script>");
-
-        return sb.toString();
+        return ResponseEntity.ok(userSeq+"번 회원이 삭제되었습니다.");
     }
 
-
-
-
-    //회원가입 폼 구현할때 보기
-//    @RequestMapping("/user/doJoin")
-//    @ResponseBody
-//    public String doJoin(@RequestParam Map<String, Object> param,Model model){
-//        //로그인 ID의 중복성 체크
-//        Map<String, Object> checkUserIdDupRs = userService.checkUserIdDup((String)param.get("userId"));
-//
-//        if(((String)checkUserIdDupRs.get("resultCode")).startsWith("F-")){
-//            model.addAttribute("alertMsg",checkUserIdDupRs.get("msg"));
-//            model.addAttribute("historyBack",true);
-//            return "user/redirect";
-//        }
-//        return "";
-//    }
 
 
 }
