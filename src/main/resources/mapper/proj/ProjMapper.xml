@@ -15,6 +15,7 @@
 
 
     <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
+
         SELECT *
         FROM codefolio.proj
         ORDER BY proj_seq DESC;
@@ -34,6 +35,7 @@
     <select id="getTotalProj" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM codefolio.proj;
+
     </select>
 
     <insert id="addProj">
