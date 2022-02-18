@@ -3,6 +3,7 @@ package com.codefolio.utils;
 import java.math.BigInteger;
 
 public class CUtil {
+
     public static long getAsLong(Object object) {
         if (object instanceof BigInteger) {
             return ((BigInteger) object).longValue();
