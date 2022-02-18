@@ -3,6 +3,7 @@ package com.codefolio.mapper;
 import java.util.List;
 import com.codefolio.vo.ProjVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import java.util.Map;
 
@@ -12,5 +13,18 @@ import java.util.Map;
 public interface ProjMapper {
     public List<ProjVO> getProjList();
 
-    public void addProj(Map<String, Object> param);
+     public void addProj(ProjVO vo);
+
+    public int getTotalProj();
+
+    public ProjVO getProjDetail(@Param("projSeq") int projSeq);
+
+    public int getProjSeq();
+
+    public void deleteProj(int projSeq);
+
+    public void update(Map<String, Object> param);
+
+    public void viewUp(int projSeq);
+
 }
