@@ -45,24 +45,24 @@ public class ProjController {
             return ResponseEntity.ok(projList);
     }
 
-// [프로젝트 상세 페이지]
-    @GetMapping("/{projSeq}")
-    public ResponseEntity<String> showProjDetail(@PathVariable("projSeq") int seq) {
-
-       // 보드 시퀀스로 파일리스트 가져오기
-       List<FileVO> fileList = fileService.getFileListBySeq(seq);
-       // 조회수 늘리기
-       projService.viewUp(seq);
-       ProjVO proj = projService.getProjDetail(seq);
-
-
-
-//         model.addAttribute("proj", projService.getProjDetail(projSeq));
-            return ResponseEntity.ok(seq+"번"+proj + "fileList=" + fileList);
-//                             .contentType(MediaType.parseMediaType(fileType))
-//                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//                             .body(resource);
-    }
+//// [프로젝트 상세 페이지]
+//    @GetMapping("/{projSeq}")
+//    public ResponseEntity<String> showProjDetail(@PathVariable("projSeq") int seq) {
+//
+//       // 보드 시퀀스로 파일리스트 가져오기
+//       List<FileVO> fileList = fileService.getFileListBySeq(seq);
+//       // 조회수 늘리기
+//       projService.viewUp(seq);
+//       ProjVO proj = projService.getProjDetail(seq);
+//
+//
+//
+////         model.addAttribute("proj", projService.getProjDetail(projSeq));
+//            return ResponseEntity.ok(seq+"번"+proj + "fileList=" + fileList);
+////                             .contentType(MediaType.parseMediaType(fileType))
+////                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+////                             .body(resource);
+//    }
 
 
 // [프로젝트 추가] + [파일 추가] test

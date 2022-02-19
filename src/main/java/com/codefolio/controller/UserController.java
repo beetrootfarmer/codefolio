@@ -1,5 +1,6 @@
 package com.codefolio.controller;
 
+import com.codefolio.service.EmailService;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    EmailService emailService;
 
 
     @GetMapping("hello")
@@ -86,6 +90,20 @@ public class UserController {
         userService.delete(userSeq);
         return ResponseEntity.ok(userSeq+"번 회원이 삭제되었습니다.");
     }
+
+
+    @GetMapping("/emailConfirm")
+    @ResponseBody
+    public ResponseEntity<String> emailConfirm(){
+        return ResponseEntity.ok("hello");
+    }
+//    public ResponseEntity<String> emailConfirm(@RequestParam("email") String email) throws Exception {
+//
+//        System.out.println(email);
+//        String confirm = emailService.sendSimpleMessage(email);
+//
+//        return ResponseEntity.ok(confirm);
+//    }
 
 
 
