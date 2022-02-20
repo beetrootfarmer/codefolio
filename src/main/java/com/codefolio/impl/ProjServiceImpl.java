@@ -45,7 +45,7 @@ public class ProjServiceImpl implements ProjService {
     }
 
     @Override
-    public void deleteProj(int projSeq) {
+    public void deleteProj(int seq) {
         projMapper.deleteProj(projSeq);
     }
 

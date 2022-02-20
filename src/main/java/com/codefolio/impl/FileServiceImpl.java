@@ -25,6 +25,13 @@ public class FileServiceImpl implements FileService {
     @Autowired
     FileMapper fileMapper;
 
+       @Override
+        	public List<FileVO> getFileListBySeq(int seq) {
+
+        		return fileMapper.getFileListBySeq(seq);
+        	}
+
+
     @Override
     public void saveFile(List<FileVO>  fileList){
         for(FileVO vo : fileList) {
@@ -33,8 +40,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Resource selectFile(String fileName){
-        return fileMapper.selectFile(fileName);
+    public Resource selectFile(int seq){
+        return fileMapper.selectFile(seq);
+    }
+
+    @Overrider
+    void deleteFileBySeq(int seq){
+        return fileMapper.deleteFileBySeq(seq);
     }
 
     @Override

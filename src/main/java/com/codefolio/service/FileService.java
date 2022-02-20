@@ -13,7 +13,11 @@ public interface FileService {
 
     void saveFile(List<FileVO> fileList);
 
-    public Resource selectFile(String fileName);
+    public List<FileVO> getFileListBySeq(int seq);
+
+    void deleteFileBySeq(int seq);
+
+    public Resource selectFile(int seq);
 
     public Iterable<FileVO> getFileList();
 

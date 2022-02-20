@@ -13,17 +13,25 @@ import com.codefolio.vo.ProjVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+// 파일관련..
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import com.codefolio.utils.FileUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.core.io.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 
 @RestController
 @RequestMapping("/proj")
 public class ProjController {
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+
     @Autowired
     ProjService projService;
 
@@ -45,27 +53,30 @@ public class ProjController {
             return ResponseEntity.ok(projList);
     }
 
-// [프로젝트 상세 페이지]
+// [프로젝트 상세 페이지] +[파일 불러오기]
     @GetMapping("/{projSeq}")
-    public ResponseEntity<String> showProjDetail(@PathVariable("projSeq") int seq) {
-
+    public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
        // 보드 시퀀스로 파일리스트 가져오기
        List<FileVO> fileList = fileService.getFileListBySeq(seq);
+
        // 조회수 늘리기
        projService.viewUp(seq);
        ProjVO proj = projService.getProjDetail(seq);
 
+       for (FileVO file : fileList) {
+        System.out.println("fileVO==========" + file);
+               if (file.getBoardSeq() == seq) {
+                   //          fileList 안불러와진다!
+                   return ResponseEntity.ok(proj + "+ " + fileList + "+file=" + file);
+               }
+           }
+                   System.out.println("fileList==========" + fileList);
 
-
-//         model.addAttribute("proj", projService.getProjDetail(projSeq));
-            return ResponseEntity.ok(seq+"번"+proj + "fileList=" + fileList);
-//                             .contentType(MediaType.parseMediaType(fileType))
-//                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//                             .body(resource);
+           return ResponseEntity.ok(proj + "+ " + fileList );
     }
 
 
-// [프로젝트 추가] + [파일 추가] test
+// [프로젝트 추가] + [파일 추가]
          @PostMapping("/add")
          public ResponseEntity<?> insertProjFile(ProjVO vo,HttpServletRequest request,
                         MultipartHttpServletRequest mhsr) throws IOException  {
@@ -74,7 +85,6 @@ public class ProjController {
 
                     int fileSeq = fileService.getFileSeq();
                     FileUtils fileUtils = new FileUtils();
-
                     List<FileVO> fileList = fileUtils.parseFileInfo(projSeq, request, mhsr);
 
                     if(CollectionUtils.isEmpty(fileList) == false) {
@@ -91,18 +101,20 @@ public class ProjController {
 
 // [프로젝트 삭제]
         @DeleteMapping("/{projSeq}")
-        public ResponseEntity<String> deleteProj(@PathVariable("projSeq") int projSeq) {
-            projService.deleteProj(projSeq);
-            ProjVO projDetail = projService.getProjDetail(projSeq);
-            return ResponseEntity.ok(projSeq+"번 프로젝트가 삭제되었습니다");
+        public ResponseEntity<String> deleteProj(@PathVariable("projSeq") int seq) {
+            fileService.deleteFileBySeq(seq);
+            projService.deleteProj(seq);
+            ProjVO projDetail = projService.getProjDetail(seq);
+            return ResponseEntity.ok(seq+"번 프로젝트가 삭제되었습니다");
             }
 
 
 // [프로젝트 수정]
         @PutMapping("/{projSeq}")
-                public ResponseEntity<String> showUpdate(@RequestBody Map<String, Object> param, @PathVariable("projSeq") int projSeq) {
+                public ResponseEntity<String> showUpdate(@RequestBody Map<String, Object> param, @PathVariable("projSeq") int seq) {
+                    List<FileVO> fileList = fileService.getFileListBySeq(seq);
                     projService.update(param);
-                    ProjVO projDetail = projService.getProjDetail(projSeq);
-                    return ResponseEntity.ok(projSeq+"번 프로젝트 수정이 완료되었습니다" + projDetail);
+                    ProjVO projDetail = projService.getProjDetail(seq);
+                    return ResponseEntity.ok(seq+"번 프로젝트 수정이 완료되었습니다" + projDetail);
         	}
 }

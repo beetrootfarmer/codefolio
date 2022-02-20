@@ -58,7 +58,7 @@
     <delete id="deleteProj" parameterType="int">
         DELETE
         FROM codefolio.proj
-        WHERE proj_seq = #{projSeq}
+        WHERE proj_seq = #{seq}
     </delete>
 
     <update id="update" parameterType="map">

@@ -21,7 +21,7 @@ public interface ProjMapper {
 
     public int getProjSeq();
 
-    public void deleteProj(int projSeq);
+    public void deleteProj(int seq);
 
     public void update(Map<String, Object> param);
 
