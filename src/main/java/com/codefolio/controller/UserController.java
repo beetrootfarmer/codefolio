@@ -1,6 +1,5 @@
 package com.codefolio.controller;
 
-import com.codefolio.service.EmailService;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -20,9 +20,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    EmailService emailService;
-
 
     @GetMapping("hello")
     public String hello(){
@@ -32,22 +29,25 @@ public class UserController {
     //JoinUser
     @PostMapping("")
     public ResponseEntity<UserVO> joinUser(@RequestBody UserVO user){
-
         Integer userSeq = userService.joinUser(user);
-        UserVO userDetail = userService.getUser(userSeq);
-
+        UserVO userDetail = userService.getUser(user.getEmail());
         return ResponseEntity.ok(userDetail);
     }
 
 
-    //TODO : 이메일 중복 확인이 제대로 안됨 결과 값이 0만 뜬다.
-    //Required request parameter 'email' for method parameter type UserVO is not present
-    //로그인 email의 중복성 체크
+    //회원가입 email의 중복성 체크
     @PostMapping("/checkEmail")
-    public ResponseEntity<String> checkEmail(@RequestParam("email") UserVO userEmail){
-        int result= userService.checkEmail(userEmail);
-        System.out.println(result);
-        if(result!=0)return ResponseEntity.badRequest().body("fail");
+    public ResponseEntity<String> checkEmail(@RequestBody UserVO user){
+        int result= userService.checkEmail(user.getEmail());
+        if(result!=0)return ResponseEntity.badRequest().body("fail"+result);
+        else return ResponseEntity.ok("success");
+    }
+
+    //회원가입 name의 중복성 체크
+    @PostMapping("/checkName")
+    public ResponseEntity<String> checkName(@RequestBody UserVO user){
+        int result = userService.checkName(user.getName());
+        if(result!=0)return ResponseEntity.badRequest().body("fail"+result);
         else return ResponseEntity.ok("success");
     }
 
@@ -61,11 +61,12 @@ public class UserController {
         else return ResponseEntity.badRequest().body("해당 사용자를 찾을 수 없습니다.");
     }
 
-    //Get user(userSeq)
-    @GetMapping("/{userSeq}")
-    public ResponseEntity<String> getUser(@PathVariable("userSeq") int userSeq){
-        UserVO user = userService.getUser(userSeq);
-        return ResponseEntity.ok(userSeq+"번"+user);
+    //Get user(userName으로 유저 조회)
+    @GetMapping("/{userName}")
+    @ResponseBody
+    public ResponseEntity<String> getUser(@PathVariable String userName){
+        UserVO userDetail = userService.getUser(userName);
+        return ResponseEntity.ok(userName+"의 사용자 조회"+userDetail);
     }
 
     //Get userlist
@@ -75,28 +76,37 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
-    //TODO : user update시 null 값만 저장됨
-    //Update user
-    @PutMapping("/{userSeq}")
-    public ResponseEntity<String> updateUser(@RequestBody UserVO user,@PathVariable("userSeq") int userSeq){
+    //TODO : 마이바티스 동적 sql 좀더 알아보기 => null 값 저장 안되게 하기
+    //Update user => email로 조회
+    @PutMapping("/{userName}")
+    public ResponseEntity<String> updateUser(@PathVariable String userName,@RequestBody UserVO user){
+        user.setName(userName);
         userService.updateUser(user);
-        UserVO userDetail = userService.getUser(userSeq);
-        return ResponseEntity.ok(userSeq+"번\n"+userDetail);
+        UserVO userDetail = userService.getUser(userName);
+        return ResponseEntity.ok(userName+"\n"+userDetail);
+    }
+
+    //DeleteUser => name조회
+    @DeleteMapping("/{userName}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userName){
+        userService.delete(userName);
+        return ResponseEntity.ok(userName+" 회원이 삭제되었습니다.");
     }
 
 
-    @DeleteMapping("/{userSeq}")
-    public ResponseEntity<String> deleteUser(@PathVariable("userSeq") int userSeq){
-        userService.delete(userSeq);
-        return ResponseEntity.ok(userSeq+"번 회원이 삭제되었습니다.");
-    }
-
-
-    @GetMapping("/emailConfirm")
+    @PostMapping("/sendEmail")
     @ResponseBody
-    public ResponseEntity<String> emailConfirm(){
-        return ResponseEntity.ok("hello");
+    public ResponseEntity<String> findLoginPW(@RequestBody UserVO user){
+        Map<String, Object> findLoginIdRs = userService.findLoginPwd(user);
+        System.out.println(findLoginIdRs);
+        return ResponseEntity.ok((String)findLoginIdRs.get("msg"));
     }
+
+//    @GetMapping("/emailConfirm")
+//    @ResponseBody
+//    public ResponseEntity<String> emailConfirm(@RequestBody UserVO user){
+//
+//    }
 //    public ResponseEntity<String> emailConfirm(@RequestParam("email") String email) throws Exception {
 //
 //        System.out.println(email);

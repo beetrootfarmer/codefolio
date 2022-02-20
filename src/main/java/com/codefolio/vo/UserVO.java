@@ -22,7 +22,9 @@ public class UserVO {
     private String creDate;
     private String recDate;
 
-    //user 프로필, 소개글
+    //user 프로필, 소개글, 직업
+    private String job;
+    private String stack;
     private String img;
     private String introFile;
 
