@@ -1,9 +1,9 @@
 package com.codefolio.service;
 
-import java.util.Map;
+
+import com.codefolio.vo.MailTO;
+
 
 public interface MailService {
-
-    public Map<String, Object> send(String email, String title, String body);
-
+    public void checkEmail(MailTO mail);
 }

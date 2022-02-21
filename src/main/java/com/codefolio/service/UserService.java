@@ -27,7 +27,7 @@ public interface UserService {
     public int checkName(String userName);
 
 
-    public Map<String, Object> findLoginPwd(UserVO user);
+//    public Map<String, Object> findLoginPwd(UserVO user);
 
 //    @Transactional
 //    public Map<String, Object> checkUserEmailDup(String userId);

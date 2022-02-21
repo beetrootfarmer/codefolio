@@ -1,6 +1,8 @@
 package com.codefolio.controller;
 
+import com.codefolio.service.MailService;
 import com.codefolio.service.UserService;
+import com.codefolio.vo.MailTO;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    MailService mailService;
 
 
     @GetMapping("hello")
@@ -58,7 +63,7 @@ public class UserController {
         String userName = userService.checkLogin(user);
         if(userName!=null)
             return ResponseEntity.ok(userName+" 로그인 성공");
-        else return ResponseEntity.badRequest().body("해당 사용자를 찾을 수 없습니다.");
+        else return ResponseEntity.notFound().build();
     }
 
     //Get user(userName으로 유저 조회)
@@ -74,6 +79,7 @@ public class UserController {
     public ResponseEntity<List<UserVO>> getAllUserData() {
         List<UserVO> userList =  userService.getAllUserData();
         return ResponseEntity.ok(userList);
+        ResponseEntity.notFound().
     }
 
     //TODO : 마이바티스 동적 sql 좀더 알아보기 => null 값 저장 안되게 하기
@@ -94,27 +100,17 @@ public class UserController {
     }
 
 
-    @PostMapping("/sendEmail")
+    @PostMapping("/Confirm")
     @ResponseBody
-    public ResponseEntity<String> findLoginPW(@RequestBody UserVO user){
-        Map<String, Object> findLoginIdRs = userService.findLoginPwd(user);
-        System.out.println(findLoginIdRs);
-        return ResponseEntity.ok((String)findLoginIdRs.get("msg"));
+    public ResponseEntity<MailTO> mailConfirm(@RequestBody UserVO user) {
+
+        String userEmail=user.getEmail();
+        String userName = user.getName();
+
+        MailTO mailTO = new MailTO(userName,userEmail);
+
+        mailService.checkEmail(mailTO);
+        return ResponseEntity.ok(mailTO);
     }
-
-//    @GetMapping("/emailConfirm")
-//    @ResponseBody
-//    public ResponseEntity<String> emailConfirm(@RequestBody UserVO user){
-//
-//    }
-//    public ResponseEntity<String> emailConfirm(@RequestParam("email") String email) throws Exception {
-//
-//        System.out.println(email);
-//        String confirm = emailService.sendSimpleMessage(email);
-//
-//        return ResponseEntity.ok(confirm);
-//    }
-
-
 
 }
