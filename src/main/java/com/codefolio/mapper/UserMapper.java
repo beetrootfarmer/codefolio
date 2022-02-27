@@ -12,17 +12,19 @@ public interface UserMapper {
 
     public List<UserVO> getAllUserData();
 
-    public UserVO getUser(int userSeq);
+    public UserVO getUser(String userName);
 
     public int joinUser(UserVO user);
 
     public void updateUser(UserVO user);
 
-    public void delete(int userSeq);
+    public void delete(String userName);
 
-    public int checkEmail(UserVO userEmail);
+    public int checkEmail(String userEmail);
 
     public String checkLogin(UserVO user);
 
+    UserVO searchEmail(String email);
 
+    int checkName(String userName);
 }

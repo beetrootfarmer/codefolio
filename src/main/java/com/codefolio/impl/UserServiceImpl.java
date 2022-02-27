@@ -2,13 +2,19 @@ package com.codefolio.impl;
 
 
 import com.codefolio.mapper.UserMapper;
+import com.codefolio.service.MailService;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 
+import java.security.SecureRandom;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.groovy.util.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -20,6 +26,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    MailService mailService;
+
+    @Autowired
+    BCryptPasswordEncoder encoder;
+
+
 
     //JoinUser을 하는 동안에 auto_increment에 의해 생긴 주키 값을 알아내야 함
     @Override
@@ -30,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO getUser(int userSeq){return userMapper.getUser(userSeq);}
+    public UserVO getUser(String userName){return userMapper.getUser(userName);}
 
     @Override
     public List<UserVO> getAllUserData() {
@@ -41,18 +54,18 @@ public class UserServiceImpl implements UserService {
     public void updateUser(UserVO user){ userMapper.updateUser(user);}
 
     @Override
-    public void delete(int userSeq){
-        userMapper.delete(userSeq);
+    public void delete(String userName){
+        userMapper.delete(userName);
     }
 
-    //TODO: checkEmail null 오류
     @Override
-    public int checkEmail(UserVO userEmail){
+    public int checkEmail(String userEmail){
         return userMapper.checkEmail(userEmail);
     }
+    @Override
+    public int checkName(String userName){return userMapper.checkName(userName);}
 
     @Override
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
-
 
 }
