@@ -18,7 +18,7 @@ public class FileUtils {
 	
 	private boolean add;
 
-    public List<FileVO> parseFileInfo(int projSeq, HttpServletRequest request,
+    public List<FileVO> parseFileInfo(int typeSeq, String boardtype, HttpServletRequest request,
 			MultipartHttpServletRequest mhsr) throws IOException {
 		
 		System.out.println(mhsr.toString());
@@ -32,8 +32,10 @@ public class FileUtils {
 
 		String attach_path = "upload/";
 
+		String board_path = boardtype + "/";
+
 		System.out.println("FileUtils+ file Path 를 왜 못찾을까요오");
-		File file = new File(root_path + attach_path);
+		File file = new File(root_path + attach_path+ board_path);
 		// file.exists : 저장된 파일이 있는지 확인 
 		if(file.exists() == false) {
 			// mkdirs : 만들고자 하는 디렉토리의 상위 디렉토리가 존재하지 않을 경우, 상위 디렉토리까지 생성
@@ -52,16 +54,16 @@ public class FileUtils {
 			for(MultipartFile mf : list) {
 				if(mf.getSize() > 0) {
 					FileVO vo = new FileVO();
-					vo.setBoardSeq(projSeq);
+					vo.setBoardSeq(typeSeq);
 					vo.setSize(mf.getSize());
 					vo.setFileName(mf.getOriginalFilename());
-					vo.setBoardType("proj");
-					vo.setFileDownloadUri(root_path + attach_path);
+					vo.setBoardType(boardtype);
+					vo.setFileDownloadUri(root_path + attach_path+ board_path);
 					add = fileList.add(vo);
 
 					System.out.println("fileutils의 for문..FileVO"+ vo);
 					
-					file = new File(root_path + attach_path + mf.getOriginalFilename());
+					file = new File(root_path + attach_path +board_path+mf.getOriginalFilename());
 					mf.transferTo(file);
 				} else {
 					fileList = null;

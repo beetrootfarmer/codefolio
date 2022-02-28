@@ -75,7 +75,7 @@ public class ProjController {
                     int fileSeq = fileService.getFileSeq();
                     FileUtils fileUtils = new FileUtils();
 
-                    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq, request, mhsr);
+                    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
 
                     if(CollectionUtils.isEmpty(fileList) == false) {
                         fileService.saveFile(fileList);

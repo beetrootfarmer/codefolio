@@ -18,7 +18,10 @@ public interface FileService {
     public Iterable<FileVO> getFileList();
 
     public Optional<FileVO> getUploadFile(int fileSeq);
+
     public int getFileSeq();
 
     public FileVO sfile(MultipartFile file);
+//
+//    FileVO getUserImg(int userSeq);
 }

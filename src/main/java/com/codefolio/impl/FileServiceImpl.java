@@ -40,8 +40,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public Iterable<FileVO> getFileList(){
            return fileMapper.findAll();
-
-        }
+    }
     @Override
     public Optional<FileVO> getUploadFile(int fileSeq) {
         return fileMapper.findBySeq(fileSeq);
@@ -58,4 +57,8 @@ public class FileServiceImpl implements FileService {
         return null;
     }
 
+//    @Override
+//    public Optional<FileVO> getUserImg(int userSeq){
+//        return fileMapper.selectUserImg(userSeq);
+//    }
 }

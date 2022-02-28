@@ -22,4 +22,6 @@ public interface FileMapper {
     int getFileSeq();
 
     void saveFile(FileVO vo);
+
+    FileVO selectUserImg(int userSeq);
 }

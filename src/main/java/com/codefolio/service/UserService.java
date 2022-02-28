@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    public UserVO getUser(String userName);
+    public UserVO getUser(String userId);
 
     public List<UserVO> getAllUserData();
 
@@ -17,14 +17,15 @@ public interface UserService {
 
     public void updateUser(UserVO user);
 
-    public void delete(String userName);
+    public void deleteUser(String userId);
 
     public int checkEmail(String userEmail);
 
 
     public String checkLogin(UserVO user);
 
-    public int checkName(String userName);
+    public int checkId(String userId);
+
 
 
 //    public Map<String, Object> findLoginPwd(UserVO user);

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO {
+public class UserVO{
 
     private int userSeq;
     //user 기본정보
@@ -28,7 +28,16 @@ public class UserVO {
     private String img;
     private String introFile;
 
-    //user 탈퇴유무(false => 탈퇴유저)
+    //소셜 로그인과 일반 사용자 구분
     private boolean reg;
+
+
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
+//        auth.add(new SimpleGrantedAuthority(AUTHORITY));
+//        return auth;
+//    }
 
 }
