@@ -22,6 +22,6 @@ public interface FileService {
     public int getFileSeq();
 
     public FileVO sfile(MultipartFile file);
-//
-//    FileVO getUserImg(int userSeq);
+
+    List<FileVO> getFileListBySeq(int seq);
 }

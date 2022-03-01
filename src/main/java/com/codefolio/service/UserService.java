@@ -26,6 +26,7 @@ public interface UserService {
 
     public int checkId(String userId);
 
+    void updateUserImg(UserVO user);
 
 
 //    public Map<String, Object> findLoginPwd(UserVO user);

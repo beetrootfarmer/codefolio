@@ -6,13 +6,15 @@ import java.util.Optional;
 import com.codefolio.vo.FileVO;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @Mapper
 public interface FileMapper {
-//     List<FileVO> getFileListByBoardSeq(@Param("seq") int seq);
+     List<FileVO> getFileListBySeq(@Param("seq") int seq);
+
     public Resource selectFile(String fileName);
 
     public Iterable<FileVO> findAll();
@@ -23,5 +25,4 @@ public interface FileMapper {
 
     void saveFile(FileVO vo);
 
-    FileVO selectUserImg(int userSeq);
 }

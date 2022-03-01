@@ -32,11 +32,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     BCryptPasswordEncoder encoder;
 
-
-
     //JoinUser을 하는 동안에 auto_increment에 의해 생긴 주키 값을 알아내야 함
     @Override
     public int joinUser(UserVO user) {return userMapper.joinUser(user);}
+
     @Override
     public UserVO getUser(String userId){return userMapper.getUser(userId);}
 
@@ -64,5 +63,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
 
+
+    @Override
+    public void updateUserImg(UserVO user){userMapper.updateUserImg(user);};
 
 }

@@ -3,7 +3,6 @@ package com.codefolio.impl;
 
 import com.codefolio.service.MailService;
 import com.codefolio.vo.MailTO;
-import org.apache.groovy.util.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Date;
-import java.util.Map;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -24,8 +22,8 @@ public class MailServiceImpl implements MailService {
 
 
         String randomString = getString();
-        String title = mail.getUserName()+"님의 인증 메일입니다.";
-        String body = "인증번호 : "+randomString;
+        String title = "codefolio 에서 발송한 이메일 입니다.";
+        String body = mail.getUserName()+"님의 인증 메일입니다."+"인증번호 : "+randomString;
 
         mail.setMessage(body);
         mail.setTitle(title);

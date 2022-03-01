@@ -12,9 +12,9 @@
         <result property="gitId" column="gitId"/>
         <result property="job" column="job"/>
         <result property="stack" column="stack"/>
-        <result property="introFile" column="introFile"/>
+        <result property="introFile" column="intro_file"/>
         <result property="img" column="img"/>
-        <result property="reg" column="reg"/>
+<!--        <result property="reg" column="reg"/>-->
     </resultMap>
 
 <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
@@ -31,33 +31,28 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
             INSERT INTO codefolio.user SET
-            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},creDate=NOW(),recDate=NOW(),reg=true;
+            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),reg_type="normal";
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
 <!--동적 SQL <if>사용 => mybatis의 기능-->
     <update id="updateUser" parameterType="com.codefolio.vo.UserVO">
         UPDATE user
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="name != null">name = #{name},</if>
-            <if test="pwd != null">pwd = #{pwd},</if>
-            <if test="gitId != null">gitId = #{gitId},</if>
-            <if test="stack != null">stack = #{stack},</if>
-            <if test="job != null">job = #{job},</if>
-            <if test="introFile != null">introFile = #{introFile}</if>
-        </trim>
-
 <!--            <set>-->
 <!--                <if test="name!=null">name=#{name}</if>-->
 <!--                <if test="pwd!=null">pwd=#{pwd}</if>-->
 <!--                <if test="gitId!=null">gitId=#{gitId}</if>-->
 <!--                <if test="job!=null">job=#{job}</if>-->
 <!--                <if test="stack!=null">stack=#{stack}</if>-->
-<!--                <if test="introFile!=null">introFile=#{introFile}</if>-->
+<!--                <if test="introFile!=null">intro_file=#{introFile}</if>-->
 <!--            </set>-->
---         SET name=#{name},pwd=#{pwd},gitId=#{gitId},job=#{job},stack=#{stack},introFile=#{introFile}
+        SET name=#{name},pwd=#{pwd},gitId=#{gitId},job=#{job},stack=#{stack},intro_file=#{introFile}
         WHERE id=#{id}
---         ORDER BY id DESC LIMIT 1
+        ORDER BY id DESC LIMIT 1
+    </update>
+
+    <update id="updateUserImg" parameterType="com.codefolio.vo.UserVO">
+        UPDATE user SET img=#{img} WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </update>
 
     <!--user delete-->
@@ -80,18 +75,18 @@
         SELECT id FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
     </select>
 
-<!--findByLoginPwd-->
-    <select id="searchEmail"
-            resultType="com.codefolio.vo.UserVO">
-        SELECT *
-        FROM codefolio.user
-        WHERE
-            email=#{email}
-    </select>
+<!--&lt;!&ndash;findByLoginPwd&ndash;&gt;-->
+<!--    <select id="searchEmail"-->
+<!--            resultType="com.codefolio.vo.UserVO">-->
+<!--        SELECT *-->
+<!--        FROM codefolio.user-->
+<!--        WHERE-->
+<!--            email=#{email}-->
+<!--    </select>-->
 
-<!--비밀번호 변경-->
-    <update id="changePwd" >
-        UPDATE user SET pwd=#{pwd} WHERE email=#{email}
-    </update>
+<!--&lt;!&ndash;비밀번호 변경&ndash;&gt;-->
+<!--    <update id="changePwd" >-->
+<!--        UPDATE user SET pwd=#{pwd} WHERE email=#{email}-->
+<!--    </update>-->
 
 </mapper>
