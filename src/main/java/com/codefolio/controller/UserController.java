@@ -7,23 +7,20 @@ import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.MailTO;
 import com.codefolio.vo.UserVO;
-import org.aspectj.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -52,7 +49,7 @@ public class UserController {
     public ResponseEntity<UserVO> joinUser(@RequestBody UserVO user){
         Map<String,Object> result = new HashMap<>();
         Integer userSeq = userService.joinUser(user);
-        UserVO userDetail = userService.getUser(user.getEmail());
+        UserVO userDetail = userService.getUser(user.getId());
 
         return ResponseEntity.ok(userDetail);
     }
@@ -87,18 +84,18 @@ public class UserController {
     //Get user(userName으로 유저 조회) => map 형식 반환
     @GetMapping("/{userId}")
     @ResponseBody
-    public ResponseEntity<UserVO> getUser(@PathVariable String userId){
+    public ResponseEntity<String> getUser(@PathVariable String userId){
 
         try {
             UserVO userDetail = userService.getUser(userId);
             String getUserName = userDetail.getName();
-//            FileVO userImg = getUserImg(userDetail.getUserSeq());
+            Optional<FileVO> userImg = fileService.getUploadFile(userDetail.getImg());
 
             if (getUserName != null) {
-                return ResponseEntity.ok(userDetail);
+                return ResponseEntity.ok(userDetail + "\n이미지 : "+userImg);
             }
         }catch (RuntimeException re) {
-            return ResponseEntity.badRequest().build();}
+            return ResponseEntity.notFound().build();}
 //        } catch (Exception e) {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //        }
@@ -132,15 +129,15 @@ public class UserController {
         List<FileVO> fileList = fileUtils.parseFileInfo(userSeq,"user", request,mhsr);
         if(CollectionUtils.isEmpty(fileList) == false) {
             fileService.saveFile(fileList);
+            user.setId(userId);
+            user.setImg(fileSeq);
+            userService.updateUserImg(user);
             System.out.println("saveFile()탐 + fileList===" + fileList);
         }else ResponseEntity.badRequest().body("이미지 업로드 실패");
         UserVO userDetail = userService.getUser(userId);
         return ResponseEntity.ok(userDetail);
     }
 
-//    private FileVO getUserImg(int userSeq){
-//        return fileService.getUserImg(userSeq);
-//    }
 
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
     @DeleteMapping("/{userId}")

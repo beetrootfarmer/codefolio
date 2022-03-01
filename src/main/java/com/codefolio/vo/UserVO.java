@@ -25,7 +25,7 @@ public class UserVO{
     //user 프로필, 소개글, 직업
     private String job;
     private String stack;
-    private String img;
+    private int img;
     private String introFile;
 
     //소셜 로그인과 일반 사용자 구분

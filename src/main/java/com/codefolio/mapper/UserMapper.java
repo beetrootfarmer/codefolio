@@ -27,4 +27,6 @@ public interface UserMapper {
     UserVO searchEmail(String email);
 
     int checkId(String userId);
+
+    void updateUserImg(UserVO user);
 }

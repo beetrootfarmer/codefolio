@@ -56,6 +56,4 @@
 		FROM codefolio.file
 	</select>
 
-
-
 </mapper>
