@@ -1,5 +1,7 @@
 package com.codefolio.controller;
 
+import com.codefolio.dto.ErrorResponse;
+import com.codefolio.dto.UserResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.MailService;
 import com.codefolio.service.UserService;
@@ -80,27 +82,26 @@ public class UserController {
         else return ResponseEntity.notFound().build();
     }
 
-    //
-    //Get user(userName으로 유저 조회) => map 형식 반환
+    //TODO : response dto로 매핑해서 response하기(완료)
+    //Get user(userName으로 유저 조회) => response Entity 사용
     @GetMapping("/{userId}")
     @ResponseBody
-    public ResponseEntity<String> getUser(@PathVariable String userId){
+    public ResponseEntity<Object> getUser(@PathVariable String userId) {
+        UserVO userDetail = userService.getUser(userId);
 
         try {
-            UserVO userDetail = userService.getUser(userId);
             String getUserName = userDetail.getName();
             Optional<FileVO> userImg = fileService.getUploadFile(userDetail.getImg());
 
-            if (getUserName != null) {
-                return ResponseEntity.ok(userDetail + "\n이미지 : "+userImg);
-            }
-        }catch (RuntimeException re) {
-            return ResponseEntity.notFound().build();}
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException re) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "not found user"));
+        }
+        if (userDetail.getName() == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(500, "not found user"));
+
+        return ResponseEntity.ok(new UserResponse(userDetail, 200));
     }
+
 
     //Get userlist
     @GetMapping("/list")
@@ -121,7 +122,7 @@ public class UserController {
 
     //user Img upload => user
     @PostMapping("/{userId}/upload")
-    public ResponseEntity<UserVO> insertUserImg(@PathVariable String userId,HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+    public ResponseEntity<UserVO> insertUserImg(@PathVariable String userId, HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
         UserVO user = userService.getUser(userId);
         int userSeq = user.getUserSeq();
         int fileSeq = fileService.getFileSeq();

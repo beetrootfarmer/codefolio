@@ -37,7 +37,9 @@ public class UserServiceImpl implements UserService {
     public int joinUser(UserVO user) {return userMapper.joinUser(user);}
 
     @Override
-    public UserVO getUser(String userId){return userMapper.getUser(userId);}
+    public UserVO getUser(String userId){
+        return userMapper.getUser(userId);
+    }
 
     @Override
     public List<UserVO> getAllUserData() {
