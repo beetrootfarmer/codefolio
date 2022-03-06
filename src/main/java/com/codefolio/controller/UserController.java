@@ -6,10 +6,17 @@ import com.codefolio.vo.MailTO;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContext;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+// import com.codefolio.config.CEmailSigninFailedException;
+// import com.codefolio.config.security.JwtTokenProvider;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,16 +27,22 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
     UserService userService;
 
     @Autowired
     MailService mailService;
 
+    // // JwT 변수 선언
+    // private PasswordEncoder passwordEncoder;
 
     @GetMapping("hello")
     public String hello(){
         return "helloTest";
     }
+    
 
     //JoinUser
     @PostMapping("")
@@ -58,7 +71,7 @@ public class UserController {
 
     //TODO: jwt로그인 방식 구현하기 필요
     //회원 로그인
-    @PostMapping("/login")
+    @PostMapping("/login2")
     public ResponseEntity<String> loginCheck(@RequestBody UserVO user){
         String userName = userService.checkLogin(user);
         if(userName!=null)
@@ -74,24 +87,6 @@ public class UserController {
         return ResponseEntity.ok(userName+"의 사용자 조회"+userDetail);
     }
 
-    //Get userlist
-    @GetMapping("/list")
-    public ResponseEntity<List<UserVO>> getAllUserData() {
-        List<UserVO> userList =  userService.getAllUserData();
-        return ResponseEntity.ok(userList);
-        ResponseEntity.notFound().
-    }
-
-    //TODO : 마이바티스 동적 sql 좀더 알아보기 => null 값 저장 안되게 하기
-    //Update user => email로 조회
-    @PutMapping("/{userName}")
-    public ResponseEntity<String> updateUser(@PathVariable String userName,@RequestBody UserVO user){
-        user.setName(userName);
-        userService.updateUser(user);
-        UserVO userDetail = userService.getUser(userName);
-        return ResponseEntity.ok(userName+"\n"+userDetail);
-    }
-
     //DeleteUser => name조회
     @DeleteMapping("/{userName}")
     public ResponseEntity<String> deleteUser(@PathVariable String userName){
@@ -100,17 +95,27 @@ public class UserController {
     }
 
 
-    @PostMapping("/Confirm")
-    @ResponseBody
-    public ResponseEntity<MailTO> mailConfirm(@RequestBody UserVO user) {
+    // [회원가입, 로그인] + [security]
+    //JoinUser
+    @PostMapping("/join")
+    public ResponseEntity<?> join(@RequestBody UserVO user){
 
-        String userEmail=user.getEmail();
-        String userName = user.getName();
-
-        MailTO mailTO = new MailTO(userName,userEmail);
-
-        mailService.checkEmail(mailTO);
-        return ResponseEntity.ok(mailTO);
+        user.setRole("ROLE_USER");
+        String getPwd = user.getPwd();
+        String encodedPwd = bCryptPasswordEncoder.encode(getPwd);
+        user.setPwd(encodedPwd);
+        Integer userSeq = userService.joinUser(user);
+        UserVO userDetail = userService.getUser(user.getEmail());
+        return ResponseEntity.ok(userDetail);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserVO user){
+        String userName = userService.checkLogin(user);
+        if(userName!=null)
+            return ResponseEntity.ok(userName+" 로그인 성공");
+        else return ResponseEntity.notFound().build();
+    }
+
 
 }

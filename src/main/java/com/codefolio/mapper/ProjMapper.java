@@ -23,7 +23,7 @@ public interface ProjMapper {
 
     public void deleteProj(int seq);
 
-    public void update(Map<String, Object> param);
+    public void update(ProjVO vo);
 
     public void viewUp(int projSeq);
 

@@ -25,5 +25,7 @@ public interface UserService {
 
     public int checkName(String userName);
 
+    public UserVO getUserObj(Object param);
 
+    public UserVO getUserById(String id);
 }

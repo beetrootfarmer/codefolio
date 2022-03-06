@@ -27,7 +27,7 @@ public interface ProjService {
     public void deleteProj(int seq);
 
      @Transactional
-    public void update(Map<String, Object> param);
+    public void update(ProjVO vo);
 
      @Transactional
     public void viewUp(int projSeq);

@@ -46,12 +46,12 @@ public class ProjServiceImpl implements ProjService {
 
     @Override
     public void deleteProj(int seq) {
-        projMapper.deleteProj(projSeq);
+        projMapper.deleteProj(seq);
     }
 
     @Override
-    public void update(Map<String, Object> param){
-         projMapper.update(param);
+    public void update(ProjVO vo){
+         projMapper.update(vo);
     }
 
     @Override

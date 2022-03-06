@@ -26,4 +26,6 @@ public interface FileMapper {
     int getFileSeq();
 
     void saveFile(FileVO vo);
+
+    
 }

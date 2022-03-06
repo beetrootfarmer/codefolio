@@ -109,12 +109,27 @@ public class ProjController {
             }
 
 
-// [프로젝트 수정]
-        @PutMapping("/{projSeq}")
-                public ResponseEntity<String> showUpdate(@RequestBody Map<String, Object> param, @PathVariable("projSeq") int seq) {
-                    List<FileVO> fileList = fileService.getFileListBySeq(seq);
-                    projService.update(param);
+// [프로젝트 수정]  + [파일 수정]
+        @PutMapping("update/{projSeq}")
+                public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int seq,
+                                                    ProjVO vo,HttpServletRequest request,
+                                                    MultipartHttpServletRequest mhsr) throws IOException {
+
+                    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
+                    fileService.deleteFileBySeq(seq);
+                    
+                    int fileSeq = fileService.getFileSeq();
+                    FileUtils fileUtils = new FileUtils();
+                    List<FileVO> fileList = fileUtils.parseFileInfo(seq, request, mhsr);
+
+                    if(CollectionUtils.isEmpty(fileList) == false) {
+                        fileService.saveFile(fileList);
+                        System.out.println("saveFile()탐 + fileList===" + fileList);
+                        }
+
+
+                    projService.update(vo);
                     ProjVO projDetail = projService.getProjDetail(seq);
-                    return ResponseEntity.ok(seq+"번 프로젝트 수정이 완료되었습니다" + projDetail);
+                    return ResponseEntity.ok(seq+"번 프로젝트 수정이 완료되었습니다" + projDetail + fileList);
         	}
 }

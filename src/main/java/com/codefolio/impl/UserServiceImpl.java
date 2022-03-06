@@ -5,14 +5,9 @@ import com.codefolio.mapper.UserMapper;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
-
-import java.security.SecureRandom;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.groovy.util.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,5 +62,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
+
+    @Override
+    public UserVO getUserObj(Object param) {
+        return userMapper.getUserObj(param);
+    }
+
+    @Override
+    public UserVO getUserById(String id) {
+        return userMapper.getUserById(id);
+    }
 
 }

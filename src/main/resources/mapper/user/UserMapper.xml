@@ -14,6 +14,7 @@
         <result property="stack" column="stack"/>
         <result property="introFile" column="introFile"/>
         <result property="img" column="img"/>
+        <result property="role" column="role"/>
 
 
     </resultMap>
@@ -31,7 +32,7 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
         INSERT INTO codefolio.user SET
-            pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},creDate=NOW(),recDate=NOW();
+            pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},creDate=NOW(),recDate=NOW(), role=#{role};
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
@@ -83,4 +84,17 @@
         UPDATE user SET pwd=#{pwd} WHERE email=#{email}
     </update>
 
+    <select id="getUserObj">
+        Select *
+        FROM codefolio.user
+        WHERE id=#{id}
+        and
+        pwd=#{pwd};
+    </select>
+
+    <select id="getUserById">
+        SELECT *
+        FROM codefolio.user
+        WHERE id=#{id}
+    </select>
 </mapper>

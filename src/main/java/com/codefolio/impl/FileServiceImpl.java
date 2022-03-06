@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileServiceImpl implements FileService {
 
     @Autowired
+    public
     FileMapper fileMapper;
 
        @Override
@@ -44,9 +45,9 @@ public class FileServiceImpl implements FileService {
         return fileMapper.selectFile(seq);
     }
 
-    @Overrider
-    void deleteFileBySeq(int seq){
-        return fileMapper.deleteFileBySeq(seq);
+    @Override
+    public void deleteFileBySeq(int seq){
+        fileMapper.deleteFileBySeq(seq);
     }
 
     @Override
