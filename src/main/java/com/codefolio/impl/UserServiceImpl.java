@@ -73,4 +73,10 @@ public class UserServiceImpl implements UserService {
         return userMapper.getUserById(id);
     }
 
+    //     시큐리티 로그인
+    @Override
+    public String secLogin(UserVO user){
+        return userMapper.secLogin(user);
+    };
+
 }

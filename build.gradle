@@ -35,6 +35,11 @@ dependencies {
 // 추가 라이브러리
 // 시큐리티 태그 라이브러리
     implementation 'org.springframework.security:spring-security-taglibs:5.6.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'org.springframework.security:spring-security-web:5.6.1'
+    implementation 'org.springframework.security:spring-security-core:5.6.1'
+    implementation 'org.springframework.security:spring-security-config:5.6.1'
 
 //  JSTL
     implementation 'javax.servlet:jstl:1.2'
@@ -51,6 +56,15 @@ dependencies {
     implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.springframework.boot:spring-boot-configuration-processor:2.6.3'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+
+//소셜로그인
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    annotationProcessor('org.projectlombok:lombok')
+    testAnnotationProcessor('org.projectlombok:lombok')
 }
 
 tasks.named('test') {

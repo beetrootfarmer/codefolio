@@ -1,25 +1,26 @@
 HELP.md
-.gradle
+*.gradle
 build/
+*.gitignore
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+*.apt_generated
+*.classpath
+*.factorypath
+*.project
+*.settings
+*.springBeans
+*.sts4-cache
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.properties
-.idea
+*.properties
+*.idea
 *.iws
 *.iml
 *.ipr
@@ -35,4 +36,4 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+*.vscode/

@@ -32,7 +32,15 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
         INSERT INTO codefolio.user SET
-            pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},creDate=NOW(),recDate=NOW(), role=#{role};
+            user_seq=(SELECT IFNULL(MAX(user_seq), 0) + 1 FROM codefolio.user A),
+            id=#{id},
+            pwd=#{pwd},
+            name=#{name},
+            email=#{email},
+            gitId=#{gitId},
+            creDate=NOW(),
+            recDate=NOW(),
+            role=#{role};
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
@@ -70,6 +78,11 @@
         SELECT name FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY name DESC LIMIT 1;
     </select>
 
+    <!--유저 로그인 => security 적용-->
+    <select id="secLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
+        SELECT name FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY name DESC LIMIT 1;
+    </select>
+
     <!--findByLoginPwd-->
     <select id="searchEmail"
             resultType="com.codefolio.vo.UserVO">
@@ -97,4 +110,6 @@
         FROM codefolio.user
         WHERE id=#{id}
     </select>
+
+
 </mapper>

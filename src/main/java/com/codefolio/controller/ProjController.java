@@ -45,7 +45,7 @@ public class ProjController {
 
 
 // [프로젝트 리스트 불러오기]
-    @GetMapping("/list")
+    @GetMapping("")
 //    Model은 HashMap형태로 key와 value값처럼 사용
     public ResponseEntity<List<ProjVO>> getProjList() {
         List<ProjVO> projList = projService.getProjList();

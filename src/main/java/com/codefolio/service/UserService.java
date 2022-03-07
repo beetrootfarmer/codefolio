@@ -28,4 +28,7 @@ public interface UserService {
     public UserVO getUserObj(Object param);
 
     public UserVO getUserById(String id);
+
+//     시큐리티 로그인
+    public String secLogin(UserVO user);
 }
