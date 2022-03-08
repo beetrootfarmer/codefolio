@@ -1,6 +1,7 @@
 package com.codefolio.controller;
 
 import com.codefolio.dto.ErrorResponse;
+import com.codefolio.dto.JsonResponse;
 import com.codefolio.dto.UserResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.MailService;
@@ -13,16 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 
 @Slf4j
@@ -31,29 +31,33 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    MailService mailService;
+    private MailService mailService;
 
     @Autowired
-    FileService fileService;
+    private FileService fileService;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @GetMapping("hello")
-    public String hello(){
-        return "helloTest";
-    }
+//    @GetMapping("/login")
+//    public String hello(){
+//        return "login";
+//    }
 
     //JoinUser
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<UserVO> joinUser(@RequestBody UserVO user){
-        Map<String,Object> result = new HashMap<>();
+    public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
+        user.setRole("ROLE_USER");
+        String encUserPwd = bCryptPasswordEncoder.encode(user.getPwd());
+        System.out.println("encodig PWD : \n"+encUserPwd);
+        user.setPwd(encUserPwd);   //encoding된 password 넣기
         Integer userSeq = userService.joinUser(user);
-        UserVO userDetail = userService.getUser(user.getId());
 
-        return ResponseEntity.ok(userDetail);
+        return getUser(user.getId());
     }
 
 
@@ -73,33 +77,29 @@ public class UserController {
         else return ResponseEntity.ok("success");
     }
 
-    //TODO: jwt로그인 방식 구현하기 필요
-    //회원 로그인
-    @PostMapping("/login")
-    public ResponseEntity<String> loginCheck(@RequestBody UserVO user){
-        String userId = userService.checkLogin(user);
-        if(userId!=null) return ResponseEntity.ok(userId+" 로그인 성공");
-        else return ResponseEntity.notFound().build();
-    }
+//    //TODO: jwt로그인 방식 구현하기 필요
+//    //회원 로그인
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginCheck(@RequestBody UserVO user){
+//        String userId = userService.checkLogin(user);
+//        if(userId!=null) return ResponseEntity.ok(userId+" 로그인 성공");
+//        else return ResponseEntity.notFound().build();
+//    }
 
     //TODO : response dto로 매핑해서 response하기(완료)
     //Get user(userName으로 유저 조회) => response Entity 사용
     @GetMapping("/{userId}")
     @ResponseBody
-    public ResponseEntity<Object> getUser(@PathVariable String userId) {
-        UserVO userDetail = userService.getUser(userId);
-
+    public ResponseEntity<Object> getUser(@PathVariable String userId){
         try {
-            String getUserName = userDetail.getName();
-            Optional<FileVO> userImg = fileService.getUploadFile(userDetail.getImg());
-
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "not found user"));
+            UserVO userDetail = userService.getUser(userId);
+            System.out.println("=========getUser=======\n"+userDetail);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new UserResponse(userDetail,200,"success",userDetail.getName()+"님의 정보 조회 완료"));
+        } catch (Exception re) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "NOT_FOUND","not found User"));
         }
-        if (userDetail.getName() == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(500, "not found user"));
 
-        return ResponseEntity.ok(new UserResponse(userDetail, 200));
     }
 
 
@@ -113,16 +113,16 @@ public class UserController {
     //TODO : 마이바티스 동적 sql 좀더 알아보기 => null 값 저장 안되게 하기
     //Update user => 유저 정보를 jwt로 받아와 찾을 수 있게 만들자
     @PutMapping("/{userId}")
-    public ResponseEntity<UserVO> updateUser(@PathVariable String userId,@RequestBody UserVO user){
+    public ResponseEntity<Object> updateUser(@PathVariable String userId,@RequestBody UserVO user){
         user.setId(userId);
         userService.updateUser(user);
-        UserVO userDetail = userService.getUser(userId);
-        return ResponseEntity.ok(userDetail);
+//        UserResponse userDetail = getUser(userId);
+        return getUser(userId);
     }
 
     //user Img upload => user
     @PostMapping("/{userId}/upload")
-    public ResponseEntity<UserVO> insertUserImg(@PathVariable String userId, HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+    public ResponseEntity<Object> insertUserImg(@PathVariable String userId, HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
         UserVO user = userService.getUser(userId);
         int userSeq = user.getUserSeq();
         int fileSeq = fileService.getFileSeq();
@@ -131,12 +131,11 @@ public class UserController {
         if(CollectionUtils.isEmpty(fileList) == false) {
             fileService.saveFile(fileList);
             user.setId(userId);
-            user.setImg(fileSeq);
+            user.setImg(fileList.get(0).getFileDownloadUri());
             userService.updateUserImg(user);
             System.out.println("saveFile()탐 + fileList===" + fileList);
-        }else ResponseEntity.badRequest().body("이미지 업로드 실패");
-        UserVO userDetail = userService.getUser(userId);
-        return ResponseEntity.ok(userDetail);
+        }else ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400,"BAD_REQUEST","file 저장 실패"));
+        return getUser(user.getId());
     }
 
 

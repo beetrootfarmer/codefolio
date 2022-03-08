@@ -1,7 +1,6 @@
 package com.codefolio.dto;
 
 import com.codefolio.vo.UserVO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponse{
     private int status;
+    private String ErrorCode;
+    private String message;
 
     //user 기본정보
     private String id;
@@ -20,11 +21,16 @@ public class UserResponse{
     //user 프로필, 소개글, 직업
     private String job;
     private String stack;
-    private int img;
+    private String img;
     private String introFile;
 
-    public UserResponse(UserVO user,int status){
+    private UserVO user;
+
+    public UserResponse(UserVO user, int status, String ErrorCode, String message){
         this.status=status;
+//        this.user=user;
+        this.ErrorCode=ErrorCode;
+        this.message=message;
         this.id=user.getId();
         this.pwd=user.getPwd();
         this.name=user.getName();
@@ -34,7 +40,9 @@ public class UserResponse{
         this.stack=user.getStack();
         this.img=user.getImg();
         this.introFile=user.getIntroFile();
+
     }
+
 
 
 }

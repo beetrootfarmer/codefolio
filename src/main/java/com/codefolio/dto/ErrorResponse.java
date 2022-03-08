@@ -11,5 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @AllArgsConstructor
 public class ErrorResponse{
     private int status;
+    private String errorCode;
     private String messege;
+
 }
