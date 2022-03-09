@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 // http://localhost:8765/login 여기로 연결되는데
 // Loginform.disable 해놔서 동작안함 => 필터 생성해줘야함JwtAthenticationFilter
 // "/login" 요청이 오면 자동으로 UserDetailsService 타입으로 IoC되어 있는 loadUserByUsername 함수가 실행됨
-@RequiredArgsConstructor
+@RequiredArgsConstructor // final 사용하도록 . 의존성 바로 주입!
 @Service
 public class PrincipalDetailsService implements UserDetailsService {
 
@@ -28,6 +28,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 로그인 시 입력받는 id를 username으로 매핑
         // SecurityCondig에서 username 파라미터를 (id)로 설정해줌
+        System.out.println("username : "+username);
         UserVO user = userService.getUserById(username);
         if(user != null) {
             return new PrincipalDetails(user);

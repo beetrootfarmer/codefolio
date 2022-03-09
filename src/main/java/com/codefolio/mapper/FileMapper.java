@@ -7,6 +7,7 @@ import com.codefolio.vo.FileVO;
 import org.apache.ibatis.annotations.Param;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 

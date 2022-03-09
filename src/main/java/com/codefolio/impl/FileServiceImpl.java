@@ -48,13 +48,18 @@ public class FileServiceImpl implements FileService {
     @Override
     public void deleteFileBySeq(int seq){
         fileMapper.deleteFileBySeq(seq);
+    public List<FileVO> getFileListBySeq(int seq) {
+        return fileMapper.getFileListBySeq(seq);
+    }
+    @Override
+    public Resource selectFile(String fileName){
+        return fileMapper.selectFile(fileName);
     }
 
     @Override
     public Iterable<FileVO> getFileList(){
            return fileMapper.findAll();
-
-        }
+    }
     @Override
     public Optional<FileVO> getUploadFile(int fileSeq) {
         return fileMapper.findBySeq(fileSeq);

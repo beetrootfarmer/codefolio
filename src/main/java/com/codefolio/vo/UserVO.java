@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO {
+public class UserVO{
 
     private int userSeq;
+    private String role;    //ROLE-USER, ROLE-ADMIN
     //user 기본정보
     private String id;
     private String pwd;
@@ -23,11 +24,13 @@ public class UserVO {
     private String creDate;
     private String recDate;
 
-    //user 프로필, 소개글
+    //user 프로필, 소개글, 직업
+    private String job;
+    private String stack;
     private String img;
     private String introFile;
 
-    //user 탈퇴유무(false => 탈퇴유저)
+    //소셜 로그인과 일반 사용자 구분
     private boolean reg;
 
     // user임을 확인해주는 역할
@@ -48,17 +51,6 @@ public class UserVO {
 
 
 
-//     public UserVO ( String id, String pwd, String name, String email,
-//                  String role, String provider, String providerId){
-// //         super();
-//         this.id = id;
-// 		this.pwd = pwd;
-// 		this.name = name;
-// 		this.email = email;
-// 		this.role = role;
-// 		this.provider = provider;
-// 		this.providerId = providerId;
-//     }
 
 
 

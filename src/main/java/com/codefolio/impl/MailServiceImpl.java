@@ -1,19 +1,18 @@
 package com.codefolio.impl;
 
-import java.security.SecureRandom;
-import java.sql.Date;
 
 import com.codefolio.service.MailService;
 import com.codefolio.vo.MailTO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-@Service
-public class EmailServiceImpl implements MailService {
+import java.security.SecureRandom;
+import java.util.Date;
 
+@Service
+public class MailServiceImpl implements MailService {
     @Autowired
     private JavaMailSender mailSender;
 
@@ -23,8 +22,8 @@ public class EmailServiceImpl implements MailService {
 
 
         String randomString = getString();
-        String title = mail.getUserName()+"님의 인증 메일입니다.";
-        String body = "인증번호 : "+randomString;
+        String title = "codefolio 에서 발송한 이메일 입니다.";
+        String body = mail.getUserName()+"님의 인증 메일입니다."+"인증번호 : "+randomString;
 
         mail.setMessage(body);
         mail.setTitle(title);
@@ -53,7 +52,7 @@ public class EmailServiceImpl implements MailService {
 
         StringBuffer sb = new StringBuffer();
         SecureRandom sr = new SecureRandom();
-//         sr.setSeed(new Date().getTime());
+        sr.setSeed(new Date().getTime());
         int idx = 0; int len = charSet.length;
         for (int i=0; i<10; i++) {
             idx = sr.nextInt(len); // 강력한 난수를 발생시키기 위해 SecureRandom을 사용한다.
@@ -61,5 +60,4 @@ public class EmailServiceImpl implements MailService {
         }
         return sb.toString();
     }
-
 }

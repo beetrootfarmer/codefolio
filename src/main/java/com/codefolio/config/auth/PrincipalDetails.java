@@ -50,10 +50,14 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 
     @Override
     public String getUsername() {
-        return user.getId();
-    }
+    //     return user.getId();
+    // }
+    // 혜지 코드 : id값을 입력하니까 name에 id넣어서 비교해야하지 않을까...
 
     // 계정이 잠겼을 때 사용하는 메소드
+        return user.getName();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -73,6 +77,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
     // 계정 활성화여부
     @Override
     public boolean isEnabled() {
+         //사이트에서 1년간 회원 활동이 없을 때 휴면 계정 전환 => recDate랑 비교해서 넣기
         // 현재시간-로그인시간 = 1년 초과 시 계정 비활성화 
         // 구현 X
         return true;

@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public interface UserService {
 
-    public UserVO getUser(String userName);
+    public UserVO getUser(String userId);
 
     public List<UserVO> getAllUserData();
 
@@ -19,7 +20,7 @@ public interface UserService {
 
     public void updateUser(UserVO user);
 
-    public void delete(String userName);
+    public void deleteUser(String userId);
 
     public int checkEmail(String userEmail);
 

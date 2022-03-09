@@ -17,12 +17,12 @@
         INTO codefolio.file
             ( file_seq, board_type, board_seq, file_name,file_download_uri, size )
         VALUES (
-                (SELECT IFNULL(MAX(file_seq), 0) + 1 FROM codefolio.file A),
-                #{boardType},
-                #{boardSeq},
-                #{fileName},
-                #{fileDownloadUri},
-                #{size}
+                       (SELECT IFNULL(MAX(file_seq), 0) + 1 FROM codefolio.file A),
+                       #{boardType},
+                       #{boardSeq},
+                       #{fileName},
+                       #{fileDownloadUri},
+                       #{size}
                )
     </insert>
 
@@ -60,6 +60,5 @@
 		SELECT IFNULL(MAX(board_seq) ,0) + 1
 		FROM codefolio.file
 	</select>
-
 
 </mapper>

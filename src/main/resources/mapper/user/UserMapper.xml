@@ -12,11 +12,8 @@
         <result property="gitId" column="gitId"/>
         <result property="job" column="job"/>
         <result property="stack" column="stack"/>
-        <result property="introFile" column="introFile"/>
+        <result property="introFile" column="intro_file"/>
         <result property="img" column="img"/>
-        <result property="role" column="role"/>
-
-
     </resultMap>
 
     <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
@@ -26,41 +23,32 @@
     </select>
 
     <select id="getUser" parameterType="String" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
-        SELECT * FROM codefolio.user WHERE name=#{name} ORDER BY name DESC LIMIT 1
+        SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1
     </select>
+
 
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
-        INSERT INTO codefolio.user SET
-            user_seq=(SELECT IFNULL(MAX(user_seq), 0) + 1 FROM codefolio.user A),
-            id=#{id},
-            pwd=#{pwd},
-            name=#{name},
-            email=#{email},
-            gitId=#{gitId},
-            creDate=NOW(),
-            recDate=NOW(),
-            role=#{role};
+            INSERT INTO codefolio.user SET
+            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),reg_type="normal",role=#{role};
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
-    <!--동적 SQL <if>사용 => mybatis의 기능-->
+<!--동적 SQL <if>사용 => mybatis의 기능-->
     <update id="updateUser" parameterType="com.codefolio.vo.UserVO">
-        UPDATE user SET
-        <!--                <if test="name!=null">name=#{name},</if>-->
-        <!--                <if test="pwd!=null">pwd=#{pwd},</if>-->
-        <!--                <if test="gitId!=null">gitId=#{gitId},</if>-->
-        <!--                <if test="job!=null">job=#{job},</if>-->
-        <!--                <if test="stack!=null">stack=#{stack},</if>-->
-        <!--                <if test="introFile!=null">introFile=#{introFile}</if>-->
+        UPDATE user
+        SET id=#{id},name=#{name},gitId=#{gitId},job=#{job},stack=#{stack},intro_file=#{introFile}
+        WHERE id=#{id}
+        ORDER BY id DESC LIMIT 1
+    </update>
 
-        SET pwd=#{pwd},gitId=#{gitId},job=#{job},stack=#{stack},introFile=#{introFile}
-        WHERE name=#{name} ORDER BY name DESC LIMIT 1
+    <update id="updateUserImg" parameterType="com.codefolio.vo.UserVO">
+        UPDATE user SET img=#{img} WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </update>
 
     <!--user delete-->
-    <delete id="delete" parameterType="String">
-        DELETE FROM codefolio.user WHERE name=#{name} ORDER BY name DESC LIMIT 1
+    <delete id="deleteUser" parameterType="String">
+        DELETE FROM codefolio.user WHERE id=#{id} ORDER BY name DESC LIMIT 1
     </delete>
 
     <!--email 중복 체크-->
@@ -101,11 +89,23 @@
         pwd=#{pwd};
     </select>
 
-    <select id="getUserById">
+    <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
         SELECT *
         FROM codefolio.user
         WHERE id=#{id}
+        ORDER BY id DESC LIMIT 1;
     </select>
 
 
+
+    <select id="checkId" parameterType="String" resultType="int">
+        SELECT COUNT(id) FROM codefolio.user WHERE id=#{id};
+    </select>
+
+
+    <!--유저 로그인 => security 적용 X-->
+    <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
+        SELECT id FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
+    </select>
 </mapper>
+
