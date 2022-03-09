@@ -1,11 +1,14 @@
 package com.codefolio.service;
 
 import com.codefolio.vo.UserVO;
+
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
+@Component
 public interface UserService {
 
     public UserVO getUser(String userName);

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import com.codefolio.config.auth.PrincipalDetails;
 import com.codefolio.config.oauth.provider.GoogleUserInfo;
+import com.codefolio.config.oauth.provider.KakaoUserInfo;
+import com.codefolio.config.oauth.provider.NaverUserInfo;
 import com.codefolio.config.oauth.provider.OAuth2UserInfo;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
@@ -30,7 +32,6 @@ public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2Authentic
 	OAuth2User oauth2User = super.loadUser(userRequest);
 	
 
-	
 	//소셜로그인 요청에 따른 정보 설정
 	String name = "";
 	String providerId = "";
@@ -40,7 +41,21 @@ public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2Authentic
 			oAuth2UserInfo = new GoogleUserInfo(oauth2User.getAttributes());
 			name = (String)oauth2User.getAttributes().get("name");
 			providerId = oAuth2UserInfo.getProviderId();
+		} else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")){
+			System.out.println("네이버 로그인 요청");
+			oAuth2UserInfo = new NaverUserInfo((Map)oauth2User.getAttributes().get("response"));
+			name = oAuth2UserInfo.getName();
+			providerId = oAuth2UserInfo.getProviderId();
+		}else if(userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
+			System.out.println("카카오 로그인 요청");
+			oAuth2UserInfo = new KakaoUserInfo(oauth2User.getAttributes());
+			name = oAuth2UserInfo.getName();
+			providerId = oAuth2UserInfo.getProviderId();
+		
+		}else {
+			System.out.println("구글, 페이스북, 네이버, 카카오 외의 로그인 요청입니다!");
 		}
+		
 
 	//회원가입 강제 진행@!
 	String provider = userRequest.getClientRegistration().getClientId(); // google

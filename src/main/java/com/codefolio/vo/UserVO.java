@@ -37,13 +37,14 @@ public class UserVO {
     private String provider;
     private String providerId;
 
-    public CharSequence getPassword() {
+    public String getPassword() {
         return null;
     }
 
     public char[] getUserSeq() {
         return null;
     }
+
 
 
 

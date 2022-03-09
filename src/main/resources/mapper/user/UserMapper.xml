@@ -73,10 +73,6 @@
         SELECT COUNT(name) FROM codefolio.user WHERE name=#{name};
     </select>
 
-    <!--유저 로그인 => security 적용 X-->
-    <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
-        SELECT name FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY name DESC LIMIT 1;
-    </select>
 
     <!--유저 로그인 => security 적용-->
     <select id="secLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
