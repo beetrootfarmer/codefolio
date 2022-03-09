@@ -26,7 +26,13 @@ public interface UserService {
 
     public int checkId(String userId);
 
+    public UserVO getUserById(String id);
+
     void updateUserImg(UserVO user);
+
+    String secLogin(UserVO user);
+//
+//    public UserVO findUserName(String name);
 
 
 //    public Map<String, Object> findLoginPwd(UserVO user);

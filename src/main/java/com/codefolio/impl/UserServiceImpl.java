@@ -63,6 +63,13 @@ public class UserServiceImpl implements UserService {
     public int checkId(String userId){return userMapper.checkId(userId);}
 
     @Override
+    public UserVO getUserById(String id){return userMapper.getUserById(id);}
+
+    @Override
+    public String secLogin(UserVO user){return userMapper.secLogin(user);}
+
+
+    @Override
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
 
 

@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -42,12 +41,17 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-//    @GetMapping("/login")
-//    public String hello(){
-//        return "login";
+
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginUser(@RequestBody UserVO user){
+//        String userName=userService.secLogin(user);
+//
+//        if(userName!=null){
+//            return ResponseEntity.ok(userName+" 로그인 성공");
+//        }else return ResponseEntity.notFound().build();
+//
 //    }
 
-    //JoinUser
     @PostMapping("")
     @ResponseBody
     public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
@@ -88,7 +92,7 @@ public class UserController {
 
     //TODO : response dto로 매핑해서 response하기(완료)
     //Get user(userName으로 유저 조회) => response Entity 사용
-    @GetMapping("/{userId}")
+    @GetMapping("/detail/{userId}")
     @ResponseBody
     public ResponseEntity<Object> getUser(@PathVariable String userId){
         try {

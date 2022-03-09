@@ -24,9 +24,11 @@ public interface UserMapper {
 
     public String checkLogin(UserVO user);
 
-    UserVO searchEmail(String email);
-
     int checkId(String userId);
 
     void updateUserImg(UserVO user);
+
+    public UserVO getUserById(String id);
+
+    public String secLogin(UserVO user);
 }
