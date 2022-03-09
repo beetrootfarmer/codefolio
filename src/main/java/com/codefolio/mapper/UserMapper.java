@@ -24,11 +24,14 @@ public interface UserMapper {
 
     public String checkLogin(UserVO user);
 
-    int checkId(String userId);
+    UserVO searchEmail(String email);
 
-    void updateUserImg(UserVO user);
+    int checkName(String userName);
+
+    public UserVO getUserObj(Object param);
 
     public UserVO getUserById(String id);
 
+//     시큐리티 로그인
     public String secLogin(UserVO user);
 }

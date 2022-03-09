@@ -58,10 +58,10 @@
     <delete id="deleteProj" parameterType="int">
         DELETE
         FROM codefolio.proj
-        WHERE proj_seq = #{projSeq}
+        WHERE proj_seq = #{seq}
     </delete>
 
-    <update id="update" parameterType="map">
+    <update id="update">
         UPDATE codefolio.proj
         SET
             user = #{user},
@@ -70,7 +70,7 @@
             stack = #{stack},
             content = #{content},
             period = #{period}
-        WHERE proj_seq = #{projSeq}
+        WHERE proj_seq = #{seq}
     </update>
 
     <update id="viewUp" parameterType="int">

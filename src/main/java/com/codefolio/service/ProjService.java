@@ -24,10 +24,10 @@ public interface ProjService {
     public int getProjSeq();
 
      @Transactional
-    public void deleteProj(int projSeq);
+    public void deleteProj(int seq);
 
      @Transactional
-    public void update(Map<String, Object> param);
+    public void update(ProjVO vo);
 
      @Transactional
     public void viewUp(int projSeq);
