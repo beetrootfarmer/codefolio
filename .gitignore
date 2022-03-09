@@ -18,6 +18,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+*.properties
+*.yml
 .idea
 *.iws
 *.iml
@@ -35,3 +37,11 @@ out/
 
 ### VS Code ###
 .vscode/
+src/main/resources/application.yml
+src/main/resources/application.yml
+*.yml
+src/main/resources/application.yml
+
+
+### codefolio ###
+**/webapp/upload/*

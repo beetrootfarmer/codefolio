@@ -58,19 +58,19 @@ public class FileController {
             return fileService.getUploadFile(fileSeq);
         }
 
- @PostMapping("/upload")
+        @PostMapping("/upload")
         public List<FileVO> insertFile(FileVO vo, HttpServletRequest request,
-                MultipartHttpServletRequest mhsr) throws IOException  {
+                                       MultipartHttpServletRequest mhsr) throws IOException  {
 
             int fileSeq = fileService.getFileSeq();
             FileUtils fileUtils = new FileUtils();
 
-            List<FileVO> fileList = fileUtils.parseFileInfo(fileSeq, request, mhsr);
+            List<FileVO> fileList = fileUtils.parseFileInfo(fileSeq,"file", request, mhsr);
 
             if(CollectionUtils.isEmpty(fileList) == false) {
                 fileService.saveFile(fileList);
                 System.out.println("saveFile()탐 + fileList===" + fileList);
-                }
+            }
             return fileList;
         }
 
@@ -98,5 +98,5 @@ public class FileController {
 
 
 
-    }
+}
 
