@@ -58,7 +58,7 @@ public class FileUtils {
 					vo.setSize(mf.getSize());
 					vo.setFileName(mf.getOriginalFilename());
 					vo.setBoardType(boardtype);
-					vo.setFileDownloadUri(root_path + attach_path+ board_path);
+					vo.setFileDownloadUri(root_path + attach_path+ board_path+mf.getOriginalFilename());
 					add = fileList.add(vo);
 
 					System.out.println("fileutils의 for문..FileVO"+ vo);

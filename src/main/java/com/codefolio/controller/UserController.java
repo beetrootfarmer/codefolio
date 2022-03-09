@@ -41,6 +41,10 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @GetMapping("/")
+    public String home(){
+        return "home";
+    }
 
 //    @PostMapping("/login")
 //    public ResponseEntity<String> loginUser(@RequestBody UserVO user){

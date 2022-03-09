@@ -15,9 +15,5 @@ public class CodefolioApplication {
         SpringApplication.run(CodefolioApplication.class, args);
     }
 
-    @Bean
-    public BCryptPasswordEncoder encodePwd() {
-        return new BCryptPasswordEncoder();
-    }
 
 }
