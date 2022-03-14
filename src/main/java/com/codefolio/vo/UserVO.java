@@ -1,10 +1,11 @@
 package com.codefolio.vo;
 
+import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,13 +33,25 @@ public class UserVO{
     //소셜 로그인과 일반 사용자 구분
     private boolean reg;
 
+    // user임을 확인해주는 역할
+    private String role;
+
+    //소셜로그인 정보
+    private String provider;
+    private String providerId;
+
+    public String getPassword() {
+        return null;
+    }
+
+    public char[] getUserSeq() {
+        return null;
+    }
 
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
-//        auth.add(new SimpleGrantedAuthority(AUTHORITY));
-//        return auth;
-//    }
+
+
+
+
 
 }

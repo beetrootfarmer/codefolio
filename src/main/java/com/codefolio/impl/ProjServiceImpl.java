@@ -11,9 +11,8 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import com.codefolio.utils.CUtil;
 
-
-@Service
 @Slf4j
+@Service
 public class ProjServiceImpl implements ProjService {
     @Autowired
     ProjMapper projMapper;
@@ -45,13 +44,13 @@ public class ProjServiceImpl implements ProjService {
     }
 
     @Override
-    public void deleteProj(int projSeq) {
-        projMapper.deleteProj(projSeq);
+    public void deleteProj(int seq) {
+        projMapper.deleteProj(seq);
     }
 
     @Override
-    public void update(Map<String, Object> param){
-         projMapper.update(param);
+    public void update(ProjVO vo){
+         projMapper.update(vo);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package com.codefolio.service;
 
 import com.codefolio.vo.UserVO;
+
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
-
+@Component
 public interface UserService {
 
     public UserVO getUser(String userId);
@@ -24,20 +27,12 @@ public interface UserService {
 
     public String checkLogin(UserVO user);
 
-    public int checkId(String userId);
+    public int checkName(String userName);
+
+    public UserVO getUserObj(Object param);
 
     public UserVO getUserById(String id);
 
-    void updateUserImg(UserVO user);
-
-    String secLogin(UserVO user);
-//
-//    public UserVO findUserName(String name);
-
-
-//    public Map<String, Object> findLoginPwd(UserVO user);
-
-//    @Transactional
-//    public Map<String, Object> checkUserEmailDup(String userId);
-
+//     시큐리티 로그인
+    public String secLogin(UserVO user);
 }
