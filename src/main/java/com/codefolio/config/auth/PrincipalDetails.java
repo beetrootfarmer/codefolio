@@ -1,46 +1,36 @@
 package com.codefolio.config.auth;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 import com.codefolio.vo.UserVO;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class PrincipalDetails implements UserDetails, OAuth2User{
-
-    private UserVO user; // 콤포지션
+import java.util.ArrayList;
+import java.util.Collection;
 
 
+// 시큐리티가 /login 주소 요청이 오면 낚아채서 로그인을 진행시킨다.
+//로그인 진행이 완료가 되면 시큐리티 session을 만들어준다.(Security ContextHolder)
+// Object 타입 => Authentication 타입 객체
+//Authentication 안에 User 정보가 있어야 됨
+//User Object 타입 => UserDetails 타입 객체
 
-    //일반 로그인
-    public PrincipalDetails(UserVO user) {
-	this.user = user;
-    }   
+//Security Session => Authentication => UserDetails(PrincipalDetails)
 
-    //소셜 로그인
-    public PrincipalDetails(UserVO user,  Map<String ,Object> attributes) {
-        this.user = user;
-        this.attributes = attributes;
+public class PrincipalDetails implements UserDetails {
+
+    private UserVO user;    //콤포지션
+
+    public PrincipalDetails(UserVO user){
+        this.user=user;
     }
 
-    private Map<String ,Object> attributes;
-
-    //해당 유저의 권한을 리턴
+    //해당 User의 권한을 반환하는 곳!!
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collect = new ArrayList<>();
-        collect.add(new GrantedAuthority(){
-            @Override
-            public String getAuthority() {
-                return user.getRole();
-            }
-        });
-
-        return collect;
+        Collection<GrantedAuthority> collet = new ArrayList<GrantedAuthority>();
+        collet.add(()->{ return user.getRole();});
+        return collet;
     }
 
     @Override
@@ -50,11 +40,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 
     @Override
     public String getUsername() {
-    //     return user.getId();
-    // }
-    // 혜지 코드 : id값을 입력하니까 name에 id넣어서 비교해야하지 않을까...
-
-    // 계정이 잠겼을 때 사용하는 메소드
         return user.getName();
     }
 
@@ -63,7 +48,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
         return true;
     }
 
-    // 비밀번호 유효기간이 지났을 때 사용하는 메소드
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -74,25 +58,10 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
         return true;
     }
 
-    // 계정 활성화여부
     @Override
     public boolean isEnabled() {
-         //사이트에서 1년간 회원 활동이 없을 때 휴면 계정 전환 => recDate랑 비교해서 넣기
-        // 현재시간-로그인시간 = 1년 초과 시 계정 비활성화 
-        // 구현 X
+        //사이트에서 1년간 회원 활동이 없을 때 휴면 계정 전환 => recDate랑 비교해서 넣기
+//        user.getRecDate()
         return true;
     }
-    // 리소스 서버로 부터 받는 회원정보
-	@Override
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
-
-   // User의 PrimaryKey
-	@Override
-	public String getName() {
-		return user.getId()+"";
-	}
-
-    
 }
