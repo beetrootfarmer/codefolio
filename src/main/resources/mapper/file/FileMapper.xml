@@ -26,7 +26,7 @@
                )
     </insert>
 
-    <select id="getFileListBySeq"  parameterType="int" resultType="com.codefolio.vo.FileVO" resultMap="fileResult">
+    <select id="getFileListBySeq" resultType="com.codefolio.vo.FileVO">
         SELECT *
         FROM codefolio.file
         WHERE board_seq = #{seq}
@@ -35,14 +35,9 @@
     <select id="selectFile" resultType="Map" resultMap="fileResult">
         SELECT *
         FROM codefolio.file
-        WHERE board_seq = #{seq}
+        WHERE board_type = #{boardType}
+        AND board_seq = #{boardSeq}
     </select>
-
-    <delete id="deleteFileBySeq" parameterType="int">
-        DELETE
-        FROM codefolio.file
-        WHERE board_seq = #{seq}
-    </delete>
 
     <select id="findAll" resultType="Map" parameterType="com.codefolio.vo.FileVO">
         SELECT *

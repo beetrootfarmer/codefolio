@@ -1,13 +1,10 @@
 package com.codefolio.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.mail.MailException;
 
-@Data
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
 public class MailTO {
     private String userName;
@@ -32,7 +29,4 @@ public class MailTO {
     public void  setrString(String rString){
         this.rString=rString;
     }
-
-
 }
-

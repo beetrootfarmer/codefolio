@@ -14,9 +14,10 @@
         <result property="stack" column="stack"/>
         <result property="introFile" column="intro_file"/>
         <result property="img" column="img"/>
+        <!--        <result property="reg" column="reg"/>-->
     </resultMap>
 
-    <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
+<!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
     <!--유저 리스트 받아오기-->
     <select id="getAllUserData" parameterType="com.codefolio.vo.UserVO" resultType="map">
         SELECT * FROM codefolio.user ORDER BY user_seq DESC;
@@ -57,55 +58,36 @@
     </select>
 
     <!--email 중복 체크-->
-    <select id="checkName" parameterType="String" resultType="int">
-        SELECT COUNT(name) FROM codefolio.user WHERE name=#{name};
-    </select>
-
-
-    <!--유저 로그인 => security 적용-->
-    <select id="secLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
-        SELECT name FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY name DESC LIMIT 1;
-    </select>
-
-    <!--findByLoginPwd-->
-    <select id="searchEmail"
-            resultType="com.codefolio.vo.UserVO">
-        SELECT *
-        FROM codefolio.user
-        WHERE
-            email=#{email}
-    </select>
-
-    <!--비밀번호 변경-->
-    <update id="changePwd" >
-        UPDATE user SET pwd=#{pwd} WHERE email=#{email}
-    </update>
-
-    <select id="getUserObj">
-        Select *
-        FROM codefolio.user
-        WHERE id=#{id}
-        and
-        pwd=#{pwd};
-    </select>
-
-    <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
-        SELECT *
-        FROM codefolio.user
-        WHERE id=#{id}
-        ORDER BY id DESC LIMIT 1;
-    </select>
-
-
-
     <select id="checkId" parameterType="String" resultType="int">
         SELECT COUNT(id) FROM codefolio.user WHERE id=#{id};
     </select>
 
+    <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
+        SELECT * FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
+    </select>
 
     <!--유저 로그인 => security 적용 X-->
     <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
         SELECT id FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
     </select>
-</mapper>
 
+
+    <select id="secLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
+        SELECT name FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
+    </select>
+
+    <!--&lt;!&ndash;findByLoginPwd&ndash;&gt;-->
+<!--    <select id="searchEmail"-->
+<!--            resultType="com.codefolio.vo.UserVO">-->
+<!--        SELECT *-->
+<!--        FROM codefolio.user-->
+<!--        WHERE-->
+<!--            email=#{email}-->
+<!--    </select>-->
+
+<!--&lt;!&ndash;비밀번호 변경&ndash;&gt;-->
+<!--    <update id="changePwd" >-->
+<!--        UPDATE user SET pwd=#{pwd} WHERE email=#{email}-->
+<!--    </update>-->
+
+</mapper>
