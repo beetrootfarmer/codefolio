@@ -63,7 +63,7 @@
     </select>
 
     <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
-        SELECT * FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
+        SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </select>
 
     <!--유저 로그인 => security 적용 X-->

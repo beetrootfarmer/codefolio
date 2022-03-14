@@ -1,13 +1,11 @@
 package com.codefolio.config.auth;
 
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 import com.codefolio.vo.UserVO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
 
 // 시큐리티가 /login 주소 요청이 오면 낚아채서 로그인을 진행시킨다.
 //로그인 진행이 완료가 되면 시큐리티 session을 만들어준다.(Security ContextHolder)
@@ -17,15 +15,20 @@ import java.util.Collection;
 
 //Security Session => Authentication => UserDetails(PrincipalDetails)
 
+
 public class PrincipalDetails implements UserDetails {
 
     private UserVO user;    //콤포지션
 
-    public PrincipalDetails(UserVO user){
-        this.user=user;
-    }
 
     //해당 User의 권한을 반환하는 곳!!
+    //일반 로그인
+    public PrincipalDetails(UserVO user) {
+        this.user = user;
+    }
+
+    private Map<String ,Object> attributes;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collet = new ArrayList<GrantedAuthority>();
@@ -40,7 +43,8 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        // 계정이 잠겼을 때 사용하는 메소드
+        return user.getId();
     }
 
     @Override
@@ -64,4 +68,5 @@ public class PrincipalDetails implements UserDetails {
 //        user.getRecDate()
         return true;
     }
+
 }

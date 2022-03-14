@@ -1,7 +1,6 @@
 package com.codefolio.controller;
 
 import com.codefolio.dto.ErrorResponse;
-import com.codefolio.dto.JsonResponse;
 import com.codefolio.dto.UserResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.MailService;
@@ -13,13 +12,11 @@ import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -46,29 +43,6 @@ public class UserController {
         return "home";
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String> loginUser(@RequestBody UserVO user){
-//        String userName=userService.secLogin(user);
-//
-//        if(userName!=null){
-//            return ResponseEntity.ok(userName+" 로그인 성공");
-//        }else return ResponseEntity.notFound().build();
-//
-//    }
-
-    @PostMapping("")
-    @ResponseBody
-    public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
-        user.setRole("ROLE_USER");
-        String encUserPwd = bCryptPasswordEncoder.encode(user.getPwd());
-        System.out.println("encodig PWD : \n"+encUserPwd);
-        user.setPwd(encUserPwd);   //encoding된 password 넣기
-        Integer userSeq = userService.joinUser(user);
-
-        return getUser(user.getId());
-    }
-
-
     //회원가입 email의 중복성 체크
     @PostMapping("/checkEmail")
     public ResponseEntity<String> checkEmail(@RequestBody UserVO user){
@@ -85,16 +59,6 @@ public class UserController {
         else return ResponseEntity.ok("success");
     }
 
-//    //TODO: jwt로그인 방식 구현하기 필요
-//    //회원 로그인
-//    @PostMapping("/login")
-//    public ResponseEntity<String> loginCheck(@RequestBody UserVO user){
-//        String userId = userService.checkLogin(user);
-//        if(userId!=null) return ResponseEntity.ok(userId+" 로그인 성공");
-//        else return ResponseEntity.notFound().build();
-//    }
-
-    //TODO : response dto로 매핑해서 response하기(완료)
     //Get user(userName으로 유저 조회) => response Entity 사용
     @GetMapping("/detail/{userId}")
     @ResponseBody
@@ -107,9 +71,7 @@ public class UserController {
         } catch (Exception re) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "NOT_FOUND","not found User"));
         }
-
     }
-
 
     //Get userlist
     @GetMapping("/list")
@@ -146,7 +108,6 @@ public class UserController {
         return getUser(user.getId());
     }
 
-
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable String userId){
@@ -169,9 +130,6 @@ public class UserController {
         return ResponseEntity.ok(mailTO);
     }
 
-//    //TODO: jwt방식으로 비밀번호 변경 페이지 보내기
-//    //email 조회 후 해당 유저 토큰과 함께 비밀번호 변경 url 보냄
-//    public ResponseEntity<MailTO> confirmPwd(@RequestBody UserVO user){
-//
-//    }
+
 }
+

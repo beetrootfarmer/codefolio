@@ -1,27 +1,39 @@
 package com.codefolio.config.jwt;
 
+import com.codefolio.config.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.GenericFilterBean;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-//스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 가 있음
-// "/login" 요청해서 username, password 전송하면(post) => intercept path "/login"
-//UsernamePasswordAuthenticationFilter 동작을 함
+import java.io.IOException;
+
+// 시큐리티에 UsernamePasswordAuthenticationFilter가 있음
+// login요청해서 username, password 전송하면 filter가 동작함
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends GenericFilterBean{
+    private final JwtTokenProvider jwtTokenProvider;
 
-    private final AuthenticationManager authenticationManager;
 
-    // "/login" 요청을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        System.out.println("JwtAuthenticationFilter 로그인 시도중");
-        return super.attemptAuthentication(request,response);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        System.out.println("===JwtAuthenticationFilter 시작===");
+        //헤더에서 JWT를 받아옵니다.
+        String token = jwtTokenProvider.resolveToken((HttpServletRequest)request);
+        System.out.println(token);
+        //유효한 토큰인지 확인합니다.
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            System.out.println("token 유효함");
+            //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            //securityContext에 Authentication객체를 저장합니다.
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        chain.doFilter(request,response);
     }
-
 }
