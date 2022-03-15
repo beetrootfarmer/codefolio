@@ -50,7 +50,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
                 .compact();
 
-
         return acToken;
     }
 

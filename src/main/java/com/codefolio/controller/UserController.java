@@ -60,6 +60,7 @@ public class UserController {
     }
 
     //Get user(userName으로 유저 조회) => response Entity 사용
+    //TODO : jwtToken userId로 검증
     @GetMapping("/detail/{userId}")
     @ResponseBody
     public ResponseEntity<Object> getUser(@PathVariable String userId){
