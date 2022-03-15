@@ -78,4 +78,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserImg(UserVO user){userMapper.updateUserImg(user);};
 
+    @Override
+    public UserVO getUserByEmail(String email){return userMapper.getUserByEmail(email);}
+
+
 }

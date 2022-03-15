@@ -34,6 +34,8 @@ public interface UserService {
 
     void updateRefToken(UserVO userVO);
 
+    public UserVO getUserByEmail(String email);
+
     //    public UserVO findUserName(String name);
 
 

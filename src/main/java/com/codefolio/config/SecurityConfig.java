@@ -1,7 +1,8 @@
 package com.codefolio.config;
 
 import com.codefolio.config.jwt.JwtAuthenticationFilter;
-import com.codefolio.config.security.JwtTokenProvider;
+import com.codefolio.config.jwt.JwtTokenProvider;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

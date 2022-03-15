@@ -1,4 +1,4 @@
-package com.codefolio.config.security;
+package com.codefolio.config.jwt;
 
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
@@ -22,10 +22,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     // jwt를 생성하고 검증하는 컴포넌트
     // jwt에는 토큰 만료시간이나 회원 권한 정보등을 저장할 수 있다.
-    private String secretKey="webfirewood";
-
-    private long accessToken = 1*60*1000L;//토큰 유효시간 1시간
-    private long refreshToken = 7*24*60*60*1000L;//토큰 유효시간 7일
+    private String secretKey= JwtProperties.SECRET;  
 
     private final UserDetailsService userDetailsService;
     private final UserService userService;
@@ -46,7 +43,7 @@ public class JwtTokenProvider {
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
-                .setExpiration(new Date(now.getTime()+accessToken))  //setExpire Time
+                .setExpiration(new Date(now.getTime()+JwtProperties.EXPIRATION_TIME))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
                 .compact();
 
@@ -59,7 +56,7 @@ public class JwtTokenProvider {
         String refToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
-                .setExpiration(new Date(now.getTime()+refreshToken))  //setExpire Time
+                .setExpiration(new Date(now.getTime()+JwtProperties.REF_EXPIRATION_TIME))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
                 .compact();
         System.out.println("===refToken==="+refToken);
@@ -86,7 +83,7 @@ public class JwtTokenProvider {
 
     //Request의 Header에서 token값을 가져옵니다. "X-AUTH-TOKEN":"TOKEN값" =>refresh token은 DB에 저장
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("X-AUTH-TOKEN");
+        return request.getHeader("JwtProperties.ACCESS_HEADER_STRING");
     }
 
     //토큰의 유효성 + 만료 일자 확인

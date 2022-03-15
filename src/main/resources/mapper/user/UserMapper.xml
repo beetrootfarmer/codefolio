@@ -69,6 +69,10 @@
     <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
         SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </select>
+    
+    <select id="getUserByEmail" parameterType="String" resultType="com.codefolio.vo.UserVO">
+        SELECT * FROM codefolio.user WHERE email=#{email} ORDER BY email DESC LIMIT 1;
+    </select>
 
     <!--유저 로그인 => security 적용 X-->
     <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">

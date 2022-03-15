@@ -1,6 +1,6 @@
 package com.codefolio.controller;
 
-import com.codefolio.config.security.JwtTokenProvider;
+import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.ErrorResponse;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
@@ -34,22 +34,22 @@ public class SecurityController {
         System.out.println("encodig PWD : "+encUserPwd);
         user.setPwd(encUserPwd);   //encoding된 password 넣기
         Integer userSeq = userService.joinUser(user);
-        UserVO userDetail = userService.getUser(user.getId());
+        UserVO userDetail = userService.getUser(user.getEmail());
         return ResponseEntity.ok(userDetail);
     }
 
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
-        UserVO userDetail = userService.getUser(user.getId());
+        UserVO userDetail = userService.getUser(user.getEmail());
         System.out.println(userDetail);
-        if(userDetail.getId()==null)throw new IllegalArgumentException("가입되지 않은 ID 입니다.");
+        if(userDetail.getEmail()==null)throw new IllegalArgumentException("가입되지 않은 ID 입니다.");
         //TODO : password does not match
         if(!passwordEncoder.matches(user.getPwd(),userDetail.getPwd()))
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
 
         String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-        String getReftoken=userService.getUserById(user.getId()).getRefToken();
+        String getReftoken=userService.getUserById(user.getEmail()).getRefToken();
         System.out.println("====getAccessToken==="+getActoken);
         System.out.println("====getRefreshToken==="+getReftoken);
 

@@ -33,4 +33,6 @@ public interface UserMapper {
     public String secLogin(UserVO user);
 
     void updateRefToken(UserVO user);
+
+    public UserVO getUserByEmail(String email);
 }
