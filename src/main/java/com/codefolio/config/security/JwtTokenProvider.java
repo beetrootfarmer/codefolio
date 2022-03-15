@@ -1,112 +1,101 @@
-// package com.codefolio.config.security;
+package com.codefolio.config.security;
 
-// import io.jsonwebtoken.*;
-// import lombok.RequiredArgsConstructor;
+import com.codefolio.service.UserService;
+import com.codefolio.vo.UserVO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
+import java.util.Date;
 
-// import lombok.extern.slf4j.Slf4j;
-// import org.slf4j.*;
-// import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-// import org.springframework.security.core.Authentication;
-// import org.springframework.security.core.userdetails.UserDetails;
-// import org.springframework.security.core.userdetails.UserDetailsService;
-// import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-// import org.springframework.stereotype.Component;
+@RequiredArgsConstructor
+@Component
+public class JwtTokenProvider {
+    // jwt를 생성하고 검증하는 컴포넌트
+    // jwt에는 토큰 만료시간이나 회원 권한 정보등을 저장할 수 있다.
+    private String secretKey="webfirewood";
 
-// import lombok.RequiredArgsConstructor;
+    private long accessToken = 1*60*1000L;//토큰 유효시간 1시간
+    private long refreshToken = 7*24*60*60*1000L;//토큰 유효시간 7일
 
-// import javax.annotation.PostConstruct;
-// import javax.servlet.http.HttpServletRequest;
-// import java.util.Base64;
-// import java.util.Date;
-// import java.util.List;
+    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
 
-// @RequiredArgsConstructor
-// @Component
-// public class JwtTokenProvider { // JWT 토큰을 생성 및 검증 모듈
 
-//     private static Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+    //객체 초기화, secretKey를 Base64로 인코딩한다.
+    @PostConstruct
+    protected void init(){
+        secretKey= Base64.getEncoder().encodeToString(secretKey.getBytes());
+    }
 
-//     @Value("${spring.jwt.secret}")
-//     private String secretKey;
+    //login시 acToken과 refToken 갱신이 필요하다.
+    public String createToken(String user, String role){
+        Claims claims = Jwts.claims().setSubject(user);   //Jwt payload에 저장되는 정보 단위
+        claims.put("role",role);  //권한설정 key/value 쌍으로 저장된다.
+        Date now = new Date();
+        String acToken = Jwts.builder()
+                .setClaims(claims)  //정보 저장
+                .setIssuedAt(now)   //토큰 발행시간 정보
+                .setExpiration(new Date(now.getTime()+accessToken))  //setExpire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .compact();
 
-//     private long tokenValidMilisecond = 1000L * 60 * 60; // 1시간만 토큰 유효
+        return acToken;
+    }
 
-//     private UserDetailsService userDetailsService;
+    public String createRefToken(String user, String role){
+        Claims claims = Jwts.claims().setSubject(user);   //Jwt payload에 저장되는 정보 단위
+        Date now = new Date();
+        String refToken = Jwts.builder()
+                .setClaims(claims)  //정보 저장
+                .setIssuedAt(now)   //토큰 발행시간 정보
+                .setExpiration(new Date(now.getTime()+refreshToken))  //setExpire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .compact();
+        System.out.println("===refToken==="+refToken);
+        UserVO userVO=new UserVO();
+        userVO.setRefToken(refToken);
+        userVO.setId(user);
+        System.out.println(user);
+        userService.updateRefToken(userVO);
+        return refToken;
+    }
 
-//     @PostConstruct
-//     protected void init() {
-//         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-//     }
+    //jwt토큰에서 인증정보 조회
+    public Authentication getAuthentication(String token){
+        System.out.println("getAuthentication : "+token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
+        System.out.println("getAuthentication User : "+userDetails);
+        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+    }
 
-//     // Jwt 토큰 생성
-//     public int createToken(int userSeq) {
-//         Claims claims = Jwts.claims().setSubject(userSeq);
-//         Date now = new Date();
-//         return Jwts.builder()
-//                 .setClaims(claims) // 데이터
-//                 .setIssuedAt(now) // 토큰 발행일자
-//                 .setExpiration(new Date(now.getTime() + tokenValidMilisecond)) // set Expire Time
-//                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
-//                 .compact();
-//     }
+    //토큰에서 회원 정보 추출
+    public String getUserPk(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
 
-//     // Jwt 토큰으로 인증 정보를 조회
-//     public Authentication getAuthentication(String token) {
-//         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-//         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//     }
+    //Request의 Header에서 token값을 가져옵니다. "X-AUTH-TOKEN":"TOKEN값" =>refresh token은 DB에 저장
+    public String resolveToken(HttpServletRequest request){
+        return request.getHeader("X-AUTH-TOKEN");
+    }
 
-//     // Jwt 토큰에서 회원 구별 정보 추출
-//     public String getUserPk(String token) {
-//         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-//     }
-
-//     /**
-//      * <pre>
-//      * Request의 Header에서 token 파싱 : "X-AUTH-TOKEN: jwt토큰"
-//      * </pre>
-//      *
-//      * @param req
-//      * @return
-//      */
-//     public String resolveToken(HttpServletRequest req) {
-//         return req.getHeader("X-AUTH-TOKEN");
-//     }
-
-//     /**
-//      * <per>
-//      * Jwt 토큰의 유효성 + 만료일자 확인
-//      * </per>
-//      *
-//      * @param jwtToken
-//      * @return
-//      */
-//     public boolean validateToken(String jwtToken) {
-//         try {
-
-//             logger.debug( "[JwtTokenProvider >> validateToken]" );
-
-//             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-//             return !claims.getBody().getExpiration().before(new Date());
-//         } catch (SignatureException e) {
-//             logger.error("Invalid JWT signature", e);
-//             return false;
-//         } catch (MalformedJwtException e) {
-//             logger.error("Invalid JWT token", e);
-//             return false;
-//         } catch (ExpiredJwtException e) {
-//             logger.error("Expired JWT token", e);
-//             return false;
-//         } catch (UnsupportedJwtException e) {
-//             logger.error("Unsupported JWT token", e);
-//             return false;
-//         } catch (IllegalArgumentException e) {
-//             logger.error("JWT claims string is empty.", e);
-//             return false;
-//         }catch (Exception e) {
-//             return false;
-//         }
-//     }
-// }
+    //토큰의 유효성 + 만료 일자 확인
+    public boolean validateToken(String jwtToken){
+        try{
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            return !claims.getBody().getExpiration().before(new Date());
+        }catch (Exception e){
+            return false;
+        }
+    }
+}
