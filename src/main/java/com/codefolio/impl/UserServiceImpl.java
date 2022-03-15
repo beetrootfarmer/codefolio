@@ -68,9 +68,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String secLogin(UserVO user){return userMapper.secLogin(user);}
 
-
     @Override
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
+
+    @Override
+    public void updateRefToken(UserVO user){userMapper.updateRefToken(user);}
 
 
     @Override

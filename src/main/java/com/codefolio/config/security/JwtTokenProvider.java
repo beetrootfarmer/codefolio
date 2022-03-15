@@ -24,13 +24,13 @@ public class JwtTokenProvider {
     // jwt에는 토큰 만료시간이나 회원 권한 정보등을 저장할 수 있다.
     private String secretKey="webfirewood";
 
-    private long accessToken = 60*60*1000L;//토큰 유효시간 1시간
+    private long accessToken = 1*60*1000L;//토큰 유효시간 1시간
     private long refreshToken = 7*24*60*60*1000L;//토큰 유효시간 7일
 
     private final UserDetailsService userDetailsService;
     private final UserService userService;
 
-    private UserVO userVO;
+
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -38,6 +38,7 @@ public class JwtTokenProvider {
         secretKey= Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    //login시 acToken과 refToken 갱신이 필요하다.
     public String createToken(String user, String role){
         Claims claims = Jwts.claims().setSubject(user);   //Jwt payload에 저장되는 정보 단위
         claims.put("role",role);  //권한설정 key/value 쌍으로 저장된다.
@@ -48,17 +49,27 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime()+accessToken))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
                 .compact();
-        System.out.println(acToken);
+
+
+        return acToken;
+    }
+
+    public String createRefToken(String user, String role){
+        Claims claims = Jwts.claims().setSubject(user);   //Jwt payload에 저장되는 정보 단위
+        Date now = new Date();
         String refToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
                 .setExpiration(new Date(now.getTime()+refreshToken))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
                 .compact();
-  //      userVO.setId(user);
-//        userVO.setRefToken(refToken);
-//        userService.updateRefToken(userVO);
-        return acToken;
+        System.out.println("===refToken==="+refToken);
+        UserVO userVO=new UserVO();
+        userVO.setRefToken(refToken);
+        userVO.setId(user);
+        System.out.println(user);
+        userService.updateRefToken(userVO);
+        return refToken;
     }
 
     //jwt토큰에서 인증정보 조회

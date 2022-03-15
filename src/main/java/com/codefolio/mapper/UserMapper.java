@@ -31,4 +31,6 @@ public interface UserMapper {
     public UserVO getUserById(String id);
 
     public String secLogin(UserVO user);
+
+    void updateRefToken(UserVO user);
 }

@@ -47,6 +47,10 @@
         UPDATE user SET img=#{img} WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </update>
 
+    <update id="updateRefToken" parameterType="com.codefolio.vo.UserVO">
+        UPDATE user SET ref_token=#{refToken} WHERE id=#{id} ORDER BY id DESC LIMIT 1
+    </update>
+
     <!--user delete-->
     <delete id="deleteUser" parameterType="String">
         DELETE FROM codefolio.user WHERE id=#{id} ORDER BY name DESC LIMIT 1

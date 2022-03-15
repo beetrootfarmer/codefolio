@@ -32,6 +32,7 @@ public class UserVO{
     //소셜 로그인과 일반 사용자 구분
     private boolean reg;
 
+    private String refToken;
 
 
 //    @Override

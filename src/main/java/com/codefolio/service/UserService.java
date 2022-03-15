@@ -31,8 +31,10 @@ public interface UserService {
     void updateUserImg(UserVO user);
 
     String secLogin(UserVO user);
-//
-//    public UserVO findUserName(String name);
+
+    void updateRefToken(UserVO userVO);
+
+    //    public UserVO findUserName(String name);
 
 
 //    public Map<String, Object> findLoginPwd(UserVO user);
