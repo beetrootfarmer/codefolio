@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    public UserVO getUser(String userId);
+    public UserVO getUser(String userEmail);
 
     public List<UserVO> getAllUserData();
 

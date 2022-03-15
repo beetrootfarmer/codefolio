@@ -38,18 +38,19 @@ public class SecurityController {
         return ResponseEntity.ok(userDetail);
     }
 
+    //TODO : email로 login
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
         UserVO userDetail = userService.getUser(user.getEmail());
         System.out.println(userDetail);
-        if(userDetail.getEmail()==null)throw new IllegalArgumentException("가입되지 않은 ID 입니다.");
-        //TODO : password does not match
+//        if(userDetail.getEmail()==null)throw new IllegalArgumentException("가입되지 않은 ID 입니다.");
+        if(userDetail.getEmail()==null) new ErrorResponse(404,"NOT_FOUND","가입되지 않은 Email입니다.");
         if(!passwordEncoder.matches(user.getPwd(),userDetail.getPwd()))
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
 
         String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-        String getReftoken=userService.getUserById(user.getEmail()).getRefToken();
+        String getReftoken= userDetail.getRefToken();
         System.out.println("====getAccessToken==="+getActoken);
         System.out.println("====getRefreshToken==="+getReftoken);
 
@@ -60,15 +61,24 @@ public class SecurityController {
 //        case4: accesss token과 refresh token 모두가 유효한 경우 -> 다음 미들웨어로
 
         if (getActoken != null && jwtTokenProvider.validateToken(getActoken)) {
-            if(getReftoken!=null)
-                System.out.println("token 유효함");
+            System.out.println("accessToken 유효함");
+            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
+                System.out.println("ac/ref 유효함");
+            else
+                System.out.println("ref 만료");
         }
         else{
             System.out.println("accessToken 만료");
+            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
+                System.out.println("refToken 유효");
+            else System.out.println("ac/ref 만료");
         }
 
-        String newAcToken = jwtTokenProvider.createToken(userDetail.getId(),userDetail.getRole());
+        String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail(),userDetail.getRole());
         if(newAcToken==null) return new ErrorResponse(500,"Exception","토큰 발행 실패");
+        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail(),userDetail.getRole());
+        System.out.println("newAcToken : "+newAcToken+"\nnewRefToken : "+newRefToken);
+
 
 
         return newAcToken;

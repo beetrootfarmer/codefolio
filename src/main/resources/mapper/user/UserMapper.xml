@@ -24,7 +24,7 @@
     </select>
 
     <select id="getUser" parameterType="String" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
-        SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1
+        SELECT * FROM codefolio.user WHERE email=#{email} ORDER BY email DESC LIMIT 1
     </select>
 
 

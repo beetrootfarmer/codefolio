@@ -12,7 +12,7 @@ public interface UserMapper {
 
     public List<UserVO> getAllUserData();
 
-    public UserVO getUser(String userId);
+    public UserVO getUser(String userEmail);
 
     public int joinUser(UserVO user);
 

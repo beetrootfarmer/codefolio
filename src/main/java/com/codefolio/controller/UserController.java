@@ -1,5 +1,6 @@
 package com.codefolio.controller;
 
+import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.ErrorResponse;
 import com.codefolio.dto.UserResponse;
 import com.codefolio.service.FileService;
@@ -20,7 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-
+//"/user/**" filtering중
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -36,7 +37,7 @@ public class UserController {
     private FileService fileService;
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/")
     public String home(){
@@ -44,6 +45,7 @@ public class UserController {
     }
 
     //회원가입 email의 중복성 체크
+    //TODO: response json
     @PostMapping("/checkEmail")
     public ResponseEntity<String> checkEmail(@RequestBody UserVO user){
         int result= userService.checkEmail(user.getEmail());
@@ -52,6 +54,7 @@ public class UserController {
     }
 
     //회원가입 name의 중복성 체크
+    //TODO: response json
     @PostMapping("/checkId")
     public ResponseEntity<String> checkId(@RequestBody UserVO user){
         int result = userService.checkId(user.getId());
@@ -60,15 +63,22 @@ public class UserController {
     }
 
     //Get user(userName으로 유저 조회) => response Entity 사용
-    //TODO : jwtToken userId로 검증
     @GetMapping("/detail/{userId}")
     @ResponseBody
-    public ResponseEntity<Object> getUser(@PathVariable String userId){
+    public ResponseEntity<Object> getUser(@PathVariable String userId, HttpServletRequest request){
+        //TODO : jwt parsing 해서 userEmail 받아오기
+        UserVO getUserById = userService.getUserById(userId);
+        String getAcToken = jwtTokenProvider.resolveToken(request);
+        String userEmail = jwtTokenProvider.getUserPk(getAcToken);
+        UserVO getUserByEmail = userService.getUser(userEmail);
+        System.out.println("=========getUserByEmail=======\n"+getUserByEmail);
+        System.out.println("=========getUserById=======\n"+getUserById);
+
         try {
-            UserVO userDetail = userService.getUser(userId);
-            System.out.println("=========getUser=======\n"+userDetail);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new UserResponse(userDetail,200,"success",userDetail.getName()+"님의 정보 조회 완료"));
+            if(getUserByEmail.getId().equals(getUserById.getId()))
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(new UserResponse(getUserByEmail,200,"success",getUserByEmail.getName()+"님의 정보 조회 완료"));
+            else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404,"User invalid","유저 토큰과 정보가 맞지 않습니다. "));
         } catch (Exception re) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "NOT_FOUND","not found User"));
         }
@@ -88,7 +98,8 @@ public class UserController {
         user.setId(userId);
         userService.updateUser(user);
 //        UserResponse userDetail = getUser(userId);
-        return getUser(userId);
+//        return getUser(userId);
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     //user Img upload => user
@@ -96,7 +107,7 @@ public class UserController {
     public ResponseEntity<Object> insertUserImg(@PathVariable String userId, HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
         UserVO user = userService.getUser(userId);
         int userSeq = user.getUserSeq();
-        int fileSeq = fileService.getFileSeq();
+//        int fileSeq = fileService.getFileSeq();
         FileUtils fileUtils = new FileUtils();
         List<FileVO> fileList = fileUtils.parseFileInfo(userSeq,"user", request,mhsr);
         if(CollectionUtils.isEmpty(fileList) == false) {
@@ -106,7 +117,7 @@ public class UserController {
             userService.updateUserImg(user);
             System.out.println("saveFile()탐 + fileList===" + fileList);
         }else ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400,"BAD_REQUEST","file 저장 실패"));
-        return getUser(user.getId());
+        return ResponseEntity.ok(userService.getUserById(user.getId()));
     }
 
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
@@ -130,6 +141,10 @@ public class UserController {
 
         return ResponseEntity.ok(mailTO);
     }
+
+//    public MailTO sendToInquiry(@RequestBody String user){
+//        //TODO : 고객 문의 메일로
+//    }
 
 
 }

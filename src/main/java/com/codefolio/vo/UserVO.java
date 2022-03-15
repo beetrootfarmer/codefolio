@@ -1,11 +1,13 @@
 package com.codefolio.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserVO{
@@ -33,6 +35,14 @@ public class UserVO{
     private boolean reg;
 
     private String refToken;
+
+    private String provider;
+    private String providerId;
+
+//    @Builder
+//    UserVO(String id){
+//        this.id=id;
+//    }
 
 
 //    @Override
