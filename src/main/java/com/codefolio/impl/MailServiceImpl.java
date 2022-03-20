@@ -1,11 +1,13 @@
 package com.codefolio.impl;
 
 
+import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.MailTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -16,6 +18,7 @@ public class MailServiceImpl implements MailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Async
     @Override
     public void checkEmail(MailTO mail) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -23,7 +26,7 @@ public class MailServiceImpl implements MailService {
 
         String randomString = getString();
         String title = "codefolio 에서 발송한 이메일 입니다.";
-        String body = mail.getUserName()+"님의 인증 메일입니다."+"인증번호 : "+randomString;
+        String body = "codefolio에서 발송한 인증 메일입니다."+"인증번호 : "+randomString;
 
         mail.setMessage(body);
         mail.setTitle(title);
@@ -37,7 +40,27 @@ public class MailServiceImpl implements MailService {
         mailSender.send(message);
     }
 
-//    public void findPwd(MailTO mail){}
+
+    @Override
+    @Async
+    public void changePwd(MailTO mail, String acToken){
+        SimpleMailMessage message = new SimpleMailMessage();
+
+
+        String title = "비밀번호 변경 이메일입니다.";
+        String body = mail.getUserName()+"님의 비밀번호를 변경\n "+"<button type=\"button\" class=\"navyBtn\" onClick=\"codefolio.com/"+acToken+"'\">전송</button>";
+
+        mail.setMessage(body);
+        mail.setTitle(title);
+        mail.setrString(acToken);
+
+        message.setTo(mail.getAddress());
+//        message.setFrom(""); from 값을 설정하지 않으면 application.yml의 username값이 설정됩니다.
+        message.setSubject(mail.getTitle());
+        message.setText(mail.getMessage());
+
+        mailSender.send(message);
+    }
 
 
     public String getString(){

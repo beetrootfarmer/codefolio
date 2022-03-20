@@ -27,17 +27,15 @@ public class JwtTokenProvider {
     private final UserService userService;
 
 
-
     //객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
     protected void init(){
         secretKey= Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
-
     //login시 acToken과 refToken 갱신이 필요하다.
-    public String createToken(String userEmail, String role){
+    public String createToken(String userEmail){
         Claims claims = Jwts.claims().setSubject(userEmail);   //Jwt payload에 저장되는 정보 단위
-        claims.put("role",role);  //권한설정 key/value 쌍으로 저장된다.
+//        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
@@ -49,7 +47,7 @@ public class JwtTokenProvider {
         return acToken;
     }
 
-    public String createRefToken(String userEmail, String role){
+    public String createRefToken(String userEmail){
         Claims claims = Jwts.claims().setSubject(userEmail);   //Jwt payload에 저장되는 정보 단위
         Date now = new Date();
         String refToken = Jwts.builder()
@@ -64,6 +62,20 @@ public class JwtTokenProvider {
         userVO.setEmail(userEmail);
         userService.updateRefToken(userVO);
         return refToken;
+    }
+
+    public String createEmailToken(String email) {
+        Claims claims = Jwts.claims().setSubject(email);   //Jwt payload에 저장되는 정보 단위
+//        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
+        Date now = new Date();
+        String acToken = Jwts.builder()
+                .setClaims(claims)  //정보 저장
+                .setIssuedAt(now)   //토큰 발행시간 정보
+                .setExpiration(new Date(now.getTime()+JwtProperties.EMAIL_EXPIRATION_TIME))  //setExpire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .compact();
+
+        return acToken;
     }
 
     //jwt토큰에서 인증정보 조회
@@ -81,7 +93,7 @@ public class JwtTokenProvider {
 
     //Request의 Header에서 token값을 가져옵니다. "X-AUTH-TOKEN":"TOKEN값" =>refresh token은 DB에 저장
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("AccessToken");
+        return request.getHeader(JwtProperties.ACCESS_HEADER_STRING);
     }
 
     //토큰의 유효성 + 만료 일자 확인
@@ -93,4 +105,6 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+
 }

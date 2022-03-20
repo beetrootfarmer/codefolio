@@ -31,9 +31,6 @@ public class UserVO{
     private String img;
     private String introFile;
 
-    //소셜 로그인과 일반 사용자 구분
-    private boolean reg;
-
     private String refToken;
 
     private String provider;
