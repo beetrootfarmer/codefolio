@@ -35,7 +35,6 @@ public class JwtTokenProvider {
     //login시 acToken과 refToken 갱신이 필요하다.
     public String createToken(String userEmail){
         Claims claims = Jwts.claims().setSubject(userEmail);   //Jwt payload에 저장되는 정보 단위
-//        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
@@ -54,9 +53,8 @@ public class JwtTokenProvider {
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
                 .setExpiration(new Date(now.getTime()+JwtProperties.REF_EXPIRATION_TIME))  //setExpire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret값 세팅
                 .compact();
-        System.out.println("===refToken==="+refToken);
         UserVO userVO=new UserVO();
         userVO.setRefToken(refToken);
         userVO.setEmail(userEmail);
@@ -80,9 +78,7 @@ public class JwtTokenProvider {
 
     //jwt토큰에서 인증정보 조회
     public Authentication getAuthentication(String token){
-        System.out.println("getAuthentication : "+token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-        System.out.println("getAuthentication User : "+userDetails);
         return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
     }
 

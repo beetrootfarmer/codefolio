@@ -31,7 +31,7 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
             INSERT INTO codefolio.user SET
-            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),reg_type="normal";
+            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW();
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->

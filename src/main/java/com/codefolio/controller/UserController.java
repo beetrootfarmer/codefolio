@@ -40,8 +40,12 @@ public class UserController {
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
+        log.info("====join===");
         System.out.println(user);
         user.setRole("ROLE_USER");
+        //TODO : saltkey 설정
+//        String salt = //salt key 설정;
+//        String userPwd = user.getPwd()+salt;
         String encUserPwd = passwordEncoder.encode(user.getPwd());
         System.out.println("encodig PWD : "+encUserPwd);
         user.setPwd(encUserPwd);   //encoding된 password 넣기
@@ -54,17 +58,17 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
+        log.info("===login===");
         UserVO userDetail = userService.getUser(user.getEmail());
-        System.out.println(userDetail);
-//        if(userDetail.getEmail()==null)throw new IllegalArgumentException("가입되지 않은 ID 입니다.");
         if(userDetail.getEmail()==null) new ErrorResponse(404,"NOT_FOUND","가입되지 않은 Email입니다.");
-        if(!passwordEncoder.matches(user.getPwd(),userDetail.getPwd()))
+        if(!passwordEncoder.matches(user.getPwd(),userDetail.getPwd())){
+            log.error("[ERROR] Wrong Password");
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+
 
         String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
         String getReftoken= userDetail.getRefToken();
-        System.out.println("====getAccessToken==="+getActoken);
-        System.out.println("====getRefreshToken==="+getReftoken);
 
         //유효한 토큰인지 확인합니다.
 //        case1: access token과 refresh token 모두가 만료된 경우 -> 에러 발생
@@ -89,9 +93,6 @@ public class UserController {
         String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
         if(newAcToken==null) return new ErrorResponse(500,"Exception","토큰 발행 실패");
         String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
-        System.out.println("newAcToken : "+newAcToken+"\nnewRefToken : "+newRefToken);
-
-
 
         return newAcToken;
     }
@@ -126,13 +127,10 @@ public class UserController {
     @PostMapping("/mailConfirm")
     @ResponseBody
     public ResponseEntity<String> confirmMail(@RequestBody UserVO user) {
-
         String userEmail=user.getEmail();
         String userId = user.getId();
-
         MailTO mailTO = new MailTO(userId,userEmail);
         mailService.checkEmail(mailTO);
-
         return ResponseEntity.ok(mailTO.getRString());
     }
 

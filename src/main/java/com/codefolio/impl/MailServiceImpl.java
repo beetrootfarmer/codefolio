@@ -1,7 +1,6 @@
 package com.codefolio.impl;
 
 
-import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.MailTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,6 @@ public class MailServiceImpl implements MailService {
     @Async
     public void changePwd(MailTO mail, String acToken){
         SimpleMailMessage message = new SimpleMailMessage();
-
 
         String title = "비밀번호 변경 이메일입니다.";
         String body = mail.getUserName()+"님의 비밀번호를 변경\n "+"<button type=\"button\" class=\"navyBtn\" onClick=\"codefolio.com/"+acToken+"'\">전송</button>";

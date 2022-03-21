@@ -48,7 +48,6 @@ public class SecurityController {
             user.setId(userId);
             user.setImg(fileList.get(0).getFileDownloadUri());
             userService.updateUserImg(user);
-            System.out.println("saveFile()탐 + fileList===" + fileList);
         }else ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400,"BAD_REQUEST","file 저장 실패"));
         return ResponseEntity.ok(userService.getUserById(user.getId()));
     }
@@ -80,8 +79,6 @@ public class SecurityController {
         String getAcToken = jwtTokenProvider.resolveToken(request);
         String userEmail = jwtTokenProvider.getUserPk(getAcToken);
         UserVO getUserByEmail = userService.getUser(userEmail);
-        System.out.println("=========getUserByEmail=======\n"+getUserByEmail);
-        System.out.println("=========getUserById=======\n"+getUserById);
 
         try {
             if(getUserByEmail.getId().equals(getUserById.getId()))
