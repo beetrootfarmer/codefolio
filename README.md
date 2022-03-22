@@ -8,7 +8,7 @@ CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프�
 <p align = "center" size="0.7em">본 레포지토리는 CODEFOLIO의 백엔드 API 코드를 관리합니다</p>
 
 <br><br>
-  <img src="https://user-images.githubusercontent.com/87971876/159397529-1847f746-e42b-46ed-b510-383f13f33f81.mov" width=80% height =80% align = "center"/>
+  <img src="https://user-images.githubusercontent.com/87971876/159397974-5feba1f6-e16e-404e-9b90-f1e1b1b9bcf3.gif" width=80% height =80% align = "center"/>
 
 
 ## ⏲️ 개발기간 (약 6주차 진행중(3월 20일))
