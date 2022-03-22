@@ -24,7 +24,8 @@ CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프�
 　<br/>
 
 ## 📍 코드폴리오 API 명세서
-<img src="https://user-images.githubusercontent.com/87971876/159411196-30f7a9f6-051a-4be6-8596-2deff7a777bd.png" width=80% height =80%>&nbsp;
+<img src="https://user-images.githubusercontent.com/87971876/159411196-30f7a9f6-051a-4be6-8596-2deff7a777bd.png" width=80% height =80%>
+<br>
 <a href="https://ember-warbler-375.notion.site/Codefolio-API-e1951fa6c59a40fc83c64adb03235aac"> api 명세서 notion link </a>
 
 
