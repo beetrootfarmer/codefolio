@@ -3,10 +3,7 @@
 
 
 <p align = "center">
-CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프로젝트를 소개하고 포트폴리오로 사용하는 서비스입니다 <br>
-
-본 레포지토리는 CODEFOLIO의 백엔드 API 코드를 관리합니다
-
+CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프로젝트를 소개하고 포트폴리오로 사용하는 서비스입니다 <br>본 레포지토리는 CODEFOLIO의 백엔드 API 코드를 관리합니다<br>
 <br><br>
   <img src="https://user-images.githubusercontent.com/87971876/159402156-1f06d96b-bf81-4221-ac41-5fb99786d8f1.gif" width=80% height =80%/>
 </p>
@@ -21,22 +18,23 @@ CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프�
 
 <br/>
 
-## 🎯 사용 스택
-<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">&nbsp;
-<img src="https://img.shields.io/badge/html-E34F26?style=for-the-badge&logo=html5&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jQuery&logoColor=black">&nbsp;
-<img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=Bootstrap&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/mybatis-990000?style=for-the-badge&logo=mybatis&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">&nbsp;
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">&nbsp;
+## 🛠 사용 스택
+<img src="https://user-images.githubusercontent.com/87971876/159406723-7e1816c1-d4fd-4051-8550-a577eefa47ee.png" width=80% height =80% >&nbsp;
 
 　<br/>
 
-## 📌 주요 구현 내용
+## 📍 코드폴리오 API 명세서
+<img src="https://user-images.githubusercontent.com/87971876/159408565-16770800-0c8f-4d3c-ad54-c3f003d3af65.png" width=80% height =80%>&nbsp;
+<a href="https://ember-warbler-375.notion.site/Codefolio-API-e1951fa6c59a40fc83c64adb03235aac"> api 명세서 notion link </a>
+
+
+　<br/>
+## 🦈 코드폴리오 DB 설계
+<img src="https://user-images.githubusercontent.com/87971876/159409853-1bdaf16d-3cd7-43ae-a5fe-6522b9a3b5b6.png" width=80% height =80%>&nbsp;
+
+　<br/>
+
+<!-- ## 📌 주요 구현 내용
 
 1. 카카오 맵 API 활용하여 지도 구현
 2. 클러스터러 활용한 데이터 시각화 (카카오맵)
@@ -51,15 +49,17 @@ CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프�
 10. 예약 기능
 11. 도메인 적용하여 AWS EC2 서버에 배포
 
+<br/> -->
+
+
+## ‎‍💻 협업 기록
+
++ 아래 주소를 클릭하시면 프로젝트 관련 자료를 볼 수 있습니다 :+1: <br>
+<a href="https://ember-warbler-375.notion.site/1faa4b79572148b8bdc606895707e476"> PawMap Project </a>
+<br/>
+## ‎‍💻 개인 기록
+
++ 아래 주소를 클릭하시면 백엔드 개별 회의록과 개발 기록을 볼 수 있습니다 :+1: <br>
+<a href="https://hyejisfarm.notion.site/CodeFolio-b14474fa0ba94274a91961d2e2de4abf"> CODEFOLIO Project </a>
 <br/>
 
-
-## ‎‍💻협업 진행했던 기록들
-
-+ 하기 주소를 클릭하시면 프로젝트 관련 기록을 볼 수 있습니다 :+1: <br>
-<a href="https://github.com/JAESKAAA/PawMap/projects/1"> PawMap Project </a>
-<br/>
-
-## ⭐️리팩토링 기록
-+ 혼재되어 있던 view 파일들을 카테고리별로 폴더화 하는 작업 진행 (PawMap v1.0 _ 2021.12.18)
-<br/>
