@@ -52,12 +52,13 @@ CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프�
 <br/> -->
 
 
-## ‎‍💻 협업 기록
+# ‎‍💻 협업 기록
 
 + 아래 주소를 클릭하시면 프로젝트 관련 자료를 볼 수 있습니다 :+1: <br>
 <a href="https://ember-warbler-375.notion.site/1faa4b79572148b8bdc606895707e476"> PawMap Project </a>
 <br/>
-## ‎‍💻 개인 기록
+
+# ‎‍💻 개인 기록
 
 + 아래 주소를 클릭하시면 백엔드 개별 회의록과 개발 기록을 볼 수 있습니다 :+1: <br>
 <a href="https://hyejisfarm.notion.site/CodeFolio-b14474fa0ba94274a91961d2e2de4abf"> CODEFOLIO Project </a>
