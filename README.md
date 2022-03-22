@@ -3,12 +3,13 @@
 
 
 <p align = "center">
-CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프로젝트를 소개하고 포트폴리오로 사용하는 서비스입니다 <br></p>
+CODEFOLIO는 웹/앱 서비스를 만드는 개발자와 디자이너들의 프로젝트를 소개하고 포트폴리오로 사용하는 서비스입니다 <br>
 
-<p align = "center" size="0.7em">본 레포지토리는 CODEFOLIO의 백엔드 API 코드를 관리합니다</p>
+본 레포지토리는 CODEFOLIO의 백엔드 API 코드를 관리합니다
 
 <br><br>
-  <img src="https://user-images.githubusercontent.com/87971876/159397974-5feba1f6-e16e-404e-9b90-f1e1b1b9bcf3.gif" width=80% height =80% align = "center"/>
+  <img src="https://user-images.githubusercontent.com/87971876/159402156-1f06d96b-bf81-4221-ac41-5fb99786d8f1.gif" width=80% height =80%/>
+</p>
 
 
 ## ⏲️ 개발기간 (약 6주차 진행중(3월 20일))
