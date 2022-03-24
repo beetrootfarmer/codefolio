@@ -35,4 +35,6 @@ public interface UserMapper {
     void updateRefToken(UserVO user);
 
     public UserVO getUserByEmail(String email);
+
+    String getSaltKey(String email);
 }

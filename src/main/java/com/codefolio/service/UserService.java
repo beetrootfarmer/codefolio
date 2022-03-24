@@ -36,12 +36,7 @@ public interface UserService {
 
     public UserVO getUserByEmail(String email);
 
-    //    public UserVO findUserName(String name);
+    public String getSecString();
 
-
-//    public Map<String, Object> findLoginPwd(UserVO user);
-
-//    @Transactional
-//    public Map<String, Object> checkUserEmailDup(String userId);
-
+    public String getSaltKey(String email);
 }

@@ -13,5 +13,4 @@ public class ErrorResponse{
     private int status;
     private String errorCode;
     private String messege;
-
 }

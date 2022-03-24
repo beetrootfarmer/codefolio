@@ -1,7 +1,10 @@
 package com.codefolio.controller;
 
+import com.codefolio.config.exception.NotCreateException;
+import com.codefolio.config.exception.NotFoundException;
 import com.codefolio.config.jwt.JwtTokenProvider;
-import com.codefolio.dto.ErrorResponse;
+import com.codefolio.dto.JsonResponse;
+import com.codefolio.dto.response.GetUserResponse;
 import com.codefolio.service.MailService;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.MailTO;
@@ -46,26 +49,26 @@ public class UserController {
         //TODO : saltkey 설정
 //        String salt = //salt key 설정;
 //        String userPwd = user.getPwd()+salt;
-        String encUserPwd = passwordEncoder.encode(user.getPwd());
-        System.out.println("encodig PWD : "+encUserPwd);
+        String saltkey = userService.getSecString();
+        String encUserPwd = passwordEncoder.encode(user.getPwd()+saltkey);
+        log.info("saltkey : "+saltkey+"pwd : "+encUserPwd);
+        user.setSaltKey(saltkey);
         user.setPwd(encUserPwd);   //encoding된 password 넣기
         Integer userSeq = userService.joinUser(user);
         UserVO userDetail = userService.getUser(user.getEmail());
-        return ResponseEntity.ok(userDetail);
+        return ResponseEntity.ok(new JsonResponse(userDetail,200,"joinUser"));
     }
 
-    //TODO : email로 login
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
         log.info("===login===");
         UserVO userDetail = userService.getUser(user.getEmail());
-        if(userDetail.getEmail()==null) new ErrorResponse(404,"NOT_FOUND","가입되지 않은 Email입니다.");
-        if(!passwordEncoder.matches(user.getPwd(),userDetail.getPwd())){
+        if(userDetail.getEmail()==null) throw new NotFoundException("unsigned email");
+        if(!passwordEncoder.matches(user.getPwd()+userService.getSaltKey(user.getEmail()),userDetail.getPwd())){
             log.error("[ERROR] Wrong Password");
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new NotFoundException("password not match");
         }
-
 
         String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
         String getReftoken= userDetail.getRefToken();
@@ -91,11 +94,12 @@ public class UserController {
         }
 
         String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
-        if(newAcToken==null) return new ErrorResponse(500,"Exception","토큰 발행 실패");
+        if(newAcToken==null) return new NotCreateException("Unable to create token.");
         String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
 
         return newAcToken;
     }
+
 
     //회원가입 email의 중복성 체크
     //TODO: response json
@@ -122,6 +126,25 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
+    @GetMapping("/{userId}")
+    @ResponseBody
+    public ResponseEntity<Object> getUser(@PathVariable String userId) {
+        try{
+            UserVO user = userService.getUserById(userId);
+            GetUserResponse userDetail = GetUserResponse.builder()
+                    .img(user.getImg())
+                    .gitId(user.getGitId())
+                    .name(user.getName())
+                    .stack(user.getStack())
+                    .introFile(user.getIntroFile())
+                    .job(user.getJob()).build();
+            return ResponseEntity.ok(new JsonResponse(userDetail,200,"getUser"));
+        }catch (Exception s){
+            throw new NotFoundException("NotFoundUser");
+        }
+
+    }
+
     //email 인증 => userEmail 입력
     //email 인증 후 문자열 비교는 front에
     @PostMapping("/mailConfirm")
@@ -141,8 +164,7 @@ public class UserController {
         UserVO userDetail = userService.getUser(user.getEmail());
         System.out.println(user.getEmail());
         System.out.println(userDetail.getEmail());
-        if(userDetail.getEmail().isEmpty())
-            return new ErrorResponse(404, "NOT_FOUND","해당 유저를 찾을 수 없습니다.");
+        if(userDetail.getEmail().isEmpty()) throw new NotFoundException("Email not found");
         MailTO mailTO = new MailTO(userDetail.getId(),userDetail.getEmail());
         //이메일 토큰 만료 시간 5분
         String acToken = jwtTokenProvider.createEmailToken(userDetail.getEmail());

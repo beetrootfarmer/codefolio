@@ -1,14 +1,18 @@
 package com.codefolio.controller;
 
+import com.codefolio.config.exception.GlobalException;
+import com.codefolio.config.exception.NotCreateException;
+import com.codefolio.config.exception.NotFoundException;
 import com.codefolio.config.jwt.JwtTokenProvider;
-import com.codefolio.dto.ErrorResponse;
-import com.codefolio.dto.UserResponse;
+
+import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.UserVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -20,6 +24,7 @@ import java.util.List;
 
 //"/user/**" filtering중
 //Security 인증이 필요한 메서드 모음
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
@@ -38,9 +43,9 @@ public class SecurityController {
     //user Img upload => user
     @PostMapping("/{userId}/upload")
     public ResponseEntity<Object> insertUserImg(@PathVariable String userId, HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+        log.info("insertUserImg");
         UserVO user = userService.getUserById(userId);
         int userSeq = user.getUserSeq();
-//        int fileSeq = fileService.getFileSeq();
         FileUtils fileUtils = new FileUtils();
         List<FileVO> fileList = fileUtils.parseFileInfo(userSeq,"user", request,mhsr);
         if(CollectionUtils.isEmpty(fileList) == false) {
@@ -48,8 +53,9 @@ public class SecurityController {
             user.setId(userId);
             user.setImg(fileList.get(0).getFileDownloadUri());
             userService.updateUserImg(user);
-        }else ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400,"BAD_REQUEST","file 저장 실패"));
-        return ResponseEntity.ok(userService.getUserById(user.getId()));
+        }else throw new NotCreateException("Unable create file");
+        UserVO userDetail = userService.getUserById(userId);
+        return ResponseEntity.ok(new JsonResponse(userDetail,200,"insertUserImg"));
     }
 
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
@@ -63,6 +69,7 @@ public class SecurityController {
     //Update user => 유저 정보를 jwt로 받아와 찾을 수 있게 만들자
     @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable String userId,@RequestBody UserVO user){
+        log.info("updateUser");
         user.setId(userId);
         userService.updateUser(user);
 //        UserResponse userDetail = getUser(userId);
@@ -73,20 +80,20 @@ public class SecurityController {
     //Get user(userName으로 유저 조회) => response Entity 사용
     @GetMapping("/{userId}")
     @ResponseBody
-    public ResponseEntity<Object> getUser(@PathVariable String userId, HttpServletRequest request){
+    public ResponseEntity<Object> getUserProfile(@PathVariable String userId, HttpServletRequest request){
+        log.info("===getUser===");
         //TODO : jwt parsing 해서 userEmail 받아오기
-        UserVO getUserById = userService.getUserById(userId);
         String getAcToken = jwtTokenProvider.resolveToken(request);
         String userEmail = jwtTokenProvider.getUserPk(getAcToken);
         UserVO getUserByEmail = userService.getUser(userEmail);
 
         try {
-            if(getUserByEmail.getId().equals(getUserById.getId()))
+            if(getUserByEmail.getId().equals(userId))
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(new UserResponse(getUserByEmail,200,"success",getUserByEmail.getName()+"님의 정보 조회 완료"));
-            else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404,"User invalid","유저 토큰과 정보가 맞지 않습니다. "));
+                        .body(new JsonResponse(getUserByEmail,200,"getUserProfile"));
+            else throw new NotFoundException("Invalid user id");
         } catch (Exception re) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "NOT_FOUND","not found User"));
+            throw new GlobalException("getUserProfile");
         }
     }
 

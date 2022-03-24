@@ -33,6 +33,8 @@ public class UserVO{
 
     private String refToken;
 
+    private String saltKey;
+
     private String provider;
     private String providerId;
 
