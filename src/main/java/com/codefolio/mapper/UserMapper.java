@@ -12,8 +12,6 @@ public interface UserMapper {
 
     public List<UserVO> getAllUserData();
 
-    public UserVO getUser(String userEmail);
-
     public int joinUser(UserVO user);
 
     public void updateUser(UserVO user);

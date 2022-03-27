@@ -9,8 +9,6 @@ import java.util.Map;
 
 public interface UserService {
 
-    public UserVO getUser(String userEmail);
-
     public List<UserVO> getAllUserData();
 
     public int joinUser(UserVO user);

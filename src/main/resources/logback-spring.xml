@@ -1,15 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 30초마다 설정 파일의 변경을 확인 하여 변경시 갱신 -->
 <configuration>
-    <appender name="STDOUT"
-              class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-3level %logger{5} -
-                %msg %n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
         </encoder>
     </appender>
 
     <logger name="jdbc" level="OFF" />
 
-    <logger name="jdbc.sqlonly" level="DEBUG" />
+    <logger name="jdbc.sqlonly" level="INFO" />
     <logger name="jdbc.sqltiming" level="OFF" />
     <logger name="jdbc.audit" level="OFF" />
     <logger name="jdbc.resultset" level="OFF" />

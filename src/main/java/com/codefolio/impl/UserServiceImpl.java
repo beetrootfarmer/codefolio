@@ -33,11 +33,6 @@ public class UserServiceImpl implements UserService {
     public int joinUser(UserVO user) {return userMapper.joinUser(user);}
 
     @Override
-    public UserVO getUser(String userEmail){
-        return userMapper.getUser(userEmail);
-    }
-
-    @Override
     public List<UserVO> getAllUserData() {
         return userMapper.getAllUserData();
     }

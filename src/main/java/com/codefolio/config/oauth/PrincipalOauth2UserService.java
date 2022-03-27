@@ -66,7 +66,7 @@ public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2Authentic
 	String role = "ROLE_USER";
 
 	// 일치하는 이름이 없다면 회원가입 진행
-	UserVO user = userService.getUser(name);
+	UserVO user = userService.getUserByEmail(name);
 	
 	// UserVO 에 위 정보를 넣을 Builder를 만들어준다
 	if(user == null) {

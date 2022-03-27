@@ -4,7 +4,6 @@ import com.codefolio.config.exception.GlobalException;
 import com.codefolio.config.exception.NotCreateException;
 import com.codefolio.config.exception.NotFoundException;
 import com.codefolio.config.jwt.JwtTokenProvider;
-
 import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.UserService;
@@ -15,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -32,6 +32,7 @@ public class SecurityController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final FileService fileService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/")
     public String mainhome(){
@@ -85,7 +86,7 @@ public class SecurityController {
         //TODO : jwt parsing 해서 userEmail 받아오기
         String getAcToken = jwtTokenProvider.resolveToken(request);
         String userEmail = jwtTokenProvider.getUserPk(getAcToken);
-        UserVO getUserByEmail = userService.getUser(userEmail);
+        UserVO getUserByEmail = userService.getUserByEmail(userEmail);
 
         try {
             if(getUserByEmail.getId().equals(userId))
@@ -94,6 +95,27 @@ public class SecurityController {
             else throw new NotFoundException("Invalid user id");
         } catch (Exception re) {
             throw new GlobalException("getUserProfile");
+        }
+    }
+
+    @PostMapping("/changePwd")
+    @ResponseBody
+    public ResponseEntity<Object> changePwd(@RequestBody UserVO user,HttpServletRequest request){
+        String getAcToken = jwtTokenProvider.resolveToken(request);
+        String userEmail = jwtTokenProvider.getUserPk(getAcToken);
+        System.out.println("userEmail================="+userEmail);
+        try{
+            if(userEmail==null)throw new NotFoundException("Unable found User email");
+            UserVO getUser = userService.getUserByEmail(userEmail);
+            String saltkey = userService.getSecString();
+            String encUserPwd = passwordEncoder.encode(user.getPwd()+saltkey);
+            getUser.setSaltKey(saltkey);
+            getUser.setPwd(encUserPwd);   //encoding된 password 넣기
+            userService.updateUser(getUser);
+            UserVO userDetail = userService.getUserByEmail(userEmail);
+            return ResponseEntity.ok(new JsonResponse(userDetail,200,"changePwd"));
+        }catch (Exception e){
+            throw new NotCreateException("not create user password");
         }
     }
 

@@ -23,7 +23,7 @@
         SELECT * FROM codefolio.user ORDER BY user_seq DESC;
     </select>
 
-    <select id="getUser" parameterType="String" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
+    <select id="getUserByEmail" parameterType="String" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
         SELECT * FROM codefolio.user WHERE email=#{email} ORDER BY email DESC LIMIT 1
     </select>
 
@@ -35,7 +35,7 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
             INSERT INTO codefolio.user SET
-            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),salt_key=#{saltKey};
+            id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),role="ROLE_USER",salt_key=#{saltKey};
     </insert>
 
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
@@ -73,10 +73,7 @@
     <select id="getUserById" parameterType="String" resultType="com.codefolio.vo.UserVO">
         SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </select>
-    
-    <select id="getUserByEmail" parameterType="String" resultType="com.codefolio.vo.UserVO">
-        SELECT * FROM codefolio.user WHERE email=#{email} ORDER BY email DESC LIMIT 1;
-    </select>
+
 
     <!--유저 로그인 => security 적용 X-->
     <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">

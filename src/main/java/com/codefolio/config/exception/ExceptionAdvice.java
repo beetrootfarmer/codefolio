@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionAdvice {
 
     //404
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> NotFoundException(NotFoundException e){
 //        String msg = "찾을 수 없음";

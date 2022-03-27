@@ -64,7 +64,7 @@ public class JwtTokenProvider {
 
     public String createEmailToken(String email) {
         Claims claims = Jwts.claims().setSubject(email);   //Jwt payload에 저장되는 정보 단위
-//        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
+        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
