@@ -8,6 +8,7 @@ import com.codefolio.dto.response.GetUserResponse;
 import com.codefolio.service.MailService;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.MailTO;
+import com.codefolio.vo.MailVO;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -77,7 +81,13 @@ public class UserController {
         if (getActoken != null && jwtTokenProvider.validateToken(getActoken)) {
             System.out.println("accessToken 유효함");
             if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
-                System.out.println("ac/ref 유효함");
+            {
+                log.info("ac/ref 유효함");
+                String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
+                if(newAcToken==null) return new NotCreateException("Unable to create token.");
+                String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
+                return newAcToken;
+            }
             else
                 System.out.println("ref 만료");
         }
@@ -88,11 +98,6 @@ public class UserController {
             else System.out.println("ac/ref 만료");
         }
 
-        String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
-        if(newAcToken==null) return new NotCreateException("Unable to create token.");
-        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
-
-        return newAcToken;
     }
 
 
@@ -144,35 +149,54 @@ public class UserController {
     //email 인증 후 문자열 비교는 front에
     @PostMapping("/mailConfirm")
     @ResponseBody
-    public ResponseEntity<String> confirmMail(@RequestBody UserVO user) {
+    public ResponseEntity<String> confirmMail(@RequestBody UserVO user)throws MessagingException, IOException {
         String userEmail=user.getEmail();
         String userId = user.getId();
+        String seckey = userService.getSecString();
+
         MailTO mailTO = new MailTO(userId,userEmail);
-        mailService.checkEmail(mailTO);
+        mailTO.setrString(seckey);
+
+        HashMap<String, String> emailValues = new HashMap<>();
+        emailValues.put("id", user.getId());
+        emailValues.put("seckey",seckey);
+        mailService.send("codefolio에서 전송한 이메일입니다. ", user.getEmail(), "emailConfirm", emailValues);
+
         return ResponseEntity.ok(mailTO.getRString());
     }
 
 
     @PostMapping("/mailToPwd")
     @ResponseBody
-    public Object mailToPwd(@RequestBody UserVO user){
+    public Object mailToPwd(@RequestBody UserVO user)throws MessagingException, IOException{
         UserVO userDetail = userService.getUserByEmail(user.getEmail());
-        System.out.println(user.getEmail()+userDetail.getEmail());
-        if(!user.getEmail().equals(userDetail.getEmail())) throw new NotFoundException("Email not found");
-        MailTO mailTO = new MailTO(userDetail.getId(),userDetail.getEmail());
+
+        if (!user.getEmail().equals(userDetail.getEmail())) throw new NotFoundException("Email not found");
+
+        MailTO mailTO = new MailTO(userDetail.getId(), userDetail.getEmail());
         //이메일 토큰 만료 시간 5분
         String acToken = jwtTokenProvider.createEmailToken(userDetail.getEmail());
-        mailService.changePwd(mailTO, acToken);
+        HashMap<String, String> emailValues = new HashMap<>();
+        emailValues.put("id", userDetail.getId());
+        emailValues.put("accesskey", acToken);
+        mailService.send("codefolio 비밀번호 찾기 메일입니다.", user.getEmail(), "changePwd", emailValues);
+//        mailService.changePwd(mailTO, acToken);
         mailTO.setrString(acToken);
 
-        return ResponseEntity.ok(mailTO.getRString());
+        return ResponseEntity.ok(mailTO);
     }
 
 
-//    @PostMapping()
-//    public MailTO sendInquiry(@RequestBody UserVO user, ){
-//        //TODO : 고객 문의 메일로
-//    }
+    @PostMapping("/sendInquiry")
+    public Object sendInquiry(@RequestBody MailVO mail)throws MessagingException, IOException{
+        //TODO : 고객 문의 메일로
+        HashMap<String, String> emailValues = new HashMap<>();
+        emailValues.put("email", mail.getEmail());
+        emailValues.put("message", mail.getMessage());
+        mailService.send(mail.getEmail()+"님의 문의 메일입니다.", "codefolio19@gmail.com", "sendInq", emailValues);
+
+        return ResponseEntity.ok(mail);
+    }
 
 
 }
