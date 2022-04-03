@@ -56,7 +56,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     @Override
     public String getUsername() {
         // 계정이 잠겼을 때 사용하는 메소드
-        return user.getEmail();
+        return user.getUUID();
     }
 
     @Override

@@ -1,15 +1,19 @@
 package com.codefolio.impl;
 
 
+import com.codefolio.config.exception.NotFoundException;
+import com.codefolio.config.exception.TestException;
 import com.codefolio.mapper.UserMapper;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +61,13 @@ public class UserServiceImpl implements UserService {
     public UserVO getUserById(String id){return userMapper.getUserById(id);}
 
     @Override
+    public String getUUIDById(String userId){return userMapper.getUUIDById(userId);}
+
+    @Override
+    public UserVO getUserByUUID(String userUUID){return userMapper.getUserByUUID(userUUID);}
+
+
+    @Override
     public String secLogin(UserVO user){return userMapper.secLogin(user);}
 
     @Override
@@ -70,10 +81,16 @@ public class UserServiceImpl implements UserService {
     public void updateUserImg(UserVO user){userMapper.updateUserImg(user);};
 
     @Override
-    public void updateUserId(String userId, String getUserId){userMapper.updateUserId(userId,getUserId);}
+    public void updatePwd(UserVO getUser){userMapper.updatePwd(getUser);}
+
 
     @Override
-    public UserVO getUserByEmail(String email){return userMapper.getUserByEmail(email);}
+    public void updateUserId(String userUUID, String getUserId){userMapper.updateUserId(userUUID,getUserId);}
+
+    @Override
+    public UserVO getUserByEmail(String email){
+            return userMapper.getUserByEmail(email);
+    }
 
     @Override
     public String getSaltKey(String email){return userMapper.getSaltKey(email);}

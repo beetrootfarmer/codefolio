@@ -12,6 +12,7 @@ import com.codefolio.vo.MailTO;
 import com.codefolio.vo.MailVO;
 import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import javax.mail.MessagingException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,7 +79,7 @@ public class UserController {
 
     @PostMapping("/join")
     @ResponseBody
-    public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
+    public ResponseEntity<Object> joinUser(@RequestBody UserVO user)throws Exception{
         log.info("====join===");
         user.setUUID(UuidUtil.generateType1UUID());
         String saltkey = userService.getSecString();
@@ -101,15 +103,14 @@ public class UserController {
             throw new NotFoundException("password not match");
         }
         //login성공시 actoken과 reftoken 재발행
-        String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
+        String newAcToken = jwtTokenProvider.createToken(userDetail.getUUID());
         if(newAcToken==null) return new NotCreateException("Unable to create token.");
-        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
+        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getUUID());
         return newAcToken;
     }
 
 
     //회원가입 email의 중복성 체크
-    //TODO: response json
     @PostMapping("/checkEmail")
     public ResponseEntity<String> checkEmail(@RequestBody UserVO user){
         int result= userService.checkEmail(user.getEmail());
@@ -118,7 +119,6 @@ public class UserController {
     }
 
     //회원가입 name의 중복성 체크
-    //TODO: response json
     @PostMapping("/checkId")
     public ResponseEntity<String> checkId(@RequestBody UserVO user){
         int result = userService.checkId(user.getId());
@@ -135,8 +135,12 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @ResponseBody
-    public ResponseEntity<Object> getUser(@PathVariable String userId) {
+    public ResponseEntity<Object> getUser(@PathVariable String userId,HttpServletRequest request) {
         try{
+            String acToken = jwtTokenProvider.resolveToken(request);
+            if(jwtTokenProvider.validateToken(acToken))
+                return ResponseEntity.ok("codefolio/user/"+userId);
+
             UserVO user = userService.getUserById(userId);
             GetUserResponse userDetail = GetUserResponse.builder()
                     .img(user.getImg())
@@ -196,7 +200,6 @@ public class UserController {
 
     @PostMapping("/sendInquiry")
     public Object sendInquiry(@RequestBody MailVO mail)throws MessagingException, IOException{
-        //TODO : 고객 문의 메일로
         HashMap<String, String> emailValues = new HashMap<>();
         emailValues.put("email", mail.getEmail());
         emailValues.put("message", mail.getMessage());
@@ -204,6 +207,7 @@ public class UserController {
 
         return ResponseEntity.ok(mail);
     }
+
 
 
 }

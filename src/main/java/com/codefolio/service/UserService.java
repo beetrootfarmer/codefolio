@@ -38,5 +38,11 @@ public interface UserService {
 
     public String getSaltKey(String email);
 
-    void updateUserId(String userId, String id);
+    void updateUserId(String userUUID, String getUserId);
+
+    String getUUIDById(String userId);
+
+    UserVO getUserByUUID(String userUUID);
+
+    void updatePwd(UserVO getUser);
 }

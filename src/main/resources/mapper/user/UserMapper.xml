@@ -31,6 +31,13 @@
         SELECT salt_key FROM codefolio.user WHERE email=#{email} ORDER BY email DESC LIMIT 1
     </select>
 
+    <select id="getUUIDById" parameterType="String" resultType="String">
+        SELECT UUID FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="getUserByUUID" parameterType="String" resultType="com.codefolio.vo.UserVO" resultMap="UserResult">
+        SELECT * FROM codefolio.user WHERE UUID=#{UUID};
+    </select>
 
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
@@ -42,20 +49,19 @@
 <!--동적 SQL <if>사용 => mybatis의 기능-->
     <update id="updateUser" parameterType="com.codefolio.vo.UserVO">
         UPDATE user
-<!--        <set><if test="id != null and id != ''">id = #{id,jdbcType=VARCHAR}</if>-->
-<!--        <if test="name != null and name != ''">name = #{name,jdbcType=VARCHAR}</if>-->
-<!--        <if test="gitId != null and gitId != ''">gitId = #{gitId,jdbcType=VARCHAR}</if>-->
-<!--        <if test="job != null and job != ''">job = #{job,jdbcType=VARCHAR}</if>-->
-<!--        <if test="stack != null and stack != ''">stack = #{stack,jdbcType=VARCHAR}</if>-->
-<!--        <if test="introFile != null and introFile != ''">intro_file = #{introFile,jdbcType=VARCHAR}</if></set>-->
-                SET id=#{id},name=#{name},gitId=#{gitId},job=#{job},stack=#{stack},intro_file=#{introFile}
+        SET id=#{id},name=#{name},gitId=#{gitId},job=#{job},stack=#{stack},intro_file=#{introFile}
         WHERE id=#{id}
         ORDER BY id DESC LIMIT 1
     </update>
 
     <update id="updateUserId">
         UPDATE user
-        SET id=#{getUserId} WHERE id=#{userId}
+        SET id=#{getUserId} WHERE UUID=#{userUUID}
+    </update>
+
+    <update id="updatePwd">
+        UPDATE user
+        SET salt_key=#{saltKey},pwd=#{pwd} WHERE UUID=#{UUID};
     </update>
 
     <update id="updateUserImg" parameterType="com.codefolio.vo.UserVO">
@@ -63,12 +69,12 @@
     </update>
 
     <update id="updateRefToken" parameterType="com.codefolio.vo.UserVO">
-        UPDATE user SET ref_token=#{refToken} WHERE id=#{id} ORDER BY id DESC LIMIT 1
+        UPDATE user SET ref_token=#{refToken} WHERE UUID=#{UUID};
     </update>
 
     <!--user delete-->
     <delete id="deleteUser" parameterType="String">
-        DELETE FROM codefolio.user WHERE id=#{id} ORDER BY name DESC LIMIT 1
+        DELETE FROM codefolio.user WHERE UUID=#{UUID};
     </delete>
 
     <!--email 중복 체크-->

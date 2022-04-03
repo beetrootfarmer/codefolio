@@ -2,10 +2,7 @@ package com.codefolio.config.jwt;
 
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,8 +34,8 @@ public class JwtTokenProvider {
     }
     //login시 acToken과 refToken 갱신이 필요하다.
 
-    public String createToken(String userEmail){
-        Claims claims = Jwts.claims().setSubject(userEmail);   //Jwt payload에 저장되는 정보 단위
+    public String createToken(String userUUID){
+        Claims claims = Jwts.claims().setSubject(userUUID);   //Jwt payload에 저장되는 정보 단위
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
@@ -50,8 +47,8 @@ public class JwtTokenProvider {
         return acToken;
     }
 
-    public String createRefToken(String userEmail){
-        Claims claims = Jwts.claims().setSubject(userEmail);   //Jwt payload에 저장되는 정보 단위
+    public String createRefToken(String userUUID){
+        Claims claims = Jwts.claims().setSubject(userUUID);   //Jwt payload에 저장되는 정보 단위
         claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String refToken = Jwts.builder()
@@ -62,7 +59,7 @@ public class JwtTokenProvider {
                 .compact();
         UserVO userVO=new UserVO();
         userVO.setRefToken(refToken);
-        userVO.setEmail(userEmail);
+        userVO.setUUID(userUUID);
         userService.updateRefToken(userVO);
         return refToken;
     }
@@ -102,7 +99,10 @@ public class JwtTokenProvider {
         try{
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
-        }catch (Exception e){
+        }catch(ExpiredJwtException e) {
+            //만료일자 지난 토큰
+            return false;
+        } catch (Exception e){
             return false;
         }
     }
@@ -110,23 +110,30 @@ public class JwtTokenProvider {
     public void verifyLogin(ServletRequest request, ServletResponse response){
         //헤더에서 JWT를 받아옵니다.
         String token = resolveToken((HttpServletRequest)request);
-//        String userEmail = getUserPk(token);
-//        String refToken = userService.getUserByEmail(userEmail).getRefToken();
-
         //유효한 토큰인지 확인합니다.
         if (token != null && validateToken(token)) {
             //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
             Authentication authentication = getAuthentication(token);
             //securityContext에 Authentication객체를 저장합니다.
             SecurityContextHolder.getContext().setAuthentication(authentication);
-//            String newAcToken = createToken(userEmail);
-//            String newRefToken = createRefToken(userEmail);
         }
-//        else if(refToken != null && validateToken(refToken)){
-//            System.out.println("ACTOKEN 만료");
-//            String newAcToken = createToken(userEmail);
-//            String newRefToken = createRefToken(userEmail);
-//        }else return;
+//        }else{
+//            verifyRefToken(token);
+//        }
+    }
+
+    public void verifyRefToken(String acToken){
+        //헤더에서 JWT를 받아옵니다.
+        String userUUID = getUserPk(acToken);
+        UserVO userDetail = userService.getUserByUUID(userUUID);
+        //유효한 토큰인지 확인합니다.
+        if (userDetail.getRefToken() != null && validateToken(userDetail.getRefToken())) {
+            String newAcToken = createToken(userUUID);
+            userDetail.setRefToken(createRefToken(userUUID));
+            userService.updateRefToken(userDetail);
+            Authentication authentication = getAuthentication(newAcToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 
 
