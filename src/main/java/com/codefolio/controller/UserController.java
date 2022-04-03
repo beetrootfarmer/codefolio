@@ -7,6 +7,7 @@ import com.codefolio.dto.JsonResponse;
 import com.codefolio.dto.response.GetUserResponse;
 import com.codefolio.service.MailService;
 import com.codefolio.service.UserService;
+import com.codefolio.utils.UuidUtil;
 import com.codefolio.vo.MailTO;
 import com.codefolio.vo.MailVO;
 import com.codefolio.vo.UserVO;
@@ -39,20 +40,51 @@ public class UserController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
+
+//    @GetMapping("/")
+//    public String validateUser(ServletRequest request){
+//        String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
+//        String userEmail = jwtTokenProvider.
+//
+//        //유효한 토큰인지 확인합니다.
+////        case1: access token과 refresh token 모두가 만료된 경우 -> 에러 발생
+////        case2: access token은 만료됐지만, refresh token은 유효한 경우 ->  access token 재발급
+////        case3: access token은 유효하지만, refresh token은 만료된 경우 ->  refresh token 재발급
+////        case4: accesss token과 refresh token 모두가 유효한 경우 -> 다음 미들웨어로
+//
+//        if (getActoken != null && jwtTokenProvider.validateToken(getActoken)) {
+//            //accessToken 유효함
+//
+//            String getReftoken= userDetail.getRefToken();
+//            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
+//            {
+//                //ac/ref 유효함
+//                String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
+//                if(newAcToken==null) return new NotCreateException("Unable to create token.");
+//                String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
+//                return newAcToken;
+//            }
+//            else
+//                System.out.println("ref 만료");
+//        }
+//        else{
+//            //accessToken 만료
+//            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
+//                System.out.println("refToken 유효");
+//            else System.out.println("ac/ref 만료");
+//        }
+//    }
 
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<Object> joinUser(@RequestBody UserVO user){
         log.info("====join===");
+        user.setUUID(UuidUtil.generateType1UUID());
         String saltkey = userService.getSecString();
         String encUserPwd = passwordEncoder.encode(user.getPwd()+saltkey);
         user.setSaltKey(saltkey);
         user.setPwd(encUserPwd);   //encoding된 password 넣기
-        Integer userSeq = userService.joinUser(user);
+        userService.joinUser(user);
         UserVO userDetail = userService.getUserByEmail(user.getEmail());
         return ResponseEntity.ok(new JsonResponse(userDetail,200,"joinUser"));
     }
@@ -60,7 +92,7 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
-        log.info("===login===");
+        log.info("[info]===login===");
         UserVO userDetail = userService.getUserByEmail(user.getEmail());
         System.out.println(userDetail);
         if(!userDetail.getEmail().equals(user.getEmail())) return new NotFoundException("unsigned email");
@@ -68,36 +100,11 @@ public class UserController {
             log.error("[ERROR] Wrong Password");
             throw new NotFoundException("password not match");
         }
-
-        String getActoken = jwtTokenProvider.resolveToken((HttpServletRequest)request);
-        String getReftoken= userDetail.getRefToken();
-
-        //유효한 토큰인지 확인합니다.
-//        case1: access token과 refresh token 모두가 만료된 경우 -> 에러 발생
-//        case2: access token은 만료됐지만, refresh token은 유효한 경우 ->  access token 재발급
-//        case3: access token은 유효하지만, refresh token은 만료된 경우 ->  refresh token 재발급
-//        case4: accesss token과 refresh token 모두가 유효한 경우 -> 다음 미들웨어로
-
-        if (getActoken != null && jwtTokenProvider.validateToken(getActoken)) {
-            System.out.println("accessToken 유효함");
-            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
-            {
-                log.info("ac/ref 유효함");
-                String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
-                if(newAcToken==null) return new NotCreateException("Unable to create token.");
-                String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
-                return newAcToken;
-            }
-            else
-                System.out.println("ref 만료");
-        }
-        else{
-            System.out.println("accessToken 만료");
-            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
-                System.out.println("refToken 유효");
-            else System.out.println("ac/ref 만료");
-        }
-
+        //login성공시 actoken과 reftoken 재발행
+        String newAcToken = jwtTokenProvider.createToken(userDetail.getEmail());
+        if(newAcToken==null) return new NotCreateException("Unable to create token.");
+        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
+        return newAcToken;
     }
 
 

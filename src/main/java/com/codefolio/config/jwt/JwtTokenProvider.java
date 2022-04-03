@@ -9,10 +9,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
@@ -102,6 +105,28 @@ public class JwtTokenProvider {
         }catch (Exception e){
             return false;
         }
+    }
+
+    public void verifyLogin(ServletRequest request, ServletResponse response){
+        //헤더에서 JWT를 받아옵니다.
+        String token = resolveToken((HttpServletRequest)request);
+//        String userEmail = getUserPk(token);
+//        String refToken = userService.getUserByEmail(userEmail).getRefToken();
+
+        //유효한 토큰인지 확인합니다.
+        if (token != null && validateToken(token)) {
+            //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
+            Authentication authentication = getAuthentication(token);
+            //securityContext에 Authentication객체를 저장합니다.
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+//            String newAcToken = createToken(userEmail);
+//            String newRefToken = createRefToken(userEmail);
+        }
+//        else if(refToken != null && validateToken(refToken)){
+//            System.out.println("ACTOKEN 만료");
+//            String newAcToken = createToken(userEmail);
+//            String newRefToken = createRefToken(userEmail);
+//        }else return;
     }
 
 

@@ -71,11 +71,22 @@ public class SecurityController {
     @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable String userId,@RequestBody UserVO user){
         log.info("updateUser");
-        user.setId(userId);
+        UserVO userVO = userService.getUserById(userId);
+
+        if(user.getName()!=null) userVO.setName(user.getName());
+        if(user.getImg()!=null) userVO.setImg(user.getImg());
+        if(user.getPwd()!=null) userVO.setPwd(user.getPwd());
+        if(user.getGitId()!=null)userVO.setGitId(user.getGitId());
+        if(user.getStack()!=null)userVO.setStack(user.getStack());
+        if(user.getIntroFile()!=null)userVO.setIntroFile(user.getIntroFile());
+        if(user.getJob()!=null)userVO.setJob(user.getJob());
         userService.updateUser(user);
+        if(user.getId()!=null)userService.updateUserId(userId,user.getId());
+
+
 //        UserResponse userDetail = getUser(userId);
 //        return getUser(userId);
-        return ResponseEntity.ok(userService.getUserById(userId));
+        return ResponseEntity.ok(userService.getUserById(user.getId()));
     }
 
     //Get user(userName으로 유저 조회) => response Entity 사용

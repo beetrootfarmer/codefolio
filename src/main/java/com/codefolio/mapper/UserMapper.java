@@ -35,4 +35,6 @@ public interface UserMapper {
     public UserVO getUserByEmail(String email);
 
     String getSaltKey(String email);
+
+    void updateUserId(String userId, String getUserId);
 }

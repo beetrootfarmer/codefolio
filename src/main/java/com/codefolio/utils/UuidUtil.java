@@ -1,39 +1,38 @@
 package com.codefolio.utils;
 
 import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 //TODO: UUID 적용하기
 public class UuidUtil {
-
-    private final static int LENGTH_20_LONG_RADIX = 9;
-    private final static int LENGTH_10_INT_RADIX = 9;
-
-    // 10자리의 UUID 생성
-    public static String makeShortUUID() {
-        UUID uuid = UUID.randomUUID();
-        return parseToShortUUID(uuid.toString());
+    private static long get64LeastSignificantBitsForVersion1() {
+        Random random = new Random();
+        long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
+        long variant3BitFlag = 0x8000000000000000L;
+        return random63BitLong + variant3BitFlag;
     }
 
-    public static String parseToIntRadixUUID(String uuid, int radix) {
-        int l = ByteBuffer.wrap(uuid.getBytes()).getInt();
-        return Integer.toString(l, radix);
+    private static long get64MostSignificantBitsForVersion1() {
+        LocalDateTime start = LocalDateTime.of(1582, 10, 15, 0, 0, 0);
+        Duration duration = Duration.between(start, LocalDateTime.now());
+        long seconds = duration.getSeconds();
+        long nanos = duration.getNano();
+        long timeForUuidIn100Nanos = seconds * 10000000 + nanos * 100;
+        long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
+        long version = 1 << 12;
+        return
+                (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
     }
 
-    public static String parseToLongRadixUUID(String uuid, int radix) {
-        long l = ByteBuffer.wrap(uuid.getBytes()).getLong();
-        return Long.toString(l, radix);
+    public static String generateType1UUID() {
+
+        long most64SigBits = get64MostSignificantBitsForVersion1();
+        long least64SigBits = get64LeastSignificantBitsForVersion1();
+        UUID uuid = new UUID(most64SigBits, least64SigBits);
+        return uuid.toString();
     }
 
-    // 파라미터로 받은 값을 10자리의 UUID로 변환
-    public static String parseToShortUUID(String uuid) {
-        int l = ByteBuffer.wrap(uuid.getBytes()).getInt();
-        return Integer.toString(l, LENGTH_10_INT_RADIX);
-    }
-
-    // 파라미터로 받은 값을 20자리의 UUID로 변환
-    public static String parseToLongUUID(String uuid) {
-        long l = ByteBuffer.wrap(uuid.getBytes()).getLong();
-        return Long.toString(l, LENGTH_20_LONG_RADIX);
-    }
 }

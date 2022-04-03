@@ -37,4 +37,6 @@ public interface UserService {
     public String getSecString();
 
     public String getSaltKey(String email);
+
+    void updateUserId(String userId, String id);
 }

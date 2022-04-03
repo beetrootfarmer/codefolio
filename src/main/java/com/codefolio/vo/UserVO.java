@@ -14,6 +14,7 @@ public class UserVO{
 
     private int userSeq;
     private String role;    //ROLE-USER, ROLE-ADMIN
+    private String UUID;
     //user 기본정보
     private String id;
     private String pwd;
