@@ -117,9 +117,6 @@ public class JwtTokenProvider {
             //securityContext에 Authentication객체를 저장합니다.
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-//        }else{
-//            verifyRefToken(token);
-//        }
     }
 
     public void verifyRefToken(String acToken){

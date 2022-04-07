@@ -1,12 +1,12 @@
 package com.codefolio.controller;
 
-import com.codefolio.config.exception.GlobalException;
 import com.codefolio.config.exception.NotCreateException;
 import com.codefolio.config.exception.NotFoundException;
 import com.codefolio.config.exception.TestException;
 import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
+import com.codefolio.service.ProjService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +34,7 @@ public class SecurityController {
     private final UserService userService;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
+    private final ProjService projService;
 
     @GetMapping("/")
     public String mainhome(){
@@ -83,6 +83,7 @@ public class SecurityController {
         if(user.getPwd()!=null) userVO.setPwd(user.getPwd());
         if(user.getGitId()!=null)userVO.setGitId(user.getGitId());
         if(user.getStack()!=null){
+
             userVO.setStack(user.getStack());
         }
         if(user.getIntroFile()!=null)userVO.setIntroFile(user.getIntroFile());
@@ -92,25 +93,9 @@ public class SecurityController {
 
         UserVO userDetail = userService.getUserByUUID(userUUID);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new JsonResponse(userDetail,200,"getUserProfile"));
-//        UserResponse userDetail = getUser(userId);
-//        return getUser(userId);
+                .body(new JsonResponse(userDetail,200,"updateUser"));
     }
 
-    //Get user(userName으로 유저 조회) => response Entity 사용
-    @GetMapping("/{userId}")
-    @ResponseBody
-    public ResponseEntity<Object> getUserProfile(HttpServletRequest request){
-        log.info("===getUser===");
-        try{
-            String userUUID = getUUID(request);
-            UserVO getUserByUUID = userService.getUserByUUID(userUUID);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new JsonResponse(getUserByUUID,200,"getUserProfile"));
-        }catch (Exception e){
-            throw new NotFoundException("user not found");
-        }
-    }
 
     @PostMapping("/changePwd")
     @ResponseBody

@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -58,13 +59,19 @@ public class UserServiceImpl implements UserService {
     public int checkId(String userId){return userMapper.checkId(userId);}
 
     @Override
-    public UserVO getUserById(String id){return userMapper.getUserById(id);}
+    public UserVO getUserById(String id){
+            return userMapper.getUserById(id);
+    }
 
     @Override
-    public String getUUIDById(String userId){return userMapper.getUUIDById(userId);}
+    public String getUUIDById(String userId){
+        return userMapper.getUUIDById(userId);
+    }
 
     @Override
-    public UserVO getUserByUUID(String userUUID){return userMapper.getUserByUUID(userUUID);}
+    public UserVO getUserByUUID(String userUUID){
+        return userMapper.getUserByUUID(userUUID);
+    }
 
 
     @Override

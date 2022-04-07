@@ -2,17 +2,20 @@ package com.codefolio.controller;
 
 import com.codefolio.config.exception.NotCreateException;
 import com.codefolio.config.exception.NotFoundException;
+import com.codefolio.config.exception.TestException;
 import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.JsonResponse;
-import com.codefolio.dto.response.GetUserResponse;
+import com.codefolio.dto.response.GetResponse;
+import com.codefolio.dto.response.UserResponse;
 import com.codefolio.service.MailService;
+import com.codefolio.service.ProjService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.UuidUtil;
 import com.codefolio.vo.MailTO;
 import com.codefolio.vo.MailVO;
+import com.codefolio.vo.ProjVO;
 import com.codefolio.vo.UserVO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,26 +25,23 @@ import javax.mail.MessagingException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private MailService mailService;
+    private final MailService mailService;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
+    private final ProjService projService;
 
 //    @GetMapping("/")
 //    public String validateUser(ServletRequest request){
@@ -94,19 +94,24 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public Object loginUser(@RequestBody UserVO user, ServletRequest request){
-        log.info("[info]===login===");
-        UserVO userDetail = userService.getUserByEmail(user.getEmail());
-        System.out.println(userDetail);
-        if(!userDetail.getEmail().equals(user.getEmail())) return new NotFoundException("unsigned email");
-        if(!passwordEncoder.matches(user.getPwd()+userService.getSaltKey(user.getEmail()),userDetail.getPwd())){
-            log.error("[ERROR] Wrong Password");
-            throw new NotFoundException("password not match");
+        try{
+            log.info("[info]===login===");
+            UserVO userDetail = userService.getUserByEmail(user.getEmail());
+            System.out.println(userDetail);
+            if(!userDetail.getEmail().equals(user.getEmail())) return new NotFoundException("unsigned email");
+            if(!passwordEncoder.matches(user.getPwd()+userService.getSaltKey(user.getEmail()),userDetail.getPwd())){
+                log.error("[ERROR] Wrong Password");
+                throw new NotFoundException("password not match");
+            }
+            //login성공시 actoken과 reftoken 재발행
+            String newAcToken = jwtTokenProvider.createToken(userDetail.getUUID());
+            if(newAcToken==null) return new NotCreateException("Unable to create token.");
+            String newRefToken = jwtTokenProvider.createRefToken(userDetail.getUUID());
+            return newAcToken;
+        }catch(NullPointerException e) {
+            throw new TestException(e);
         }
-        //login성공시 actoken과 reftoken 재발행
-        String newAcToken = jwtTokenProvider.createToken(userDetail.getUUID());
-        if(newAcToken==null) return new NotCreateException("Unable to create token.");
-        String newRefToken = jwtTokenProvider.createRefToken(userDetail.getUUID());
-        return newAcToken;
+
     }
 
 
@@ -133,31 +138,29 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
+
+        //TODO : user별 project list=> total proj view
+        //TODO : user별 follow list
+        // TODO : user별 좋아한 프로젝트
+    //getUser의 경우 유저에 따라 다르게 보여줘야하는 정보가 따로 없어 하나의 api로 만들었습니다.
     @GetMapping("/{userId}")
     @ResponseBody
     public ResponseEntity<Object> getUser(@PathVariable String userId,HttpServletRequest request) {
-        try{
-            String acToken = jwtTokenProvider.resolveToken(request);
-            if(jwtTokenProvider.validateToken(acToken))
-                return ResponseEntity.ok("codefolio/user/"+userId);
+        String acToken = jwtTokenProvider.resolveToken(request);
+        if (jwtTokenProvider.validateToken(acToken))
+            return ResponseEntity.ok("codefolio/user/" + userId);
 
-            UserVO user = userService.getUserById(userId);
-            GetUserResponse userDetail = GetUserResponse.builder()
-                    .img(user.getImg())
-                    .gitId(user.getGitId())
-                    .name(user.getName())
-                    .stack(user.getStack())
-                    .introFile(user.getIntroFile())
-                    .job(user.getJob()).build();
-            return ResponseEntity.ok(new JsonResponse(userDetail,200,"getUser"));
-        }catch (Exception s){
-            throw new NotFoundException("NotFoundUser");
-        }
+        UserVO user = userService.getUserById(userId);
+        if(user==null)throw new NotFoundException("not found User");
+        List<ProjVO> proj = projService.getProjByUser(userId);
 
+        //TODO : UserMapping을 하고 싶은데 ㅠㅠㅠ 좀 더 해보자!!
+        UserResponse userDetail = new UserResponse(user);
+        GetResponse data = new GetResponse(userDetail, proj);
+        return ResponseEntity.ok(new JsonResponse(data, 200, "getUser"));
     }
 
-    //email 인증 => userEmail 입력
-    //email 인증 후 문자열 비교는 front에
+    //TODO : (test)mail 100개 보내는데 4분정도 이후에 update 필요함
     @PostMapping("/mailConfirm")
     @ResponseBody
     public ResponseEntity<String> confirmMail(@RequestBody UserVO user)throws MessagingException, IOException {
@@ -207,8 +210,6 @@ public class UserController {
 
         return ResponseEntity.ok(mail);
     }
-
-
 
 }
 

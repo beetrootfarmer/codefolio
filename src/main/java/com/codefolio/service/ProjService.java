@@ -10,6 +10,10 @@ public interface ProjService {
     @Transactional
     public List<ProjVO> getProjList();
 
+    //hweyoung udpate
+    @Transactional
+    public List<ProjVO> getProjByUser(String userId);
+
      @Transactional
 //     public void addProj(Map<String, Object> param);
      public void addProj(ProjVO vo);
@@ -28,6 +32,10 @@ public interface ProjService {
 
      @Transactional
     public void update(Map<String, Object> param);
+
+     //hweyoung update
+     @Transactional
+     public void updatePreview(int projSeq, String preview);
 
      @Transactional
     public void viewUp(int projSeq);

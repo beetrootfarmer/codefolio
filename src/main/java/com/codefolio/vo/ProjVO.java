@@ -18,4 +18,5 @@ public class ProjVO {
     private String content;
     private Timestamp regDate;
     private String period;
+    private String preview;
 }
