@@ -1,29 +1,23 @@
 package com.codefolio.controller;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.codefolio.config.exception.NotCreateException;
-import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.ProjVO;
-
-import com.codefolio.vo.UserVO;
+import com.jayway.jsonpath.Criteria;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import com.codefolio.utils.FileUtils;
 import org.springframework.util.CollectionUtils;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/proj")
 public class ProjController {
@@ -38,14 +32,6 @@ public class ProjController {
             return "helloTest";
         }
 
-
-// [프로젝트 리스트 불러오기]
-    @GetMapping("/list")
-//    Model은 HashMap형태로 key와 value값처럼 사용
-    public ResponseEntity<List<ProjVO>> getProjList() {
-        List<ProjVO> projList = projService.getProjList();
-        return ResponseEntity.ok(projList);
-    }
 
 @GetMapping("/list")
 public ResponseEntity<?> getProjList(ProjVO vo, Criteria cri) {
