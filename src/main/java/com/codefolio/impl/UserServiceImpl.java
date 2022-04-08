@@ -5,6 +5,7 @@ import com.codefolio.config.exception.NotFoundException;
 import com.codefolio.config.exception.TestException;
 import com.codefolio.mapper.UserMapper;
 import com.codefolio.service.MailService;
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 import java.security.SecureRandom;
@@ -36,6 +37,10 @@ public class UserServiceImpl implements UserService {
     //JoinUser을 하는 동안에 auto_increment에 의해 생긴 주키 값을 알아내야 함
     @Override
     public int joinUser(UserVO user) {return userMapper.joinUser(user);}
+
+    @Override
+    public int followUser(FollowVO follow){return userMapper.followUser(follow);}
+
 
     @Override
     public List<UserVO> getAllUserData() {

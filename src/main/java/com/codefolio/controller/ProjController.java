@@ -82,13 +82,13 @@ public class ProjController {
                     if(CollectionUtils.isEmpty(fileList) == false) {
                         fileService.saveFile(fileList);
                         System.out.println("saveFile()탐 + fileList===" + fileList);
-                        }
+                    }
 
                     projService.addProj(vo);
                    ProjVO projDetail = projService.getProjDetail(projSeq);
 //  projSeq와 fileSeq가 return값에 담겨있지 않음.
                    return ResponseEntity.ok(projSeq+"번 프로젝트가 추가되었습니다"+ "projVO" + vo + "fileSeq="+fileSeq +fileList);
-                }
+        }
 
 
 // [프로젝트 삭제]
@@ -101,21 +101,19 @@ public class ProjController {
 
 
 //        //hweyoung update
-        @PutMapping("/preview/{projSeq}")
-        @ResponseBody
-        public ResponseEntity updatePreview(@PathVariable int projSeq,HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
-            FileUtils fileUtils = new FileUtils();
-            String preview="";
-            List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"user", request,mhsr);
-            if(CollectionUtils.isEmpty(fileList) == false) {
-                fileService.saveFile(fileList);
-                preview = fileList.get(0).getFileDownloadUri();
-                projService.updatePreview(projSeq,preview);
-            }else throw new NotCreateException("Unable create file");
-
-            return ResponseEntity.ok(new JsonResponse(preview,200,"updatePreview"));
-
-        }
+//        @PutMapping("/preview/{projSeq}")
+//        @ResponseBody
+//        public ResponseEntity updatePreview(@PathVariable int projSeq,HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+//            FileUtils fileUtils = new FileUtils();
+//            String preview="";
+//            List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"user", request,mhsr);
+//            if(CollectionUtils.isEmpty(fileList) == false) {
+//                fileService.saveFile(fileList);
+//                preview = fileList.get(0).getFileDownloadUri();
+//                projService.updatePreview(projSeq,preview);
+//            }else throw new NotCreateException("Unable create file");
+//            return ResponseEntity.ok(new JsonResponse(preview,200,"updatePreview"));
+//        }
 
 
 

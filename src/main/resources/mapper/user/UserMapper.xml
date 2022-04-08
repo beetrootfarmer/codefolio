@@ -45,6 +45,14 @@
             UUID = #{UUID},id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),role="ROLE_USER",salt_key=#{saltKey};
     </insert>
 
+
+<!--    followUser      -->
+    <insert id="followUser" parameterType="com.codefolio.vo.FollowVO" useGeneratedKeys="true" keyProperty="followSeq">
+        INSERT INTO codefolio.follow
+        SET follower_id=#{followerId},follower_stack=#{followerStack},follower_img=#{followerImg},
+            followee_id=#{followeeId},followee_stack=#{followeeStack},followee_img=#{followeeImg};
+    </insert>
+
     <!--회원정보수정(마이페이지) -> name,pwd,gitId,stack,job,img,introFile-->
 <!--동적 SQL <if>사용 => mybatis의 기능-->
     <update id="updateUser" parameterType="com.codefolio.vo.UserVO">

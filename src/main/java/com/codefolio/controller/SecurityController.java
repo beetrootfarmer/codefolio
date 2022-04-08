@@ -10,6 +10,7 @@ import com.codefolio.service.ProjService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,6 +117,21 @@ public class SecurityController {
             throw new NotCreateException("not create user password");
         }
     }
+
+    //follower : following 당하는 사람
+    //follower <= following
+//    @PostMapping("/{userId}/{followerId}")
+//    public ResponseEntity followUser(@PathVariable String followerId,HttpServletRequest request){
+//        String userUUID = getUUID(request);
+//        UserVO followee = userService.getUserByUUID(userUUID);
+//        UserVO follower = userService.getUserById(followerId);
+//        FollowVO followVO = FollowVO.builder().followeeId(followee.getId()).followeeStack(followee.getStack()).follweeImg(followee.getImg())
+//                .followerId(follower.getId()).follwerImg(follower.getImg()).followerStack(follower.getStack()).build();
+//        int followSeq = userService.followUser(followVO);
+//
+//        return ResponseEntity.ok(followee.getId()+"님이 "+follower.getId()+"님을 팔로우 했습니다.");
+//
+//    }
 
 //    private Object checkAcToken(String userUUID,HttpServletRequest request){
 //        try{

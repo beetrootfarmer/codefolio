@@ -1,6 +1,7 @@
 package com.codefolio.mapper;
 
 
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -43,4 +44,6 @@ public interface UserMapper {
     UserVO getUserByUUID(String userUUID);
 
     void updatePwd(UserVO getUser);
+
+    int followUser(FollowVO follow);
 }

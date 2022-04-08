@@ -1,5 +1,6 @@
 package com.codefolio.service;
 
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,4 +46,6 @@ public interface UserService {
     UserVO getUserByUUID(String userUUID);
 
     void updatePwd(UserVO getUser);
+
+    int followUser(FollowVO follow);
 }
