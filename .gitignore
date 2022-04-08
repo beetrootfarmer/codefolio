@@ -18,6 +18,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+**/JwtProperties.java
+*.log
 *.properties
 *.yml
 .idea

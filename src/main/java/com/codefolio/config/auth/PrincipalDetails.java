@@ -6,6 +6,7 @@ import java.util.Map;
 import com.codefolio.vo.UserVO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 // 시큐리티가 /login 주소 요청이 오면 낚아채서 로그인을 진행시킨다.
 //로그인 진행이 완료가 되면 시큐리티 session을 만들어준다.(Security ContextHolder)
@@ -16,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 //Security Session => Authentication => UserDetails(PrincipalDetails)
 
 
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private UserVO user;    //콤포지션
 
@@ -27,7 +28,18 @@ public class PrincipalDetails implements UserDetails {
         this.user = user;
     }
 
+    //소셜 로그인
+    public PrincipalDetails(UserVO user,  Map<String ,Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
     private Map<String ,Object> attributes;
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -44,7 +56,7 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public String getUsername() {
         // 계정이 잠겼을 때 사용하는 메소드
-        return user.getId();
+        return user.getUUID();
     }
 
     @Override
@@ -69,4 +81,8 @@ public class PrincipalDetails implements UserDetails {
         return true;
     }
 
+    @Override
+    public String getName() {
+        return user.getEmail()+"";
+    }
 }

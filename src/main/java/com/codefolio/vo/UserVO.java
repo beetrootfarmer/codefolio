@@ -1,17 +1,20 @@
 package com.codefolio.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserVO{
 
     private int userSeq;
     private String role;    //ROLE-USER, ROLE-ADMIN
+    private String UUID;
     //user 기본정보
     private String id;
     private String pwd;
@@ -29,10 +32,17 @@ public class UserVO{
     private String img;
     private String introFile;
 
-    //소셜 로그인과 일반 사용자 구분
-    private boolean reg;
-
     private String refToken;
+
+    private String saltKey;
+
+    private String provider;
+    private String providerId;
+
+//    @Builder
+//    UserVO(String id){
+//        this.id=id;
+//    }
 
 
 //    @Override

@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.codefolio.config.exception.NotCreateException;
+import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.ProjVO;
 
+import com.codefolio.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +44,7 @@ public class ProjController {
 //    Model은 HashMap형태로 key와 value값처럼 사용
     public ResponseEntity<List<ProjVO>> getProjList() {
         List<ProjVO> projList = projService.getProjList();
-
-            return ResponseEntity.ok(projList);
+        return ResponseEntity.ok(projList);
     }
 
 //// [프로젝트 상세 페이지]
@@ -80,13 +82,13 @@ public class ProjController {
                     if(CollectionUtils.isEmpty(fileList) == false) {
                         fileService.saveFile(fileList);
                         System.out.println("saveFile()탐 + fileList===" + fileList);
-                        }
+                    }
 
                     projService.addProj(vo);
                    ProjVO projDetail = projService.getProjDetail(projSeq);
 //  projSeq와 fileSeq가 return값에 담겨있지 않음.
                    return ResponseEntity.ok(projSeq+"번 프로젝트가 추가되었습니다"+ "projVO" + vo + "fileSeq="+fileSeq +fileList);
-                }
+        }
 
 
 // [프로젝트 삭제]
@@ -96,6 +98,23 @@ public class ProjController {
             ProjVO projDetail = projService.getProjDetail(projSeq);
             return ResponseEntity.ok(projSeq+"번 프로젝트가 삭제되었습니다");
             }
+
+
+//        //hweyoung update
+//        @PutMapping("/preview/{projSeq}")
+//        @ResponseBody
+//        public ResponseEntity updatePreview(@PathVariable int projSeq,HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+//            FileUtils fileUtils = new FileUtils();
+//            String preview="";
+//            List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"user", request,mhsr);
+//            if(CollectionUtils.isEmpty(fileList) == false) {
+//                fileService.saveFile(fileList);
+//                preview = fileList.get(0).getFileDownloadUri();
+//                projService.updatePreview(projSeq,preview);
+//            }else throw new NotCreateException("Unable create file");
+//            return ResponseEntity.ok(new JsonResponse(preview,200,"updatePreview"));
+//        }
+
 
 
 // [프로젝트 수정]

@@ -27,13 +27,6 @@ dependencies {
 
     implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.5.RELEASE'
 
-
-//    //security
-//    implementation 'javax.xml.bind:jaxb-api'
-//    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-//    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
-//    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-
     //jwt 라이브러리
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
@@ -50,8 +43,10 @@ dependencies {
     // https://mvnrepository.com/artifact/com.auth0/java-jwt
     implementation 'com.auth0:java-jwt:3.18.2'
 
-    //이메일 인증
+    //이메일 인증 + thymeleaf template로 전송
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -74,7 +69,12 @@ dependencies {
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 //    실행되는 SQL 을 로그로 확인하기 위한 로그4
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-//파일 업로드 관련
+
+    //logback 라이브러리
+    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
+    implementation 'ch.qos.logback:logback-core:1.2.3'
+
+    //파일 업로드 관련
     implementation 'commons-io:commons-io:2.11.0'
     implementation 'commons-fileupload:commons-fileupload:1.4'
     implementation 'org.apache.commons:commons-lang3:3.12.0'

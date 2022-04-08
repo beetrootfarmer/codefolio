@@ -11,13 +11,20 @@
         <result property="stack" column="stack"/>
         <result property="content" column="content"/>
         <result property="period" column="period"/>
+        <result property="preview" column="preview"/>
     </resultMap>
 
 
     <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
-
         SELECT *
         FROM codefolio.proj
+        ORDER BY proj_seq DESC;
+    </select>
+
+    <select id="getProjByUser" parameterType="com.codefolio.vo.ProjVO"  resultType="Map">
+        SELECT *
+        FROM codefolio.proj
+        where user=#{userId}
         ORDER BY proj_seq DESC;
     </select>
 
@@ -60,6 +67,13 @@
         FROM codefolio.proj
         WHERE proj_seq = #{projSeq}
     </delete>
+
+<!--hweyoung update-->
+    <update id="updatePreview">
+        UPDATE codefolio.proj
+        SET preview=#{preview}
+        WHERE proj_seq=#{projSeq};
+    </update>
 
     <update id="update" parameterType="map">
         UPDATE codefolio.proj

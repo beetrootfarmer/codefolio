@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>hello codefolio</h1>
+<span th:text="${id}"></span>
+<span>님 페이지로 돌아가 인증을 완료해주세요.</span>
+<!--<a th:href="@{codefolio.com/changePwd/{accesskey}(accesskey=${accesskey})">비밀번호 찾기</a>-->
+<!--<button type=“button” th:onclick=“'location.href=‘http://www.codefolio.com/changePwd/{accesskey}(accesskey=${accesskey})}'”>클릭</button>-->
+<br>
+<img src="https://user-images.githubusercontent.com/76817418/161433599-fcfbf91b-0695-4a1e-81af-04c3ddca1ec4.png">
+<br>
+<button class="btn btn-outline-success" type="button" onclick="location.href='http://codefolio.com/changePwd'">codefolio gogo</button>
+</body>
+</html>

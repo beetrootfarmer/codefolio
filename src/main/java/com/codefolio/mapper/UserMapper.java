@@ -1,6 +1,7 @@
 package com.codefolio.mapper;
 
 
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -11,8 +12,6 @@ import java.util.List;
 public interface UserMapper {
 
     public List<UserVO> getAllUserData();
-
-    public UserVO getUser(String userId);
 
     public int joinUser(UserVO user);
 
@@ -35,4 +34,16 @@ public interface UserMapper {
     void updateRefToken(UserVO user);
 
     public UserVO getUserByEmail(String email);
+
+    String getSaltKey(String email);
+
+    void updateUserId(String userUUID, String getUserId);
+
+    String getUUIDById(String userId);
+
+    UserVO getUserByUUID(String userUUID);
+
+    void updatePwd(UserVO getUser);
+
+    int followUser(FollowVO follow);
 }

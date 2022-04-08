@@ -13,6 +13,8 @@ import java.util.Map;
 public interface ProjMapper {
     public List<ProjVO> getProjList();
 
+    public List<ProjVO> getProjByUser(String userId);
+
      public void addProj(ProjVO vo);
 
     public int getTotalProj();
@@ -27,4 +29,5 @@ public interface ProjMapper {
 
     public void viewUp(int projSeq);
 
+    public void updatePreview(int projSeq, String preview);
 }

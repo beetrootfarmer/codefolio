@@ -3,6 +3,7 @@ package com.codefolio.config;
 import com.codefolio.config.jwt.JwtAuthenticationFilter;
 import com.codefolio.config.jwt.JwtTokenProvider;
 
+import com.codefolio.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()  //formlogin이나 기본 httplogin방식을 아예 쓰지 않는다.
                 .authorizeRequests()    //요청에 대한 사용권한 체크
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")
+                //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

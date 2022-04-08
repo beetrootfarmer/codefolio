@@ -11,9 +11,8 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import com.codefolio.utils.CUtil;
 
-
-@Service
 @Slf4j
+@Service
 public class ProjServiceImpl implements ProjService {
     @Autowired
     ProjMapper projMapper;
@@ -22,6 +21,9 @@ public class ProjServiceImpl implements ProjService {
     public List<ProjVO> getProjList() {
         return projMapper.getProjList();
     }
+
+    @Override
+    public List<ProjVO> getProjByUser(String userId){return projMapper.getProjByUser(userId);}
 
     @Override
     public void addProj(ProjVO vo) {
@@ -53,6 +55,9 @@ public class ProjServiceImpl implements ProjService {
     public void update(Map<String, Object> param){
          projMapper.update(param);
     }
+
+    @Override
+    public void updatePreview(int projSeq, String preview){projMapper.updatePreview(projSeq,preview);}
 
     @Override
     public void viewUp(int projSeq){

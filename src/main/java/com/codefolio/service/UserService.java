@@ -1,5 +1,6 @@
 package com.codefolio.service;
 
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,8 +9,6 @@ import java.util.Map;
 
 
 public interface UserService {
-
-    public UserVO getUser(String userId);
 
     public List<UserVO> getAllUserData();
 
@@ -36,12 +35,17 @@ public interface UserService {
 
     public UserVO getUserByEmail(String email);
 
-    //    public UserVO findUserName(String name);
+    public String getSecString();
 
+    public String getSaltKey(String email);
 
-//    public Map<String, Object> findLoginPwd(UserVO user);
+    void updateUserId(String userUUID, String getUserId);
 
-//    @Transactional
-//    public Map<String, Object> checkUserEmailDup(String userId);
+    String getUUIDById(String userId);
 
+    UserVO getUserByUUID(String userUUID);
+
+    void updatePwd(UserVO getUser);
+
+    int followUser(FollowVO follow);
 }

@@ -1,19 +1,20 @@
 package com.codefolio.dto;
 
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class JsonResponse {
     private int status;
-    private String ErrorCode;
     private String message;
-    private UserResponse dataObject;
+    private Object data;
 
-    public JsonResponse(int status,String ErrorCode,String message) {
+    public JsonResponse(Object data, int status,String message) {
         this.status = status;
-        this.ErrorCode=ErrorCode;
         this.message=message;
+        this.data = data;
     }
 
-    public void setDataObject(UserResponse dataObject) {
-        this.dataObject = dataObject;
-    }
 }
