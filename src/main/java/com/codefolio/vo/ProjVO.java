@@ -19,4 +19,9 @@ public class ProjVO {
     private Timestamp regDate;
     private String period;
     private String preview;
+
+    private String keyword;
+    private String keywordType;
+    
+    private int likes;
 }
