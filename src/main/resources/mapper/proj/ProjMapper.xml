@@ -15,11 +15,78 @@
     </resultMap>
 
 
-    <select id="getProjList" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
+    <select id="getProjListOri" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
         SELECT *
         FROM codefolio.proj
         ORDER BY proj_seq DESC;
     </select>
+    
+    
+<select id="getProjList" parameterType="HashMap" resultType="Map">
+		SELECT 
+			proj_seq, 
+			title, 
+			user, 
+			thumbnail
+  		FROM codefolio.proj 
+  		WHERE 
+			replace([p.title], ' ', '') LIKE CONCAT_WS('%',#{keyword},'%')
+		OR
+			replace([p.content], ' ', '') LIKE CONCAT_WS('%',#{keyword},'%')
+		OR
+			replace([p.stack], ' ', '') LIKE CONCAT_WS('%',#{keyword},'%')
+		ORDER BY p.proj_seq DESC
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}		
+	</select>
+
+    <select id="searchProj" parameterType="String" resultType="Map">
+		SELECT 
+			p.proj_seq, 
+			p.title, 
+			p.user, 
+			f.file_name
+  		FROM codefolio.proj AS p
+  		LEFT OUTER JOIN 
+  		file AS f
+        ON f.board_seq = p.proj_seq
+  		WHERE 
+			p.title LIKE CONCAT_WS('%', #{keyword}, '%')
+		OR
+			p.content LIKE CONCAT_WS('%', #{keyword}, '%')
+		ORDER BY p.proj_seq DESC		
+	</select>
+
+    <select id="selectProjCount" resultType="int">
+		SELECT COUNT(*) FROM codefolio.proj
+	
+		<if test="keywordType == 'title'">
+			AND title LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="keywordType == 'content'">
+			AND `content` LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		<if test="keywordType == 'titleAndBody'">
+			AND (title LIKE CONCAT('%', #{keyword}, '%') OR `content` LIKE CONCAT('%', #{keyword}, '%'))
+		</if>
+	</select>
+
+    <select id="getProjandFile" resultType="HashMap">
+		select p.*, f.fileName
+		from proj AS p
+		left outer join 
+		(
+		select f1.file_seq as fSeq, f1.file_name as fileName, f1.board_seq AS pSeq
+		from file as f1 
+			left join file as f2 
+			on f1.board_seq = f2.board_seq 
+			and f1.file_seq > f2.file_seq
+		    where f2.file_seq is null
+		    AND f1.board_type = 'proj'
+		) as f
+		on p.proj_seq = f.pSeq
+		order by p.proj_seq DESC
+		limit 300;
+	</select>
 
     <select id="getProjByUser" parameterType="com.codefolio.vo.ProjVO"  resultType="Map">
         SELECT *
@@ -92,6 +159,32 @@
         SET view = view +1
         WHERE proj_seq = #{projSeq}
     </update>
+
+    <select id="getLikeProj" parameterType="HashMap" resultType="Map">					
+		SELECT 
+			p.proj_seq, 
+			p.title, 
+			p.user
+  		FROM codefolio.proj AS p
+  		LEFT OUTER JOIN 
+  		codefolio.like AS l
+        ON l.proj_seq = p.proj_seq
+       	WHERE
+        l.proj_seq = p.proj_seq
+       	AND
+       	l.user_id = #{userId}
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
+	</select>
+	
+	<select id="getLikeProj" parameterType="com.codefolio.vo.Criteria" resultType="Map">					
+		SELECT 
+			proj_seq, 
+			title, 
+			user
+  		FROM codefolio.proj 
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
+		DESC like
+	</select>
 
 
 </mapper>

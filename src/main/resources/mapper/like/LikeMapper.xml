@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codefolio.mapper.LikeMapper">
+	
+	<insert id ="saveHeart" parameterType="com.codefolio.vo.LikeVO">
+		INSERT 
+		INTO codefolio.like(
+				proj_seq,
+				user_id)
+		VALUES(
+				#{projSeq},
+				#{userId}
+			)
+	</insert>
+	
+	<delete id="deleteHeart" parameterType="com.codefolio.vo.LikeVO">
+	        DELETE
+	        FROM codefolio.like
+	        Where 
+			user_id = #{userId}
+			AND
+			proj_seq = #{projSeq};
+	 </delete>
+	
+	<update id="plusHeart" parameterType="int">
+        UPDATE codefolio.proj 
+        SET likes = likes +1 
+        WHERE proj_seq = #{projSeq}
+    </update>
+	
+	<update id="minusHeart" parameterType="int">
+			UPDATE codefolio.proj
+	        SET likes = likes -1
+	        WHERE proj_seq = #{projSeq}
+	</update>
+	
+	<select id="didUserLike" parameterType="com.codefolio.vo.LikeVO" resultType="int">
+		SELECT count(*)
+		FROM codefolio.like 
+		Where 
+		user_id = #{userId}
+		AND
+		proj_seq = #{projSeq};
+		
+	</select>
+
+</mapper>

@@ -7,13 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 public interface ProjService {
+    
     @Transactional
-    public List<ProjVO> getProjList();
-
-    //hweyoung udpate
-    @Transactional
-    public List<ProjVO> getProjByUser(String userId);
-
+    public List<ProjVO> getProjListOri();
+    
      @Transactional
 //     public void addProj(Map<String, Object> param);
      public void addProj(ProjVO vo);
@@ -28,15 +25,34 @@ public interface ProjService {
     public int getProjSeq();
 
      @Transactional
-    public void deleteProj(int projSeq);
+    public void deleteProj(int seq);
 
      @Transactional
-    public void update(Map<String, Object> param);
-
-     //hweyoung update
-     @Transactional
-     public void updatePreview(int projSeq, String preview);
+    public void update(ProjVO vo);
 
      @Transactional
     public void viewUp(int projSeq);
+
+	public int selectProjCount(ProjVO vo);
+	
+	public List<HashMap<String, Object>> getProjandFile();
+
+//	public List<ProjVO> searchProj(String keyword);
+	public List<HashMap<String, Object>> searchProj(String keyword);
+	
+	 @Transactional
+	public List<HashMap<String, Object>> getProjList(String keyword, Criteria cri);
+	 
+	 @Transactional
+	public List<HashMap<String, Object>> getLikeProj(String userId, Criteria cri);
+
+	@Transactional
+	public List<HashMap<String, Object>> getBestProj(Criteria cri);
+    //hweyoung update
+    @Transactional
+    public void updatePreview(int projSeq, String preview);
+    
+    //hweyoung udpate
+    @Transactional
+    public List<ProjVO> getProjByUser(String userId);
 }
