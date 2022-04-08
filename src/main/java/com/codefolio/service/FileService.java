@@ -13,9 +13,13 @@ public interface FileService {
 
     void saveFile(List<FileVO> fileList);
 
-    public Resource selectFile(String fileName);
+    public List<FileVO> getFileListBySeq(int seq);
 
-    public Iterable<FileVO> getFileList();
+    void deleteFileBySeq(int seq);
+
+    public Resource selectFile(int seq);
+
+    public List<FileVO> getFileList();
 
     public Optional<FileVO> getUploadFile(int fileSeq);
 
@@ -23,5 +27,4 @@ public interface FileService {
 
     public FileVO sfile(MultipartFile file);
 
-    List<FileVO> getFileListBySeq(int seq);
 }
