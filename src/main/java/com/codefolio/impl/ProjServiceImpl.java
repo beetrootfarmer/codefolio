@@ -18,11 +18,6 @@ public class ProjServiceImpl implements ProjService {
     ProjMapper projMapper;
 
     @Override
-    public List<ProjVO> getProjList() {
-        return projMapper.getProjList();
-    }
-
-    @Override
     public List<ProjVO> getProjByUser(String userId){return projMapper.getProjByUser(userId);}
 
     @Override
@@ -63,5 +58,63 @@ public class ProjServiceImpl implements ProjService {
     public void viewUp(int projSeq){
         projMapper.viewUp(projSeq);
     };
+    @Override
+	public int selectProjCount(ProjVO vo) {
+		return projMapper.selectProjCount(vo);
+	}
+
+
+	@Override
+	public List<ProjVO> getProjListOri() {
+		return projMapper.getProjListOri();
+	}
+
+
+	@Override
+	public List<HashMap<String, Object>> getProjandFile() {
+		return projMapper.getProjandFile();
+	}
+
+
+//	@Override
+//	public List<ProjVO> searchProj(String keyword) {
+//		return projMapper.searchProj(keyword);
+//	}
+
+
+	@Override
+	public List<HashMap<String, Object>> searchProj(String keyword) {
+		return projMapper.searchProj(keyword);
+	}
+	
+	 @Override
+	    public List<HashMap<String, Object>> getProjList(String keyword, Criteria cri) {
+				
+		 	Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("keyword", keyword);
+			cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
+			paramMap.put("criteria", cri);
+	
+			log.info("projServiceImpl의 getProjList메소드에서==== keyword, cri==="+ keyword + "," + cri);
+	      
+		return projMapper.getProjList(paramMap);
+	    }
+	 
+	 @Override
+	    public List<HashMap<String, Object>> getLikeProj(String userId, Criteria cri) {
+				
+		 	Map<String, Object> likeProj = new HashMap<String, Object>();
+			likeProj.put("userId", userId);
+			
+			cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
+			likeProj.put("criteria", cri);
+	      
+			return projMapper.getLikeProj(likeProj);
+	    }
+	 
+	 @Override
+	    public List<HashMap<String, Object>> getBestProj(Criteria cri) {
+			return projMapper.getBestProj(cri);
+	    }
 
 }
