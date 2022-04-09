@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
+import com.codefolio.vo.Criteria;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.ProjVO;
-import com.jayway.jsonpath.Criteria;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +52,7 @@ public ResponseEntity<?> getProjList(ProjVO vo, Criteria cri) {
 }
 
 @GetMapping("/search")
-   public ResponseEntity<List<HashMap<String, Object>>> searchProjList(@RequestParam("keyword") String keyword, ProjVO vo,Criteria cri) {
+   public ResponseEntity<List<HashMap<String, Object>>> searchProjList(@RequestParam("keyword") String keyword, ProjVO vo, Criteria cri) {
        log.info("프로젝트 목록 검색 api");
        
        if(vo.getKeywordType() == null) {
@@ -81,49 +81,48 @@ public ResponseEntity<?> getProjList(ProjVO vo, Criteria cri) {
 
 
 
-// [프로젝트 상세 페이지] +[파일 불러오기]
-@GetMapping("/{projSeq}")
-public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
-   // 보드 시퀀스로 파일리스트 가져오기
-   List<FileVO> fileList = fileService.getFileListBySeq(seq);
+    // [프로젝트 상세 페이지] +[파일 불러오기]
+    @GetMapping("/{projSeq}")
+    public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
+       // 보드 시퀀스로 파일리스트 가져오기
+       List<FileVO> fileList = fileService.getFileListBySeq(seq);
 
-   // 조회수 늘리기
-   projService.viewUp(seq);
-   
-   ProjVO proj = projService.getProjDetail(seq);
+       // 조회수 늘리기
+       projService.viewUp(seq);
 
-   for (FileVO file : fileList) {
-           if (file.getBoardSeq() == seq) {
-               return ResponseEntity.ok(proj + "+ " + fileList );
+       ProjVO proj = projService.getProjDetail(seq);
+
+       for (FileVO file : fileList) {
+               if (file.getBoardSeq() == seq) {
+                   return ResponseEntity.ok(proj + "+ " + fileList );
+               }
            }
-       }
-
-       return ResponseEntity.ok(proj + "+ " + fileList );
-}
+           return ResponseEntity.ok(proj + "+ " + fileList );
+    }
 
 
 // [프로젝트 추가] + [파일 추가] test
          @PostMapping("/add")
          public ResponseEntity<?> insertProjFile(ProjVO vo,HttpServletRequest request,
                         MultipartHttpServletRequest mhsr) throws IOException  {
+             int projSeq = projService.getProjSeq();
 
-                    int projSeq = projService.getProjSeq();
+             int fileSeq = fileService.getFileSeq();
+             FileUtils fileUtils = new FileUtils();
 
-                    int fileSeq = fileService.getFileSeq();
-                    FileUtils fileUtils = new FileUtils();
+             List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
 
-                    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
+             if(CollectionUtils.isEmpty(fileList) == false) {
+                 fileService.saveFile(fileList);
+                 System.out.println("saveFile()탐 + fileList===" + fileList);
+             }
 
-                    if(CollectionUtils.isEmpty(fileList) == false) {
-                        fileService.saveFile(fileList);
-                        System.out.println("saveFile()탐 + fileList===" + fileList);
-                    }
-
-                    projService.addProj(vo);
-                   ProjVO projDetail = projService.getProjDetail(projSeq);
+             projService.addProj(vo);
+             ProjVO projDetail = projService.getProjDetail(projSeq);
 //  projSeq와 fileSeq가 return값에 담겨있지 않음.
-                   return ResponseEntity.ok(projSeq+"번 프로젝트가 추가되었습니다"+ "projVO" + vo + "fileSeq="+fileSeq +fileList);
-        }
+             return ResponseEntity.ok(projSeq+"번 프로젝트가 추가되었습니다"+ "projVO" + vo + "fileSeq="+fileSeq +fileList);
+
+         }
 
 
 // [프로젝트 삭제]
@@ -152,45 +151,47 @@ public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
 
 
 
-// [프로젝트 수정]  + [파일 수정]
-@PutMapping("update/{projSeq}")
-public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int projSeq,
-                                    ProjVO vo,HttpServletRequest request,
-                                    MultipartHttpServletRequest mhsr) throws IOException {
+    // [프로젝트 수정]  + [파일 수정]
+    @PutMapping("update/{projSeq}")
+    public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int projSeq,
+                                        ProjVO vo,HttpServletRequest request,
+                                        MultipartHttpServletRequest mhsr) throws IOException {
 
-    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
-    fileService.deleteFileBySeq(projSeq);
-    
-    int fileSeq = fileService.getFileSeq();
-    FileUtils fileUtils = new FileUtils();
-    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
+        // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기
+        fileService.deleteFileBySeq(projSeq);
 
-    if(CollectionUtils.isEmpty(fileList) == false) {
-        fileService.saveFile(fileList);
-        System.out.println("saveFile()탐 + fileList===" + fileList);
+        int fileSeq = fileService.getFileSeq();
+        FileUtils fileUtils = new FileUtils();
+        List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
+
+        if(CollectionUtils.isEmpty(fileList) == false) {
+            fileService.saveFile(fileList);
+            System.out.println("saveFile()탐 + fileList===" + fileList);
         }
 
 
-    projService.update(vo);
-    ProjVO projDetail = projService.getProjDetail(projSeq);
-    return ResponseEntity.ok(projSeq+"번 프로젝트 수정이 완료되었습니다" + projDetail + fileList);
-}
-// 유저별 좋아요한 프로젝트 조회
-@GetMapping("likeProj/{userId}") //proj/userId
-public ResponseEntity<List<HashMap<String, Object>>> getLikeProj(@PathVariable("userId") String userId, ProjVO vo,Criteria cri) {
-log.info("유저가 좋아요 한 프로젝트 목록 api");
+        projService.update(vo);
+        ProjVO projDetail = projService.getProjDetail(projSeq);
+        return ResponseEntity.ok(projSeq+"번 프로젝트 수정이 완료되었습니다" + projDetail + fileList);
+    }
 
-cri.setPageNum(1);
-List<HashMap<String, Object>> projList = projService.getLikeProj(userId,cri);
-return ResponseEntity.ok(projList);
-}
-// 좋아요 순 프로젝트 리스트
-@GetMapping("/bestProj") 
-public ResponseEntity<List<HashMap<String, Object>>> getbestProj(ProjVO vo,Criteria cri) {
-log.info("좋아요 순 프로젝트 목록 api");
+    // 유저별 좋아요한 프로젝트 조회
+    @GetMapping("likeProj/{userId}") //proj/userId
+    public ResponseEntity<List<HashMap<String, Object>>> getLikeProj(@PathVariable("userId") String userId, ProjVO vo,Criteria cri) {
+        log.info("유저가 좋아요 한 프로젝트 목록 api");
 
-cri.setPageNum(1);
-List<HashMap<String, Object>> projList = projService.getBestProj(cri);
-return ResponseEntity.ok(projList);
-}
+        cri.setPageNum(1);
+        List<HashMap<String, Object>> projList = projService.getLikeProj(userId,cri);
+        return ResponseEntity.ok(projList);
+    }
+
+    // 좋아요 순 프로젝트 리스트
+    @GetMapping("/bestProj")
+    public ResponseEntity<List<HashMap<String, Object>>> getbestProj(ProjVO vo,Criteria cri) {
+        log.info("좋아요 순 프로젝트 목록 api");
+
+        cri.setPageNum(1);
+        List<HashMap<String, Object>> projList = projService.getBestProj(cri);
+        return ResponseEntity.ok(projList);
+    }
 }

@@ -1,12 +1,12 @@
 package com.codefolio.service;
 
+import com.codefolio.vo.Criteria;
 import com.codefolio.vo.ProjVO;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jayway.jsonpath.Criteria;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -50,8 +50,10 @@ public interface ProjService {
 	 @Transactional
 	public List<HashMap<String, Object>> getLikeProj(String userId, Criteria cri);
 
+
 	@Transactional
 	public List<HashMap<String, Object>> getBestProj(Criteria cri);
+
     //hweyoung update
     @Transactional
     public void updatePreview(int projSeq, String preview);

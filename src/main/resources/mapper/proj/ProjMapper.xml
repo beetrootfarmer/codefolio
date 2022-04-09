@@ -142,7 +142,7 @@
         WHERE proj_seq=#{projSeq};
     </update>
 
-    <update id="update" parameterType="map">
+    <update id="update">
         UPDATE codefolio.proj
         SET
             user = #{user},

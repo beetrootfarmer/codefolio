@@ -2,11 +2,11 @@ package com.codefolio.mapper;
 
 import java.util.HashMap;
 import java.util.List;
+
+import com.codefolio.vo.Criteria;
 import com.codefolio.vo.ProjVO;
-import com.jayway.jsonpath.Criteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 import java.util.Map;
 
 
@@ -47,4 +47,6 @@ public interface ProjMapper {
 	public List<HashMap<String, Object>> getBestProj(Criteria cri);
 
     public void updatePreview(int projSeq, String preview);
+
+    List<ProjVO> getProjByUser(String userId);
 }
