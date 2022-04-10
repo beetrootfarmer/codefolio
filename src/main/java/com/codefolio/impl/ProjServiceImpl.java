@@ -2,10 +2,12 @@ package com.codefolio.impl;
 
 import com.codefolio.mapper.ProjMapper;
 import com.codefolio.service.ProjService;
+import com.codefolio.vo.Criteria;
 import com.codefolio.vo.ProjVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -47,13 +49,10 @@ public class ProjServiceImpl implements ProjService {
     }
 
     @Override
-    public void update(Map<String, Object> param){
-         projMapper.update(param);
+    public void update(ProjVO vo){
+         projMapper.update(vo);
     }
-
-    @Override
-    public void updatePreview(int projSeq, String preview){projMapper.updatePreview(projSeq,preview);}
-
+    
     @Override
     public void viewUp(int projSeq){
         projMapper.viewUp(projSeq);
@@ -76,10 +75,6 @@ public class ProjServiceImpl implements ProjService {
 	}
 
 
-//	@Override
-//	public List<ProjVO> searchProj(String keyword) {
-//		return projMapper.searchProj(keyword);
-//	}
 
 
 	@Override
@@ -87,34 +82,44 @@ public class ProjServiceImpl implements ProjService {
 		return projMapper.searchProj(keyword);
 	}
 	
-	 @Override
-	    public List<HashMap<String, Object>> getProjList(String keyword, Criteria cri) {
-				
-		 	Map<String, Object> paramMap = new HashMap<String, Object>();
-			paramMap.put("keyword", keyword);
-			cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
-			paramMap.put("criteria", cri);
-	
-			log.info("projServiceImpl의 getProjList메소드에서==== keyword, cri==="+ keyword + "," + cri);
-	      
-		return projMapper.getProjList(paramMap);
-	    }
-	 
-	 @Override
-	    public List<HashMap<String, Object>> getLikeProj(String userId, Criteria cri) {
-				
-		 	Map<String, Object> likeProj = new HashMap<String, Object>();
-			likeProj.put("userId", userId);
+	@Override
+    public List<HashMap<String, Object>> getProjList(String keyword, Criteria cri) {
 			
-			cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
-			likeProj.put("criteria", cri);
-	      
-			return projMapper.getLikeProj(likeProj);
-	    }
-	 
-	 @Override
-	    public List<HashMap<String, Object>> getBestProj(Criteria cri) {
-			return projMapper.getBestProj(cri);
-	    }
+	 	Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("keyword", keyword);
+		cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
+		paramMap.put("criteria", cri);
+
+		log.info("projServiceImpl의 getProjList메소드에서==== keyword, cri==="+ keyword + "," + cri);
+      
+	return projMapper.getProjList(paramMap);
+    }
+ 
+	@Override
+    public List<HashMap<String, Object>> getLikeProj(String userId, Criteria cri) {
+			
+	 	Map<String, Object> likeProj = new HashMap<String, Object>();
+		likeProj.put("userId", userId);
+		
+		cri.setStartNum((cri.getPageNum() -1 ) * cri.getAmount());
+		likeProj.put("criteria", cri);
+      
+		return projMapper.getLikeProj(likeProj);
+    }
+ 
+	@Override
+    public List<HashMap<String, Object>> getBestProj(Criteria criteria) {
+		
+		Map<String,Object> bestProj = new HashMap<String, Object>();
+		criteria.setStartNum((criteria.getPageNum() -1 ) * criteria.getAmount());
+		bestProj.put("criteria", criteria);
+		
+		return projMapper.getBestProj(bestProj);
+    }
+
+
+    @Override
+    public void updatePreview(int projSeq, String preview){projMapper.updatePreview(projSeq,preview);}
+
 
 }

@@ -1,6 +1,7 @@
 package com.codefolio.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,10 +10,14 @@ import com.codefolio.config.exception.NotCreateException;
 import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
+import com.codefolio.vo.Criteria;
 import com.codefolio.vo.FileVO;
 import com.codefolio.vo.ProjVO;
 
 import com.codefolio.vo.UserVO;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +28,7 @@ import java.io.IOException;
 import com.codefolio.utils.FileUtils;
 import org.springframework.util.CollectionUtils;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/proj")
 public class ProjController {
@@ -39,13 +44,6 @@ public class ProjController {
         }
 
 
-// [프로젝트 리스트 불러오기]
-    @GetMapping("/list")
-//    Model은 HashMap형태로 key와 value값처럼 사용
-    public ResponseEntity<List<ProjVO>> getProjList() {
-        List<ProjVO> projList = projService.getProjList();
-        return ResponseEntity.ok(projList);
-    }
 
 @GetMapping("/list")
 public ResponseEntity<?> getProjList(ProjVO vo, Criteria cri) {
@@ -167,44 +165,44 @@ public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
 
 
 // [프로젝트 수정]  + [파일 수정]
-@PutMapping("update/{projSeq}")
-public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int projSeq,
-                                    ProjVO vo,HttpServletRequest request,
-                                    MultipartHttpServletRequest mhsr) throws IOException {
-
-    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
-    fileService.deleteFileBySeq(projSeq);
-    
-    int fileSeq = fileService.getFileSeq();
-    FileUtils fileUtils = new FileUtils();
-    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
-
-    if(CollectionUtils.isEmpty(fileList) == false) {
-        fileService.saveFile(fileList);
-        System.out.println("saveFile()탐 + fileList===" + fileList);
-        }
-
-
-    projService.update(vo);
-    ProjVO projDetail = projService.getProjDetail(projSeq);
-    return ResponseEntity.ok(projSeq+"번 프로젝트 수정이 완료되었습니다" + projDetail + fileList);
-}
+		@PutMapping("update/{projSeq}")
+		public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int projSeq,
+		                                    ProjVO vo,HttpServletRequest request,
+		                                    MultipartHttpServletRequest mhsr) throws IOException {
+		
+		    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
+		    fileService.deleteFileBySeq(projSeq);
+		    
+		    int fileSeq = fileService.getFileSeq();
+		    FileUtils fileUtils = new FileUtils();
+		    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
+		
+		    if(CollectionUtils.isEmpty(fileList) == false) {
+		        fileService.saveFile(fileList);
+		        System.out.println("saveFile()탐 + fileList===" + fileList);
+		        }
+		
+		
+		    projService.update(vo);
+		    ProjVO projDetail = projService.getProjDetail(projSeq);
+		    return ResponseEntity.ok(projSeq+"번 프로젝트 수정이 완료되었습니다" + projDetail + fileList);
+		}
 // 유저별 좋아요한 프로젝트 조회
-@GetMapping("likeProj/{userId}") //proj/userId
-public ResponseEntity<List<HashMap<String, Object>>> getLikeProj(@PathVariable("userId") String userId, ProjVO vo,Criteria cri) {
-log.info("유저가 좋아요 한 프로젝트 목록 api");
-
-cri.setPageNum(1);
-List<HashMap<String, Object>> projList = projService.getLikeProj(userId,cri);
-return ResponseEntity.ok(projList);
-}
+		@GetMapping("likeProj/{userId}") //proj/userId
+		public ResponseEntity<List<HashMap<String, Object>>> getLikeProj(@PathVariable("userId") String userId, ProjVO vo,Criteria cri) {
+		log.info("유저가 좋아요 한 프로젝트 목록 api");
+		
+		cri.setPageNum(1);
+		List<HashMap<String, Object>> projList = projService.getLikeProj(userId,cri);
+		return ResponseEntity.ok(projList);
+		}
 // 좋아요 순 프로젝트 리스트
-@GetMapping("/bestProj") 
-public ResponseEntity<List<HashMap<String, Object>>> getbestProj(ProjVO vo,Criteria cri) {
-log.info("좋아요 순 프로젝트 목록 api");
-
-cri.setPageNum(1);
-List<HashMap<String, Object>> projList = projService.getBestProj(cri);
-return ResponseEntity.ok(projList);
-}
+		@GetMapping("/bestProj") 
+		public ResponseEntity<List<HashMap<String, Object>>> getbestProj(ProjVO vo,Criteria criteria) {
+		log.info("좋아요 순 프로젝트 목록 api");
+		
+		criteria.setPageNum(1);
+		List<HashMap<String, Object>> projList = projService.getBestProj(criteria);
+		return ResponseEntity.ok(projList);
+		}
 }

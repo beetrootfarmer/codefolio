@@ -176,14 +176,15 @@
 		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
 	</select>
 	
-	<select id="getLikeProj" parameterType="com.codefolio.vo.Criteria" resultType="Map">					
+	<select id="getBestProj" parameterType="HashMap" resultType="Map">					
 		SELECT 
 			proj_seq, 
 			title, 
-			user
+			user,
+			likes
   		FROM codefolio.proj 
+		ORDER BY likes DESC
 		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
-		DESC like
 	</select>
 
 
