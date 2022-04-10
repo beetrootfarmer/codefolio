@@ -1,12 +1,12 @@
 package com.codefolio.controller;
 
-import com.codefolio.config.exception.NotCreateException;
-import com.codefolio.config.exception.NotFoundException;
-import com.codefolio.config.exception.TestException;
+import com.codefolio.config.exception.controller.NotCreateException;
+import com.codefolio.config.exception.controller.NotFoundException;
+import com.codefolio.config.exception.controller.TestException;
 import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.JsonResponse;
 import com.codefolio.service.FileService;
-import com.codefolio.service.ProjService;
+import com.codefolio.service.FollowService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
@@ -35,7 +35,7 @@ public class SecurityController {
     private final UserService userService;
     private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
-    private final ProjService projService;
+    private final FollowService followService;
 
     @GetMapping("/")
     public String mainhome(){
@@ -120,18 +120,17 @@ public class SecurityController {
 
     //follower : following 당하는 사람
     //follower <= following
-//    @PostMapping("/{userId}/{followerId}")
-//    public ResponseEntity followUser(@PathVariable String followerId,HttpServletRequest request){
-//        String userUUID = getUUID(request);
-//        UserVO followee = userService.getUserByUUID(userUUID);
-//        UserVO follower = userService.getUserById(followerId);
-//        FollowVO followVO = FollowVO.builder().followeeId(followee.getId()).followeeStack(followee.getStack()).follweeImg(followee.getImg())
-//                .followerId(follower.getId()).follwerImg(follower.getImg()).followerStack(follower.getStack()).build();
-//        int followSeq = userService.followUser(followVO);
-//
-//        return ResponseEntity.ok(followee.getId()+"님이 "+follower.getId()+"님을 팔로우 했습니다.");
-//
-//    }
+    @PostMapping("/{userId}/{followerId}")
+    public ResponseEntity followUser(@PathVariable String followerId,HttpServletRequest request){
+        String userUUID = getUUID(request);
+        UserVO followee = userService.getUserByUUID(userUUID);
+        UserVO follower = userService.getUserById(followerId);
+        FollowVO followVO=FollowVO.builder().followerUUID(follower.getUUID()).followeeUUID(followee.getUUID()).build();
+        int followSeq = followService.followUser(followVO);
+
+        return ResponseEntity.ok(followee.getId()+"님이 "+follower.getId()+"님을 팔로우 했습니다.");
+
+    }
 
 //    private Object checkAcToken(String userUUID,HttpServletRequest request){
 //        try{
