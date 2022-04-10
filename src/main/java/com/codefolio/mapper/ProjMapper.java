@@ -33,14 +33,6 @@ public interface ProjMapper {
     
     public int selectProjCount(ProjVO vo);
     
-    public List<ProjVO> getProjListwithCri(Criteria cri);
-
-	public List<ProjVO> getProjListOri();
-
-	public List<HashMap<String, Object>> getProjandFile();
-
-//	public List<ProjVO> searchProj(@Param("keyword")String keyword);
-
 	public List<HashMap<String, Object>> searchProj(String keyword);
 	
 	public List<HashMap<String, Object>> getProjList(Map<String, Object> paramMap);

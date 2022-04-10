@@ -7,15 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface ProjService {
-    
-    @Transactional
-    public List<ProjVO> getProjListOri();
-    
+
      @Transactional
-//     public void addProj(Map<String, Object> param);
      public void addProj(ProjVO vo);
 
      @Transactional
@@ -38,9 +35,6 @@ public interface ProjService {
 
 	public int selectProjCount(ProjVO vo);
 	
-	public List<HashMap<String, Object>> getProjandFile();
-
-//	public List<ProjVO> searchProj(String keyword);
 	public List<HashMap<String, Object>> searchProj(String keyword);
 	
 	 @Transactional
@@ -51,11 +45,14 @@ public interface ProjService {
 
 	@Transactional
 	public List<HashMap<String, Object>> getBestProj(Criteria criteria);
-    //hweyoung update
+    
+	//hweyoung update
     @Transactional
     public void updatePreview(int projSeq, String preview);
     
     //hweyoung udpate
     @Transactional
     public List<ProjVO> getProjByUser(String userId);
+
+	public String makeThumbnail(MultipartFile tn);
 }

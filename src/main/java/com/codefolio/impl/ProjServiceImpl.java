@@ -6,7 +6,10 @@ import com.codefolio.vo.Criteria;
 import com.codefolio.vo.ProjVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,9 @@ import com.codefolio.utils.CUtil;
 public class ProjServiceImpl implements ProjService {
     @Autowired
     ProjMapper projMapper;
+    
+    @Autowired
+	private WebApplicationContext context;
 
     @Override
     public List<ProjVO> getProjByUser(String userId){return projMapper.getProjByUser(userId);}
@@ -64,20 +70,6 @@ public class ProjServiceImpl implements ProjService {
 
 
 	@Override
-	public List<ProjVO> getProjListOri() {
-		return projMapper.getProjListOri();
-	}
-
-
-	@Override
-	public List<HashMap<String, Object>> getProjandFile() {
-		return projMapper.getProjandFile();
-	}
-
-
-
-
-	@Override
 	public List<HashMap<String, Object>> searchProj(String keyword) {
 		return projMapper.searchProj(keyword);
 	}
@@ -120,6 +112,28 @@ public class ProjServiceImpl implements ProjService {
 
     @Override
     public void updatePreview(int projSeq, String preview){projMapper.updatePreview(projSeq,preview);}
+
+	@Override
+	public String makeThumbnail(MultipartFile tn) {
+		String uploadPath = context.getServletContext().getRealPath("/");
+		String attach_path = "upload/";
+		String fileName = tn.getOriginalFilename();
+		
+		String thumbnail = uploadPath + attach_path + fileName;
+		File file = new File(uploadPath + attach_path + fileName);
+		int i = 1;
+		
+		// 같은 이름의 파일이 있을 경우 돌아가는 while문 
+		while(file.exists()) {
+			int index = fileName.lastIndexOf(".");
+			String newFileName = fileName.substring(0,index)+"_"+i+fileName.substring(index);
+			
+			file = new File(uploadPath+ attach_path + newFileName);
+			thumbnail = uploadPath +attach_path +newFileName;
+			i++;
+		}
+		return thumbnail;
+	}
 
 
 }
