@@ -10,6 +10,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,9 +115,9 @@ public class ProjServiceImpl implements ProjService {
     public void updatePreview(int projSeq, String preview){projMapper.updatePreview(projSeq,preview);}
 
 	@Override
-	public String makeThumbnail(MultipartFile tn) {
+	public String makeThumbnail(MultipartFile tn) throws IOException {
 		String uploadPath = context.getServletContext().getRealPath("/");
-		String attach_path = "upload/";
+		String attach_path = "upload/thumbnail/";
 		String fileName = tn.getOriginalFilename();
 		
 		String thumbnail = uploadPath + attach_path + fileName;
@@ -129,6 +130,8 @@ public class ProjServiceImpl implements ProjService {
 			String newFileName = fileName.substring(0,index)+"_"+i+fileName.substring(index);
 			
 			file = new File(uploadPath+ attach_path + newFileName);
+			
+			tn.transferTo(file);
 			thumbnail = uploadPath +attach_path +newFileName;
 			i++;
 		}

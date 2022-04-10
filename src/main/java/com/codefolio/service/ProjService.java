@@ -3,6 +3,7 @@ package com.codefolio.service;
 import com.codefolio.vo.Criteria;
 import com.codefolio.vo.ProjVO;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,5 +55,5 @@ public interface ProjService {
     @Transactional
     public List<ProjVO> getProjByUser(String userId);
 
-	public String makeThumbnail(MultipartFile tn);
+	public String makeThumbnail(MultipartFile tn) throws IOException;
 }

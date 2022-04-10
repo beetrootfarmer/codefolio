@@ -45,22 +45,22 @@ public class SecurityController {
 
 
     //user Img upload => user
-    @PostMapping("/{userId}/upload")
-    public ResponseEntity<Object> insertUserImg(HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
-        log.info("insertUserImg");
-        String userUUID = getUUID(request);
-        UserVO user = userService.getUserByUUID(userUUID);
-        int userSeq = user.getUserSeq();
-        FileUtils fileUtils = new FileUtils();
-        List<FileVO> fileList = fileUtils.parseFileInfo(userSeq,"user", request,mhsr);
-        if(CollectionUtils.isEmpty(fileList) == false) {
-            fileService.saveFile(fileList);
-            user.setImg(fileList.get(0).getFileDownloadUri());
-            userService.updateUserImg(user);
-        }else throw new NotCreateException("Unable create file");
-        UserVO userDetail = userService.getUserByUUID(userUUID);
-        return ResponseEntity.ok(new JsonResponse(userDetail,200,"insertUserImg"));
-    }
+			//    @PostMapping("/{userId}/upload")
+			//    public ResponseEntity<Object> insertUserImg(HttpServletRequest request, MultipartHttpServletRequest mhsr)throws Exception{
+			//        log.info("insertUserImg");
+			//        String userUUID = getUUID(request);
+			//        UserVO user = userService.getUserByUUID(userUUID);
+			//        int userSeq = user.getUserSeq();
+			//        FileUtils fileUtils = new FileUtils();
+			//        List<FileVO> fileList = fileUtils.parseFileInfo(userSeq,"user", request,mhsr);
+			//        if(CollectionUtils.isEmpty(fileList) == false) {
+			//            fileService.saveFile(fileList);
+			//            user.setImg(fileList.get(0).getFileDownloadUri());
+			//            userService.updateUserImg(user);
+			//        }else throw new NotCreateException("Unable create file");
+			//        UserVO userDetail = userService.getUserByUUID(userUUID);
+			//        return ResponseEntity.ok(new JsonResponse(userDetail,200,"insertUserImg"));
+			//    }
 
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
     @DeleteMapping("/{userId}")
