@@ -23,7 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileServiceImpl implements FileService {
 
     @Autowired
+    public
     FileMapper fileMapper;
+
 
     @Override
     public void saveFile(List<FileVO>  fileList){
@@ -33,16 +35,21 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<FileVO> getFileListBySeq(int seq) {
-        return fileMapper.getFileListBySeq(seq);
-    }
-    @Override
-    public Resource selectFile(String fileName){
-        return fileMapper.selectFile(fileName);
+    public Resource selectFile(int seq){
+        return fileMapper.selectFile(seq);
     }
 
     @Override
-    public Iterable<FileVO> getFileList(){
+    public void deleteFileBySeq(int seq){
+        fileMapper.deleteFileBySeq(seq);}
+    
+    public List<FileVO> getFileListBySeq(int seq) {
+        return fileMapper.getFileListBySeq(seq);
+    }
+
+
+    @Override
+    public List<FileVO> getFileList(){
            return fileMapper.findAll();
     }
     @Override
