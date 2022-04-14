@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().disable()  //formlogin이나 기본 httplogin방식을 아예 쓰지 않는다.
                 .authorizeRequests()    //요청에 대한 사용권한 체크
+                .antMatchers("/proj/**").permitAll()
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")
                 //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
