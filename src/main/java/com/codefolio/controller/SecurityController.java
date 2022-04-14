@@ -94,7 +94,7 @@ public class SecurityController {
 
         UserVO userDetail = userService.getUserByUUID(userUUID);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new JsonResponse(userDetail,200,"updateUser"));
+                .body(new JsonResponse(userDetail,"",200,"updateUser"));
     }
 
 
@@ -112,7 +112,7 @@ public class SecurityController {
             getUser.setPwd(encUserPwd);   //encoding된 password 넣기
             userService.updatePwd(getUser);
             UserVO userDetail = userService.getUserByUUID(userUUID);
-            return ResponseEntity.ok(new JsonResponse(userDetail,200,"changePwd"));
+            return ResponseEntity.ok(new JsonResponse(userDetail,"",200,"changePwd"));
         }catch (Exception e){
             throw new NotCreateException("not create user password");
         }

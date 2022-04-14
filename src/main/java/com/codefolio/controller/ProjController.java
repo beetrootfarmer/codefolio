@@ -52,9 +52,8 @@ public class ProjController {
 
 
 	@GetMapping("/search")
-	   public ResponseEntity<?> searchProjList(@RequestParam(required = false) String keyword, ProjVO vo,Criteria cri) {
-//		ResponseEntity<List<HashMap<String, Object>>>
-			log.info("프로젝트 목록 검색 api");
+	   public ResponseEntity<?> projList(@RequestParam(required = false) String keyword, ProjVO vo,Criteria cri) {
+			log.info("[API] projList");
 	       
 	       if(vo.getKeywordType() == null) {
 	           vo.setKeywordType("TITLE");
@@ -62,91 +61,54 @@ public class ProjController {
 	       if(vo.getKeyword() == null) {
 	           vo.setKeyword("");
 	       }
-	       int total = projService.selectProjCount(vo);
-	
 	       keyword = vo.getKeyword();
-	       log.info("keyword",keyword,"_______________");
-	       
+	      
 	       if(!keyword.equals(vo.getKeyword())) {
-	           log.info("!keyword.equals");
 	           cri.setPageNum(1);
-	           
 	       }
-	       //List<HashMap<String, Object>> projList = projService.searchProj(keyword);
 	       List<HashMap<String, Object>> projList = projService.getProjList(keyword,cri);
 	
 	        ProjListResponse data = new ProjListResponse(projList);
-	        return ResponseEntity.ok(new JsonResponse(data, 200, "projList"));
+	        return ResponseEntity.ok(new JsonResponse(data,"success", 200, "projList"));
 	   }
 
 
 
 	// [프로젝트 상세 페이지] +[파일 불러오기]
 	@GetMapping("/{projSeq}")
-	public ResponseEntity<?> showProjDetail(@PathVariable("projSeq") int seq) {
+	public ResponseEntity<?> getProjDetail(@PathVariable("projSeq") int seq) {
+		log.info("[API] getProjDetail");
 	   // 보드 시퀀스로 파일리스트 가져오기
 	   List<FileVO> fileList = fileService.getFileListBySeq(seq);
 	
 	   // 조회수 늘리기
 	   projService.viewUp(seq);
-	   
 	   ProjVO proj = projService.getProjDetail(seq);
 	
 	   for (FileVO file : fileList) {
 	           if (file.getBoardSeq() == seq) {
 	        	   GetProjandFileResponse data = new GetProjandFileResponse(proj, fileList);
-	    	       return ResponseEntity.ok(new JsonResponse(data, 200, "projDetail"));
+	    	       return ResponseEntity.ok(new JsonResponse(data,"success", 200, "getProjDetail"));
 	           }
 	       }
-	
 	       GetProjandFileResponse data = new GetProjandFileResponse(proj, fileList);
-	       return ResponseEntity.ok(new JsonResponse(data, 200, "projDetail"));
+	       return ResponseEntity.ok(new JsonResponse(data,"success", 200, "getProjDetail"));
 	}
 
-
-//      // [프로젝트 추가] + [파일 추가] ~~~ 썸네일 RequesetParam으로 받아오기  
-//         @PostMapping("/add")
-//         public ResponseEntity<?> insertProjandThumbnail(@RequestParam(required = false) MultipartFile tn, ProjVO vo, HttpServletRequest request,
-//                 MultipartHttpServletRequest mhsr) throws IOException  {
-//        	 		try{
-//        	 			if(!tn.isEmpty()) {
-//	        	 		String thumbnail = projService.makeThumbnail(tn);
-//	        	 		vo.setThumbnail(thumbnail);
-//        	 		}
-//        	 		}catch(NullPointerException e){
-//        	 			tn = null;
-//        	 		}
-//                    int projSeq = projService.getProjSeq();
-//
-//                    FileUtils fileUtils = new FileUtils();
-//
-//                    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
-//
-//                    if(CollectionUtils.isEmpty(fileList) == false) {
-//                        fileService.saveFile(fileList);
-//                    }
-//                    	
-//                   projService.addProj(vo);
-//                   ProjVO projDetail = projService.getProjDetail(projSeq);
-//                   
-//                   GetProjandFileResponse data = new GetProjandFileResponse(projDetail, fileList);
-//        	       return ResponseEntity.ok(new JsonResponse(data, 200, "addProj"));
-//        }
 	
   // [프로젝트 추가] + [파일 추가] ~~~ 썸네일 RequesetParam으로 받아오기  
   @PostMapping("/add")
-  public ResponseEntity<?> insertProjandThumbnail(@RequestParam(required = false) MultipartFile tn, @RequestParam(required = false) MultipartFile[] file,ProjVO vo) throws IOException  {
- 	 		try{
+  public ResponseEntity<?> addProj(@RequestParam(required = false) MultipartFile tn, @RequestParam(required = false) MultipartFile[] file,ProjVO vo) throws IOException  {
+	  		log.info("[API] addProj");
+	  		try{
  	 			if(!tn.isEmpty()) {
      	 		String thumbnail = projService.makeThumbnail(tn);
      	 		vo.setThumbnail(thumbnail);
  	 		}
  	 		}catch(NullPointerException e){
- 	 			tn = null;
+ 	 			log.error("[NullPointerException] addProj");
  	 		}
              int projSeq = projService.getProjSeq();
-
-//             FileUtils fileUtils = new FileUtils();
 
              List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj",file);
 
@@ -158,73 +120,81 @@ public class ProjController {
             ProjVO projDetail = projService.getProjDetail(projSeq);
             
             GetProjandFileResponse data = new GetProjandFileResponse(projDetail, fileList);
- 	       return ResponseEntity.ok(new JsonResponse(data, 200, "addProj"));
+ 	       return ResponseEntity.ok(new JsonResponse(data,"success", 200, "addProj"));
  }
 
 
 // [프로젝트 삭제]
         @DeleteMapping("/{projSeq}")
         public ResponseEntity<?> deleteProj(@PathVariable("projSeq") int projSeq) {
+        	log.info("[API] deleteProj");
+        	
             projService.deleteProj(projSeq);
             ProjVO projDetail = projService.getProjDetail(projSeq);
             
             ProjListResponse data = new ProjListResponse(projDetail);
-	        return ResponseEntity.ok(new JsonResponse(data, 200, "deleteProj"));
+	        return ResponseEntity.ok(new JsonResponse(data,"success", 200, "deleteProj"));
             }
 
 
 
 // [프로젝트 수정]  + [파일 수정]
-//		@PutMapping("update/{projSeq}")
-//		public ResponseEntity<?> showUpdate(@PathVariable("projSeq") int projSeq,@RequestParam("tn") MultipartFile tn,
-//		                                    ProjVO vo,HttpServletRequest request,
-//		                                    MultipartHttpServletRequest mhsr) throws IOException {
-//			
-//			if(!tn.isEmpty()) {
-//    	 		String thumbnail = projService.makeThumbnail(tn);
-//    	 		vo.setThumbnail(thumbnail);
-//	 		}
-//		
-//		    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
-//		    fileService.deleteFileBySeq(projSeq);
-//		    
-//		    int fileSeq = fileService.getFileSeq();
-//		    FileUtils fileUtils = new FileUtils();
-//		    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", request, mhsr);
-//		
-//		    if(CollectionUtils.isEmpty(fileList) == false) {
-//		        fileService.saveFile(fileList);
-//		        }
-//		
-//		
-//		    projService.update(vo);
-//		    ProjVO projDetail = projService.getProjDetail(projSeq);
-//		    
-//		    GetProjandFileResponse data = new GetProjandFileResponse(projDetail, fileList);
-// 	       	return ResponseEntity.ok(new JsonResponse(data, 200, "updateProj"));
-//		    
-//		}
+		@PutMapping("update/{projSeq}")
+		public ResponseEntity<?> updateProj(@PathVariable("projSeq") int projSeq,@RequestParam(required = false) MultipartFile tn, 
+											@RequestParam(required = false) MultipartFile[] file,
+		                                    ProjVO vo) {
+			log.info("[API] updateProj");
+			try {
+			
+				if(!tn.isEmpty()) {
+	    	 		String thumbnail = projService.makeThumbnail(tn);
+	    	 		vo.setThumbnail(thumbnail);
+		 		}
+			
+			    // 보드 시퀀스로 파일 삭제 후 새로 받아온 파일 넣어주기 
+			    fileService.deleteFileBySeq(projSeq);
+			    
+			    int fileSeq = fileService.getFileSeq();
+			    FileUtils fileUtils = new FileUtils();
+			    List<FileVO> fileList = fileUtils.parseFileInfo(projSeq,"proj", file);
+			
+			    if(CollectionUtils.isEmpty(fileList) == false) {
+			        fileService.saveFile(fileList);
+			        }
+			
+			
+			    projService.update(vo);
+			    ProjVO projDetail = projService.getProjDetail(projSeq);
+			    
+			    GetProjandFileResponse data = new GetProjandFileResponse(projDetail, fileList);
+	 	       	return ResponseEntity.ok(new JsonResponse(data, "success",200,"updateProj"));
+			} catch(IOException e){
+				log.error("[IOException] updateProj");
+				return ResponseEntity.badRequest().body("[IOException] updateProj");
+				
+			}
+		    
+		}
+		
 // 유저별 좋아요한 프로젝트 조회
-		@GetMapping("likeProj/{userId}") //proj/userId
+		@GetMapping("likeProj/{userId}")
 		public ResponseEntity<?> getLikeProj(@PathVariable("userId") String userId, ProjVO vo,Criteria cri) {
-//			List<HashMap<String, Object>>
-		log.info("유저가 좋아요 한 프로젝트 목록 api");
+		log.info("[API] getLikeProj");
 		
 		cri.setPageNum(1);
 		List<HashMap<String, Object>> projList = projService.getLikeProj(userId,cri);
 		ProjListResponse data = new ProjListResponse(projList);
-        return ResponseEntity.ok(new JsonResponse(data, 200, "likeProj"));
+        return ResponseEntity.ok(new JsonResponse(data, "success",200, "likeProj"));
 		}
 		
 // 좋아요 순 프로젝트 리스트
 		@GetMapping("/bestProj") 
 		public ResponseEntity<?> getbestProj(ProjVO vo,Criteria criteria) {
-//			List<HashMap<String, Object>>
-		log.info("좋아요 순 프로젝트 목록 api");
+		log.info("[API] getbestProj");
 		
 		criteria.setPageNum(1);
 		List<HashMap<String, Object>> projList = projService.getBestProj(criteria);
 		ProjListResponse data = new ProjListResponse(projList);
-        return ResponseEntity.ok(new JsonResponse(data, 200, "bestProj"));
+        return ResponseEntity.ok(new JsonResponse(data,"success", 200, "bestProj"));
 		}
 }
