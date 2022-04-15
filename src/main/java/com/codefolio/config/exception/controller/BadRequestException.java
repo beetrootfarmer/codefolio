@@ -1,7 +1,7 @@
 package com.codefolio.config.exception.controller;
 
-public class NotCreateException extends RuntimeException{
-    public NotCreateException(String s){
+public class BadRequestException extends RuntimeException{
+    public BadRequestException(String s){
         super(s);
     }
 }

@@ -1,8 +1,6 @@
 package com.codefolio.service;
 
 
-import com.codefolio.vo.MailTO;
-
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.HashMap;
