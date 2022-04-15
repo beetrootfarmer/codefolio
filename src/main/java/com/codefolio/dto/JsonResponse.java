@@ -13,6 +13,7 @@ public class JsonResponse {
     private Object data;
 
     public JsonResponse(Object data, String code,int status,String message) {
+
         this.status = status;
         this.code = code;
         this.message=message;

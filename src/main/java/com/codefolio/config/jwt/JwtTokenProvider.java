@@ -1,12 +1,5 @@
 package com.codefolio.config.jwt;
 
-import com.codefolio.controller.SecurityController;
-import com.codefolio.service.UserService;
-import com.codefolio.vo.UserVO;
-import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 
@@ -90,7 +83,12 @@ public class JwtTokenProvider {
 
     //토큰에서 회원 정보 추출
     public String getUserPk(String token){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        try{
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        }catch (NullPointerException e){
+            log.info(e.getMessage());
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        }
     }
 
     //Request의 Header에서 token값을 가져옵니다. "X-AUTH-TOKEN":"TOKEN값" =>refresh token은 DB에 저장
@@ -99,49 +97,54 @@ public class JwtTokenProvider {
     }
 
     //토큰의 유효성 + 만료 일자 확인
-    public boolean validateToken(String jwtToken){
-        try{
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
-        }catch (SecurityException e) {
-            log.info("Invalid JWT signature.");
-        } catch (MalformedJwtException e) {
-            log.info("Invalid JWT token.");
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-        }
-        return false;
+    public boolean validateToken(String jwtToken,HttpServletRequest request){
+            try{
+                Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+                return !claims.getBody().getExpiration().before(new Date());
+            }catch (SecurityException e) {
+                log.info("Invalid JWT signature.");
+            } catch (MalformedJwtException e) {
+                log.info("Invalid JWT token.");
+            } catch (ExpiredJwtException e) {
+                log.info("Expired JWT token.");
+                log.info(e.getMessage());
+                request.setAttribute("exception", ExceptionCode.EXPIRED_TOKEN.getCode());
+            } catch (UnsupportedJwtException e) {
+                log.info("Unsupported JWT token.");
+            } catch (IllegalArgumentException e) {
+                log.info("JWT token compact of handler are invalid.");
+            }catch (Exception e) {
+                return false;
+            }
+            return false;
         }
 
-    public void verifyLogin(ServletRequest request, ServletResponse response){
-        //헤더에서 JWT를 받아옵니다.
-        String token = resolveToken((HttpServletRequest)request);
-        //유효한 토큰인지 확인합니다.
-        if (token != null && validateToken(token)) {
-            //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
-            Authentication authentication = getAuthentication(token);
-            //securityContext에 Authentication객체를 저장합니다.
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-    }
 
-    public void verifyRefToken(String acToken){
-        //헤더에서 JWT를 받아옵니다.
-        String userUUID = getUserPk(acToken);
-        UserVO userDetail = userService.getUserByUUID(userUUID);
-        //유효한 토큰인지 확인합니다.
-        if (userDetail.getRefToken() != null && validateToken(userDetail.getRefToken())) {
-            String newAcToken = createToken(userUUID);
-            userDetail.setRefToken(createRefToken(userUUID));
-            userService.updateRefToken(userDetail);
-            Authentication authentication = getAuthentication(newAcToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-    }
+//    public void verifyLogin(ServletRequest request, ServletResponse response){
+//        //헤더에서 JWT를 받아옵니다.
+//        String token = resolveToken((HttpServletRequest)request);
+//        //유효한 토큰인지 확인합니다.
+//        if (token != null && validateToken(token)) {
+//            //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
+//            Authentication authentication = getAuthentication(token);
+//            //securityContext에 Authentication객체를 저장합니다.
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
+//    }
+
+//    public void verifyRefToken(String acToken){
+//        //헤더에서 JWT를 받아옵니다.
+//        String userUUID = getUserPk(acToken);
+//        UserVO userDetail = userService.getUserByUUID(userUUID);
+//        //유효한 토큰인지 확인합니다.
+//        if (userDetail.getRefToken() != null && validateToken(userDetail.getRefToken())) {
+//            String newAcToken = createToken(userUUID);
+//            userDetail.setRefToken(createRefToken(userUUID));
+//            userService.updateRefToken(userDetail);
+//            Authentication authentication = getAuthentication(newAcToken);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
+//    }
 
 
 }

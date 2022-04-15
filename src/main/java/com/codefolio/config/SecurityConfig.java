@@ -1,9 +1,9 @@
 package com.codefolio.config;
 
+import com.codefolio.config.exception.jwt.JwtAuthenticationEntryPoint;
 import com.codefolio.config.jwt.JwtAuthenticationFilter;
 import com.codefolio.config.jwt.JwtTokenProvider;
 
-import com.codefolio.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()  //Basic : cookie에 저장해서 접근 / Bearer : token으로 접근(유효시간)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //session을 사용하지 않음
                 .and()
+                .exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+                .and()
                 .formLogin().disable()  //formlogin이나 기본 httplogin방식을 아예 쓰지 않는다.
                 .authorizeRequests()    //요청에 대한 사용권한 체크
                 .antMatchers("/proj/**").permitAll()
@@ -43,9 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter전에 넣는다.
+                .headers().frameOptions().disable()
+                .and()
+        //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter전에 넣는다.
                 .logout().permitAll();
+
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
     }
 
 }

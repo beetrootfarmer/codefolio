@@ -11,6 +11,8 @@ import com.codefolio.dto.JsonResponse;
 import com.codefolio.dto.response.GetProjandFileResponse;
 import com.codefolio.dto.response.GetResponse;
 import com.codefolio.dto.response.ProjListResponse;
+import java.util.HashMap;
+import java.util.List;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
 import com.codefolio.vo.Criteria;
@@ -26,6 +28,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -124,6 +130,7 @@ public class ProjController {
  }
 
 
+
 // [프로젝트 삭제]
         @DeleteMapping("/{projSeq}")
         public ResponseEntity<?> deleteProj(@PathVariable("projSeq") int projSeq) {
@@ -197,4 +204,5 @@ public class ProjController {
 		ProjListResponse data = new ProjListResponse(projList);
         return ResponseEntity.ok(new JsonResponse(data,"success", 200, "bestProj"));
 		}
+
 }
