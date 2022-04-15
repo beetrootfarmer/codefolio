@@ -1,3 +1,4 @@
+
 package com.codefolio.controller;
 
 import com.codefolio.config.exception.controller.*;
@@ -69,16 +70,26 @@ public class UserController {
 //                String newRefToken = jwtTokenProvider.createRefToken(userDetail.getEmail());
 //                return newAcToken;
 //            }
-//            else
-//                System.out.println("ref 만료");
+//            //login성공시 actoken과 reftoken 재발행
+//            String newAcToken = jwtTokenProvider.createToken(userDetail.getUUID());
+//            if(newAcToken==null) return new NotCreateException("Unable to create token.");
+//            String newRefToken = jwtTokenProvider.createRefToken(userDetail.getUUID());
+//            return newAcToken;
+//        }catch(NullPointerException e) {
+//            throw new TestException(e);
 //        }
-//        else{
-//            //accessToken 만료
-//            if(getReftoken!=null&&jwtTokenProvider.validateToken(getReftoken))   //refresh token유효함
-//                System.out.println("refToken 유효");
-//            else System.out.println("ac/ref 만료");
-//        }
+//
 //    }
+//
+//
+//    //회원가입 email의 중복성 체크
+//    @PostMapping("/checkEmail")
+//    public ResponseEntity<String> checkEmail(@RequestBody UserVO user){
+//        int result= userService.checkEmail(user.getEmail());
+//        if(result!=0)return ResponseEntity.badRequest().body("fail"+result);
+//        else return ResponseEntity.ok("success");
+//    }
+
 
     @PostMapping("/join")
     @ResponseBody

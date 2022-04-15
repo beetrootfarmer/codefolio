@@ -13,6 +13,28 @@
         <result property="period" column="period"/>
         <result property="preview" column="preview"/>
     </resultMap>
+    
+    
+<select id="getProjList" parameterType="HashMap" resultType="Map">
+		SELECT 
+			proj_seq, 
+			title, 
+			user, 
+			thumbnail
+  		FROM codefolio.proj 
+  		WHERE 
+			title LIKE CONCAT_WS('%',#{keyword},'%')
+		OR
+			content LIKE CONCAT_WS('%',#{keyword},'%')
+		OR
+			stack LIKE CONCAT_WS('%',#{keyword},'%')
+			
+		ORDER BY proj_seq ASC
+		
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}		
+	</select>
+
+   
 
 
     <select id="getProjListOri" parameterType="com.codefolio.vo.ProjVO" resultType="Map">
@@ -88,6 +110,7 @@
             limit 300;
     </select>
 
+
     <select id="getProjByUser" parameterType="com.codefolio.vo.ProjVO"  resultType="Map">
         SELECT *
         FROM codefolio.proj
@@ -115,17 +138,19 @@
     <insert id="addProj">
         INSERT
         INTO codefolio.proj
-            ( proj_seq, user, title, url, view ,stack, content, period, regDate )
+            ( proj_seq, user, title, url, view ,stack, content, period, regDate,thumbnail )
         VALUES (
-                       (SELECT IFNULL(MAX(proj_seq), 0) + 1 FROM codefolio.proj A),
-                       #{user},
-                       #{title},
-                       #{url},
-                       (SELECT IFNULL(MAX(view), 0) + 1 FROM codefolio.proj A),
-                       #{stack},
-                       #{content},
-                       #{period},
-                       NOW()
+            (SELECT IFNULL(MAX(proj_seq), 0) + 1 FROM codefolio.proj A),
+            #{user},
+            #{title},
+            #{url},
+            (SELECT IFNULL(MAX(view), 0) + 1 FROM codefolio.proj A),
+            #{stack},
+            #{content},
+            #{period},
+            NOW(),
+            #{thumbnail}
+
                )
     </insert>
 
@@ -150,7 +175,9 @@
             url = #{url},
             stack = #{stack},
             content = #{content},
-            period = #{period}
+            period = #{period},
+            thumbnail = #{thumbnail},
+            regDate = NOW()
         WHERE proj_seq = #{projSeq}
     </update>
 
@@ -160,31 +187,35 @@
         WHERE proj_seq = #{projSeq}
     </update>
 
-    <select id="getLikeProj" parameterType="HashMap" resultType="Map">
-        SELECT
-            p.proj_seq,
-            p.title,
-            p.user
-        FROM codefolio.proj AS p
-                 LEFT OUTER JOIN
-             codefolio.like AS l
-             ON l.proj_seq = p.proj_seq
-        WHERE
-            l.proj_seq = p.proj_seq
-          AND
-            l.user_id = #{userId}
-            LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
-    </select>
+    <select id="getLikeProj" parameterType="HashMap" resultType="Map">					
+		SELECT 
+			p.proj_seq, 
+			p.title, 
+			p.user,
+			p.thumbnail
+  		FROM codefolio.proj AS p
+  		LEFT OUTER JOIN 
+  		codefolio.like AS l
+        ON l.proj_seq = p.proj_seq
+       	WHERE
+        l.proj_seq = p.proj_seq
+       	AND
+       	l.user_id = #{userId}
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
+	</select>
+	
+	<select id="getBestProj" parameterType="HashMap" resultType="Map">					
+		SELECT 
+			proj_seq, 
+			title, 
+			user,
+			likes,
+			thumbnail
+  		FROM codefolio.proj 
+		ORDER BY likes DESC
+		LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
+	</select>
 
-    <select id="getBestProj" parameterType="com.codefolio.vo.Criteria" resultType="Map">
-        SELECT
-            proj_seq,
-            title,
-            user
-        FROM codefolio.proj
-                 LIMIT #{criteria.amount} OFFSET #{criteria.startNum}
-            DESC like
-    </select>
 
 
 </mapper>

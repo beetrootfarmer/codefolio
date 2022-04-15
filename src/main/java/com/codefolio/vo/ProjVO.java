@@ -1,6 +1,8 @@
 package com.codefolio.vo;
 import java.sql.Timestamp;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,14 @@ public class ProjVO {
 
     private String keyword;
     private String keywordType;
+    private String thumbnail;
+    private MultipartFile tn;
     
     private int likes;
 }
+//@ApiModelProperty(
+//		  value = "first name of the user",
+//		  name = "firstName",
+//		  dataType = "String",
+//		  example = "Vatsal")
+//		String firstName;
