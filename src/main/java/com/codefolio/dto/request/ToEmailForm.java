@@ -1,2 +1,8 @@
-package com.codefolio.dto.request;public class SetEmailForm {
+package com.codefolio.dto.request;
+
+import lombok.Getter;
+
+@Getter
+public class ToEmailForm {
+    private String email;
 }

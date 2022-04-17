@@ -1,6 +1,5 @@
 package com.codefolio.config.exception.jwt;
 
-import com.codefolio.config.exception.jwt.ExceptionCode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;

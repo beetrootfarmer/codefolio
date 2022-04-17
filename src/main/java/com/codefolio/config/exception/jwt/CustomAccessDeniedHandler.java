@@ -1,6 +1,5 @@
 package com.codefolio.config.exception.jwt;
 
-import com.codefolio.config.exception.jwt.ExceptionCode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
