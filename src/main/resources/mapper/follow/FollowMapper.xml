@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codefolio.mapper.FollowMapper">
+    <!--    followUser      -->
+    <insert id="followUser" parameterType="com.codefolio.vo.FollowVO" useGeneratedKeys="true" keyProperty="followSeq">
+        INSERT INTO codefolio.follow
+        SET follower_UUID=#{followerUUID},followee_UUID=#{followeeUUID};
+    </insert>
+
+</mapper>

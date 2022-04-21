@@ -8,10 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class FollowVO {
     private int followSeq;
-    private String followerId;
-    private String followerStack;
-    private String follwerImg;
-    private String followeeId;
-    private String followeeStack;
-    private String follweeImg;
+    private String followerUUID;
+    private String followeeUUID;
+    private String status;
 }

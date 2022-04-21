@@ -1,21 +1,16 @@
 package com.codefolio.impl;
 
 
-import com.codefolio.config.exception.NotFoundException;
-import com.codefolio.config.exception.TestException;
 import com.codefolio.mapper.UserMapper;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
