@@ -23,6 +23,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         }
         //토큰 만료된 경우
         else if(exception.equals(ExceptionCode.EXPIRED_TOKEN.getCode())) {
+            log.info("Expired token exception at security exception");
             setResponse(response, ExceptionCode.EXPIRED_TOKEN);
         }
         //잘못된 타입의 토큰인 경우
@@ -42,6 +43,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
+        log.info("exception Entry point enter");
         JSONObject responseJson = new JSONObject();
 //        responseJson.put("status",exceptionCode.getStatus());
         responseJson.put("message", exceptionCode.getMessage());

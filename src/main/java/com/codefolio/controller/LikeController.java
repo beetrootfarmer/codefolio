@@ -1,7 +1,7 @@
 package com.codefolio.controller;
 
 import com.codefolio.dto.JsonResponse;
-import com.codefolio.dto.response.GetUserandProjSeqResponse;
+import com.codefolio.dto.proj.response.GetUserandProjSeqResponse;
 import com.codefolio.service.LikeService;
 import com.codefolio.vo.LikeVO;
 import lombok.extern.slf4j.Slf4j;

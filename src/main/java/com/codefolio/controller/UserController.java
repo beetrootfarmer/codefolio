@@ -5,9 +5,9 @@ import com.codefolio.config.exception.controller.MethodNotAllowedException;
 import com.codefolio.config.exception.controller.NotFoundException;
 import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.JsonResponse;
-import com.codefolio.dto.request.*;
-import com.codefolio.dto.response.GetUserResponse;
-import com.codefolio.dto.response.UserResponse;
+import com.codefolio.dto.user.request.*;
+import com.codefolio.dto.user.response.GetUserResponse;
+import com.codefolio.dto.user.response.UserResponse;
 import com.codefolio.service.MailService;
 import com.codefolio.service.ProjService;
 import com.codefolio.service.UserService;
@@ -96,38 +96,41 @@ public class UserController {
             String newRefToken = jwtTokenProvider.createRefToken(userDetail.getUUID());
             return ResponseEntity.ok(new JsonResponse(newAcToken,"success",200,"loginUser"));
         }catch(NullPointerException e) {
+            log.error("[ERROR]NullPointerException / login User");
             throw new NotFoundException("not found user");
         }catch (Exception e){
+            log.error("[ERROR]Exception / login User");
             throw new GlobalException("global Exception");
         }
     }
 
 
-    //TODO : refreshToken 요청
-    @GetMapping("/api/auth/refToken")
-    private ResponseEntity<Object> checkRefToken(HttpServletRequest request){
-
-        String getUserUUID = getUUID(request);
-        try{
-            String getAcToken = jwtTokenProvider.resolveToken(request);
-            getUserUUID = jwtTokenProvider.getUserPk(getAcToken);
-            String newAcToken = jwtTokenProvider.createToken(getUserUUID);
-//            if(!userUUID.equals(getUserUUID)) throw new NotFoundException("Invalid Access Token");
-            return ResponseEntity.ok(new JsonResponse(newAcToken,"valid AcToken",200,"checkRefToken"));
-        } catch(ExpiredJwtException e){
-            log.info("token 유효하지 않음-userController checkRecToken");
-            UserVO user = userService.getUserByUUID(getUserUUID);
-            String getRefToken = user.getRefToken();
-            if(getRefToken != null && jwtTokenProvider.validateToken(getRefToken,request)){
-                String newRefToken = jwtTokenProvider.createRefToken(getUserUUID);
-                user.setRefToken(newRefToken);
-                userService.updateRefToken(user);
-            }
-            return ResponseEntity.ok(new JsonResponse(user.getRefToken(),"valid RefToken",200,"checkRefToken"));
-        }catch (NullPointerException e) {
-            throw new NotFoundException("checkAcToken");
-        }
-    }
+//    //TODO : refreshToken 요청
+//    @GetMapping("/api/auth/refToken")
+//    private ResponseEntity<Object> checkRefToken(HttpServletRequest request){
+//
+//        String getUserUUID = getUUID(request);
+//        log.info(getUserUUID);
+//        try{
+//            String getAcToken = jwtTokenProvider.resolveToken(request);
+//            getUserUUID = jwtTokenProvider.getUserPk(getAcToken);
+//            String newAcToken = jwtTokenProvider.createToken(getUserUUID);
+////            if(!userUUID.equals(getUserUUID)) throw new NotFoundException("Invalid Access Token");
+//            return ResponseEntity.ok(new JsonResponse(newAcToken,"valid AcToken",200,"checkRefToken"));
+//        } catch(ExpiredJwtException e){
+//            log.info("token 유효하지 않음-userController checkRecToken");
+//            UserVO user = userService.getUserByUUID(getUserUUID);
+//            String getRefToken = user.getRefToken();
+//            if(getRefToken != null && jwtTokenProvider.validateToken(getRefToken,request)){
+//                String newRefToken = jwtTokenProvider.createRefToken(getUserUUID);
+//                user.setRefToken(newRefToken);
+//                userService.updateRefToken(user);
+//            }
+//            return ResponseEntity.ok(new JsonResponse(user.getRefToken(),"valid RefToken",200,"checkRefToken"));
+//        }catch (NullPointerException e) {
+//            throw new NotFoundException("checkAcToken");
+//        }
+//    }
 
     private String getUUID(HttpServletRequest request){
         try{

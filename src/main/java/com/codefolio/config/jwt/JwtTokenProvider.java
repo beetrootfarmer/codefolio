@@ -3,9 +3,11 @@ package com.codefolio.config.jwt;
 import com.codefolio.config.exception.jwt.ExceptionCode;
 import com.codefolio.service.UserService;
 import com.codefolio.vo.UserVO;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 
@@ -100,7 +104,7 @@ public class JwtTokenProvider {
     }
 
     //토큰의 유효성 + 만료 일자 확인
-    public boolean validateToken(String jwtToken,HttpServletRequest request){
+    public boolean validateToken(String jwtToken,HttpServletRequest request, HttpServletResponse response)throws IOException{
         try{
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
@@ -109,8 +113,7 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            log.info(e.getMessage());
+            log.info("Expired JWT token. at validation Token");
             request.setAttribute("exception", ExceptionCode.EXPIRED_TOKEN.getCode());
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
@@ -121,7 +124,6 @@ public class JwtTokenProvider {
         }
         return false;
     }
-
 
 //    public void verifyLogin(ServletRequest request, ServletResponse response){
 //        //헤더에서 JWT를 받아옵니다.

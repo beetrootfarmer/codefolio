@@ -34,8 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()  //Basic : cookie에 저장해서 접근 / Bearer : token으로 접근(유효시간)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //session을 사용하지 않음
-                .and()
-                .exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+
                 .and()
                 .formLogin().disable()  //formlogin이나 기본 httplogin방식을 아예 쓰지 않는다.
                 .authorizeRequests()    //요청에 대한 사용권한 체크
@@ -49,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter전에 넣는다.
                 .logout().permitAll();
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint());
 
     }
 
