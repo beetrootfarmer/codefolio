@@ -1,13 +1,12 @@
 package com.codefolio.config.jwt;
 
 import com.codefolio.config.exception.jwt.ExceptionCode;
+import com.codefolio.service.TokenService;
 import com.codefolio.service.UserService;
-import com.codefolio.vo.UserVO;
-import com.nimbusds.jose.shaded.json.JSONObject;
+import com.codefolio.vo.TokenVO;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Date;
 
@@ -29,6 +26,7 @@ public class JwtTokenProvider {
     private String secretKey= JwtProperties.SECRET;
     private final UserDetailsService userDetailsService;
     private final UserService userService;
+    private final TokenService tokenService;
 
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -40,14 +38,16 @@ public class JwtTokenProvider {
 
     public String createToken(String userUUID){
         Claims claims = Jwts.claims().setSubject(userUUID);   //Jwt payload에 저장되는 정보 단위
+        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
                 .setExpiration(new Date(now.getTime()+JwtProperties.EXPIRATION_TIME))  //setExpire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret값 세팅
                 .compact();
-
+        TokenVO tokenVO = TokenVO.builder().UUID(userUUID).acToken(acToken).build();
+        tokenService.updateAcToken(tokenVO);
         return acToken;
     }
 
@@ -61,10 +61,8 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime()+JwtProperties.REF_EXPIRATION_TIME))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret값 세팅
                 .compact();
-        UserVO userVO=new UserVO();
-        userVO.setRefToken(refToken);
-        userVO.setUUID(userUUID);
-        userService.updateRefToken(userVO);
+        TokenVO tokenVO = TokenVO.builder().UUID(userUUID).refToken(refToken).build();
+        tokenService.updateRefToken(tokenVO);
         return refToken;
     }
 
@@ -104,7 +102,7 @@ public class JwtTokenProvider {
     }
 
     //토큰의 유효성 + 만료 일자 확인
-    public boolean validateToken(String jwtToken,HttpServletRequest request, HttpServletResponse response)throws IOException{
+    public boolean validateToken(String jwtToken,HttpServletRequest request){
         try{
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
@@ -124,6 +122,7 @@ public class JwtTokenProvider {
         }
         return false;
     }
+
 
 //    public void verifyLogin(ServletRequest request, ServletResponse response){
 //        //헤더에서 JWT를 받아옵니다.

@@ -12,6 +12,7 @@ import com.codefolio.service.FollowService;
 import com.codefolio.service.UserService;
 import com.codefolio.utils.FileUtils;
 import com.codefolio.vo.FileVO;
+import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,7 +44,7 @@ public class SecurityController {
     private final FollowService followService;
 
     //user Img upload => user
-     @ApiImplicitParams({@ApiImplicitParam(name="AccessToken",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header"),
+     @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header"),
             @ApiImplicitParam(name="mhsr",value = "MultipartHttpServletRequest", required = true, dataType = "string",paramType = "header")})
     @PostMapping("/{userId}/upload")
     public ResponseEntity<Object> insertUserImg(@ApiIgnore HttpServletRequest request,@ApiIgnore @RequestParam(required = false) MultipartFile[] mhsr)throws Exception{
@@ -64,7 +65,7 @@ public class SecurityController {
 
 
     //DeleteUser => id조회 => 등록된 회원만 삭제를 할 수 있다고 생각
-    @ApiImplicitParams({@ApiImplicitParam(name="AccessToken",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
+    @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
     @DeleteMapping("/{userId}")
     public ResponseEntity<Object> deleteUser(@ApiIgnore HttpServletRequest request){
         String userUUID = getUUID(request);
@@ -83,17 +84,14 @@ public class SecurityController {
     }
 
     //Update user => 유저 정보를 jwt로 받아와 찾을 수 있게 만들자
-    @ApiImplicitParams({@ApiImplicitParam(name="AccessToken",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
+    @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
     @PutMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable String userId, @RequestBody UpdateUserForm user,@ApiIgnore HttpServletRequest request){
-        log.info("updateUser");
+        log.info("UpdateUser API");
         String userUUID = getUUID(request);
-
         try{
-
             UserVO userVO = userService.getUserByUUID(userUUID);
             if(!userId.equals(userId)) throw new NotFoundException("not found user");
-
             if(user.getId()!=null) userVO.setId(user.getId());
             if(user.getName()!=null) userVO.setName(user.getName());
             if(user.getImg()!=null) userVO.setImg(user.getImg());
@@ -115,7 +113,7 @@ public class SecurityController {
 
     }
 
-    @ApiImplicitParams({@ApiImplicitParam(name="AccessToken",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
+    @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
     @PostMapping("/changePwd")
     @ResponseBody
     public ResponseEntity<Object> changePwd(@RequestBody ToPwdForm pwd, @ApiIgnore HttpServletRequest request){
@@ -140,27 +138,20 @@ public class SecurityController {
 
     //follower : following 당하는 사람
     //follower <= following
-//    @PostMapping("/{userId}/{followerId}")
-//    public ResponseEntity followUser(@PathVariable String followerId,HttpServletRequest request){
-//        String userUUID = getUUID(request);
-//        UserVO followee = userService.getUserByUUID(userUUID);
-//        UserVO follower = userService.getUserById(followerId);
-//        FollowVO followVO=FollowVO.builder().followerUUID(follower.getUUID()).followeeUUID(followee.getUUID()).build();
-//        int followSeq = followService.followUser(followVO);
-//
-//        return ResponseEntity.ok(followee.getId()+"님이 "+follower.getId()+"님을 팔로우 했습니다.");
-//    }
+    @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
+    @PostMapping("/{userId}/{followerId}")
+    public ResponseEntity followUser(@PathVariable String followerId,HttpServletRequest request){
+        String userUUID = getUUID(request);
+        UserVO followee = userService.getUserByUUID(userUUID);
+        UserVO follower = userService.getUserById(followerId);
+        FollowVO followVO=FollowVO.builder().followerUUID(follower.getUUID()).followeeUUID(followee.getUUID()).build();
+        int followSeq = followService.followUser(followVO);
 
-    //    private Object checkAcToken(String userUUID,HttpServletRequest request){
-//        try{
-//            String getAcToken = jwtTokenProvider.resolveToken(request);
-//            String getUserUUID = jwtTokenProvider.getUserPk(getAcToken);
-////            if(!userUUID.equals(getUserUUID)) return new NotFoundException("UUID가 일치하지 않음");
-//            return getUserUUID;
-//        }catch(Exception e){
-//            return new GlobalException("token 유효하지 않음");
-//        }
-//    }
+        return ResponseEntity.ok(followee.getId()+"님이 "+follower.getId()+"님을 팔로우 했습니다.");
+    }
+
+
+
     private String getUUID(HttpServletRequest request){
         try{
             String getAcToken = jwtTokenProvider.resolveToken(request);

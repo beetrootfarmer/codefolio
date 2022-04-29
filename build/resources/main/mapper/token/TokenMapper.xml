@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codefolio.mapper.TokenMapper">
+
+    <resultMap type="com.codefolio.vo.TokenVO" id="TokenResult">
+        <result property="tokenSeq" column="token_seq"/>
+        <result property="UUID" column="UUID"/>
+        <result property="acToken" column="ac_token"/>
+        <result property="refToken" column="ref_token"/>
+        <result property="regDate" column="reg_date"/>
+    </resultMap>
+
+
+    <insert id="joinUUID" parameterType="com.codefolio.vo.TokenVO"  useGeneratedKeys="true" keyProperty="tokenSeq">
+        INSERT INTO codefolio.token SET UUID=#{UUID};
+    </insert>
+    <!--    token query     -->
+    <update id="updateRefToken" parameterType="com.codefolio.vo.TokenVO">
+        UPDATE token SET ref_token=#{refToken} WHERE UUID=#{UUID};
+    </update>
+
+    <update id="updateAcToken" parameterType="com.codefolio.vo.TokenVO">
+        UPDATE token SET ac_token=#{acToken},reg_date=NOW() WHERE UUID=#{UUID};
+    </update>
+
+    <select id="getTokenByAcToken" parameterType="String" resultType="com.codefolio.vo.TokenVO" resultMap="TokenResult">
+        select * from codefolio.token where ac_token=#{acToken};
+    </select>
+
+</mapper>

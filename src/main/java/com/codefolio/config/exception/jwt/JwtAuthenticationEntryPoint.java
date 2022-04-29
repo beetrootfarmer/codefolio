@@ -45,7 +45,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         log.info("exception Entry point enter");
         JSONObject responseJson = new JSONObject();
-//        responseJson.put("status",exceptionCode.getStatus());
+        responseJson.put("status",exceptionCode.getStatus());
         responseJson.put("message", exceptionCode.getMessage());
         responseJson.put("code", exceptionCode.getCode());
 

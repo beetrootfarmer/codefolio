@@ -1,12 +1,15 @@
 package com.codefolio.impl;
 
 
+import com.codefolio.config.jwt.JwtProperties;
 import com.codefolio.mapper.UserMapper;
 import com.codefolio.service.MailService;
 import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
 import com.codefolio.service.UserService;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -81,10 +84,6 @@ public class UserServiceImpl implements UserService {
     public String checkLogin(UserVO user){return userMapper.checkLogin(user);}
 
     @Override
-    public void updateRefToken(UserVO user){userMapper.updateRefToken(user);}
-
-
-    @Override
     public void updateUserImg(UserVO user){userMapper.updateUserImg(user);};
 
     @Override
@@ -123,5 +122,7 @@ public class UserServiceImpl implements UserService {
         }
         return sb.toString();
     }
+
+
 
 }

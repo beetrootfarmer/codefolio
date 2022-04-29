@@ -3,7 +3,6 @@ package com.codefolio.mapper;
 
 import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
-
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -31,7 +30,6 @@ public interface UserMapper {
 
     public String secLogin(UserVO user);
 
-    void updateRefToken(UserVO user);
 
     public UserVO getUserByEmail(String email);
 
