@@ -8,4 +8,16 @@
         SET follower_UUID=#{followerUUID},followee_UUID=#{followeeUUID};
     </insert>
 
+    <select id="checkFollow" parameterType="com.codefolio.vo.FollowVO" resultType="int">
+        SELECT count(followee_UUID) FROM codefolio.follow where follower_UUID = #{followerUUID} and followee_UUID = #{followeeUUID} group by followee_UUID;
+    </select>
+
+    <delete id="UnFollowUser" parameterType="com.codefolio.vo.FollowVO">
+        DELETE FROM codefolio.follow WHERE follower_UUID=#{followerUUID} and followee_UUID=#{followeeUUID};
+    </delete>
+
+    <select id="getFollowUserList" parameterType="String" resultType="map">
+        SELECT follower_UUID, id, name, img  FROM codefolio.follow,codefolio.user where follow.follower_UUID = user.UUID and follow.followee_UUID = #{userUUID};
+    </select>
+
 </mapper>

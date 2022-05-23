@@ -56,7 +56,7 @@ public class UserController {
 
     @GetMapping("")
     public String hello(){
-        return "Hello World!!";
+        return "Hello! We are Codefolio!!";
     }
 
     @PostMapping("/join")
@@ -108,6 +108,7 @@ public class UserController {
             throw new GlobalException(e.getMessage());
         }
     }
+
 
     @ApiImplicitParams({@ApiImplicitParam(name="X-AUTH-TOKEN",value = "HttpServletRequest", required = true, dataType = "string",paramType = "header")})
     @GetMapping("/auth/refToken")
