@@ -14,7 +14,6 @@
         <result property="stack" column="stack"/>
         <result property="introFile" column="intro_file"/>
         <result property="img" column="img"/>
-        <!--        <result property="reg" column="reg"/>-->
     </resultMap>
 
     <!--    테스트 쿼리 : 모든 회원정보 리스트 출력-->
@@ -42,9 +41,8 @@
     <!--join user-->
     <insert id="joinUser" parameterType="com.codefolio.vo.UserVO"  useGeneratedKeys="true" keyProperty="userSeq">
         INSERT INTO codefolio.user SET
-            UUID = #{UUID},id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),reg_date=NOW(),role="ROLE_USER",salt_key=#{saltKey};
+            UUID = #{UUID},id=#{id},pwd=#{pwd}, name=#{name},email=#{email},gitId=#{gitId},cre_date=NOW(),role="ROLE_USER",salt_key=#{saltKey};
     </insert>
-
 
     <!--    followUser      -->
     <insert id="followUser" parameterType="com.codefolio.vo.FollowVO" useGeneratedKeys="true" keyProperty="followSeq">
@@ -76,10 +74,6 @@
         UPDATE user SET img=#{img} WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </update>
 
-    <update id="updateRefToken" parameterType="com.codefolio.vo.UserVO">
-        UPDATE user SET ref_token=#{refToken} WHERE UUID=#{UUID};
-    </update>
-
     <!--user delete-->
     <delete id="deleteUser" parameterType="String">
         DELETE FROM codefolio.user WHERE UUID=#{UUID};
@@ -99,29 +93,13 @@
         SELECT * FROM codefolio.user WHERE id=#{id} ORDER BY id DESC LIMIT 1;
     </select>
 
-
     <!--유저 로그인 => security 적용 X-->
     <select id="checkLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
         SELECT id FROM codefolio.user WHERE email=#{email} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
     </select>
 
-
     <select id="secLogin" parameterType="com.codefolio.vo.UserVO" resultType="String">
         SELECT name FROM codefolio.user WHERE id=#{id} and pwd=#{pwd} ORDER BY id DESC LIMIT 1;
     </select>
-
-    <!--&lt;!&ndash;findByLoginPwd&ndash;&gt;-->
-    <!--    <select id="searchEmail"-->
-    <!--            resultType="com.codefolio.vo.UserVO">-->
-    <!--        SELECT *-->
-    <!--        FROM codefolio.user-->
-    <!--        WHERE-->
-    <!--            email=#{email}-->
-    <!--    </select>-->
-
-    <!--&lt;!&ndash;비밀번호 변경&ndash;&gt;-->
-    <!--    <update id="changePwd" >-->
-    <!--        UPDATE user SET pwd=#{pwd} WHERE email=#{email}-->
-    <!--    </update>-->
 
 </mapper>

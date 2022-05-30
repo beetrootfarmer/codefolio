@@ -2,10 +2,8 @@ package com.codefolio.service;
 
 import com.codefolio.vo.FollowVO;
 import com.codefolio.vo.UserVO;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 
 public interface UserService {
@@ -31,7 +29,6 @@ public interface UserService {
 
     String secLogin(UserVO user);
 
-    void updateRefToken(UserVO userVO);
 
     public UserVO getUserByEmail(String email);
 
@@ -48,4 +45,6 @@ public interface UserService {
     void updatePwd(UserVO getUser);
 
     int followUser(FollowVO follow);
+
+
 }

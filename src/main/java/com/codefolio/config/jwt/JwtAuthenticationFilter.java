@@ -1,5 +1,6 @@
 package com.codefolio.config.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,16 +23,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         //헤더에서 JWT를 받아옵니다.
         String token = jwtTokenProvider.resolveToken(request);
-//        try{
-            //유효한 토큰인지 확인합니다.
-            if (token != null && jwtTokenProvider.validateToken(token,request)) {
-                //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
-                Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                //securityContext에 Authentication객체를 저장합니다.
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-
-//        jwtTokenProvider.verifyLogin(request,response);
-        filterChain.doFilter(request,response);
+        //유효한 토큰인지 확인합니다.
+        if (token != null && jwtTokenProvider.validateToken(token, request)) {
+            //토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            //securityContext에 Authentication객체를 저장합니다.
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        try{
+            filterChain.doFilter(request,response);
+        }catch (ExpiredJwtException e){
+            log.info("ExpiredJwt at JWT Filter");
+        }
     }
 }

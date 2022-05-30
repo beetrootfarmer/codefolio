@@ -1,8 +1,8 @@
 package com.codefolio.controller;
 
 import com.codefolio.dto.JsonResponse;
-import com.codefolio.dto.response.GetProjandFileResponse;
-import com.codefolio.dto.response.ProjListResponse;
+import com.codefolio.dto.proj.response.GetProjandFileResponse;
+import com.codefolio.dto.proj.response.ProjListResponse;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
 import com.codefolio.utils.FileUtils;

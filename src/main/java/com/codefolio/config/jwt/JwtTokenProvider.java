@@ -1,8 +1,9 @@
 package com.codefolio.config.jwt;
 
 import com.codefolio.config.exception.jwt.ExceptionCode;
+import com.codefolio.service.TokenService;
 import com.codefolio.service.UserService;
-import com.codefolio.vo.UserVO;
+import com.codefolio.vo.TokenVO;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class JwtTokenProvider {
     private String secretKey= JwtProperties.SECRET;
     private final UserDetailsService userDetailsService;
     private final UserService userService;
+    private final TokenService tokenService;
 
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -36,14 +38,16 @@ public class JwtTokenProvider {
 
     public String createToken(String userUUID){
         Claims claims = Jwts.claims().setSubject(userUUID);   //Jwt payload에 저장되는 정보 단위
+        claims.put("role","ROLE_USER");  //권한설정 key/value 쌍으로 저장된다.
         Date now = new Date();
         String acToken = Jwts.builder()
                 .setClaims(claims)  //정보 저장
                 .setIssuedAt(now)   //토큰 발행시간 정보
                 .setExpiration(new Date(now.getTime()+JwtProperties.EXPIRATION_TIME))  //setExpire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret갓 세팅
+                .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret값 세팅
                 .compact();
-
+        TokenVO tokenVO = TokenVO.builder().UUID(userUUID).acToken(acToken).build();
+        tokenService.updateAcToken(tokenVO);
         return acToken;
     }
 
@@ -57,10 +61,8 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime()+JwtProperties.REF_EXPIRATION_TIME))  //setExpire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  //사용할 암호화 알고리즘과, signature에 들어갈 secret값 세팅
                 .compact();
-        UserVO userVO=new UserVO();
-        userVO.setRefToken(refToken);
-        userVO.setUUID(userUUID);
-        userService.updateRefToken(userVO);
+        TokenVO tokenVO = TokenVO.builder().UUID(userUUID).refToken(refToken).build();
+        tokenService.updateRefToken(tokenVO);
         return refToken;
     }
 
@@ -109,8 +111,7 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException e) {
             log.info("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            log.info(e.getMessage());
+            log.info("Expired JWT token. at validation Token");
             request.setAttribute("exception", ExceptionCode.EXPIRED_TOKEN.getCode());
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token.");
