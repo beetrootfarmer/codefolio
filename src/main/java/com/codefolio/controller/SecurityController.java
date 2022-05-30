@@ -121,9 +121,7 @@ public class SecurityController {
     @ResponseBody
     public ResponseEntity<Object> changePwd(@RequestBody ToPwdForm pwd, @ApiIgnore HttpServletRequest request){
         String userUUID = getUUID(request);
-        System.out.println("userUUID================="+userUUID);
         try{
-//            if(userUUID==null)throw new NotFoundException("Unable found User email");
             UserVO getUser = userService.getUserByUUID(userUUID);
             String saltkey = userService.getSecString();
             String encUserPwd = passwordEncoder.encode(pwd.getPwd()+saltkey);
@@ -147,15 +145,12 @@ public class SecurityController {
     public ResponseEntity followUser(@PathVariable String followerId, HttpServletRequest request){
         String followeeUUID = getUUID(request);
         UserVO follower = userService.getUserById(followerId);
-        System.out.println(follower);
         FollowVO followVO=FollowVO.builder().followerUUID(follower.getUUID()).followeeUUID(followeeUUID).build();
         try{
             int checkFollow = followService.checkFollow(followVO);
-            System.out.println(checkFollow);
             log.error("[followUser] 이미 있는 사용자 입니다. ");
             throw new BadRequestException("이미 있는 사용자 입니다.");
         }catch (BindingException e){
-            System.out.println("no exist");
             int followSeq = followService.followUser(followVO);
             return ResponseEntity.ok(new JsonResponse(null,"success",200,"followUser"));
         }
