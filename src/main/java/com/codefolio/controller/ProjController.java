@@ -37,7 +37,9 @@ public class ProjController {
 	
     @Autowired
     FileUtils fileUtils;
-	private final JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
 
 

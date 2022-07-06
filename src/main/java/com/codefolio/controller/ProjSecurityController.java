@@ -39,8 +39,12 @@ public class ProjSecurityController {
 	
     @Autowired
     FileUtils fileUtils;
-	private final JwtTokenProvider jwtTokenProvider;
-	private final UserService userService;
+
+    @Autowired
+	private  JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+	private  UserService userService;
 
 
 
