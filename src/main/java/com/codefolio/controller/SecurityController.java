@@ -38,7 +38,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class SecurityController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;

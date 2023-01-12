@@ -1,8 +1,11 @@
 package com.codefolio.controller;
 
+import com.codefolio.config.jwt.JwtTokenProvider;
 import com.codefolio.dto.JsonResponse;
 import com.codefolio.dto.proj.response.GetProjandFileResponse;
 import com.codefolio.dto.proj.response.ProjListResponse;
+import com.codefolio.config.exception.controller.NotFoundException;
+import com.codefolio.config.exception.controller.GlobalException;
 import com.codefolio.service.FileService;
 import com.codefolio.service.ProjService;
 import com.codefolio.utils.FileUtils;
@@ -20,18 +23,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @RestController
 @RequestMapping("/proj")
 public class ProjController {
-    @Autowired
+	@Autowired
     ProjService projService;
-
+	
     @Autowired
     FileService fileService;
-
+	
     @Autowired
     FileUtils fileUtils;
+
+    @Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
 
 
